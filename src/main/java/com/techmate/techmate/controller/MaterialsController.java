@@ -74,9 +74,6 @@ public class MaterialsController {
         } catch (RuntimeException e) {
             log.error("Runtime error creating material: {}", e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            log.error("Unexpected error creating material: {}", e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -85,9 +82,13 @@ public class MaterialsController {
     public ResponseEntity<MaterialResponse> getMaterialById(@PathVariable("id") Integer id) {
         try {
             MaterialsDTO materialsDTO = materialsService.getMaterialsById(id);
-        MaterialResponse resp = materialsMapper.toResponse(materialsDTO, appProperties.getServerUrl());
-        return new ResponseEntity<>(resp, HttpStatus.OK);
-        } catch (Exception e) {
+            MaterialResponse resp = materialsMapper.toResponse(materialsDTO, appProperties.getServerUrl());
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.debug("Material not found with id: {}", id, e);
+            return ResponseEntity.notFound().build();
+        } catch (RuntimeException e) {
+            log.error("Unexpected error retrieving material with id {}: {}", id, e.getMessage(), e);
             return ResponseEntity.notFound().build();
         }
     }
@@ -162,7 +163,10 @@ public class MaterialsController {
                     .build();
             
             return new ResponseEntity<>(pageResponse, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid pagination parameters provided: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (RuntimeException e) {
             log.error("Error getting paginated materials: {}", e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -183,8 +187,12 @@ public class MaterialsController {
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(resp, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // Error al obtener materiales
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid sort parameters: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (RuntimeException e) {
+            log.error("Error retrieving materials sorted by price: {}", e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -210,7 +218,11 @@ public class MaterialsController {
             String targetEmail = email != null ? email : "rodrigorafaelchipacheco@gmail.com";
             emailService.sendEmail(targetEmail, "Test", "Este es un mensaje de prueba.");
             return new ResponseEntity<>("Correo enviado a: " + targetEmail, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid email parameter: {}", e.getMessage());
+            return new ResponseEntity<>("Error enviando correo: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (RuntimeException e) {
+            log.error("Error enviando correo: {}", e.getMessage(), e);
             return new ResponseEntity<>("Error enviando correo: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
