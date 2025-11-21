@@ -23,8 +23,11 @@ public class GlobalExceptionHandlerUnitTest {
         assertThat(resp.getStatusCode().value()).isEqualTo(404);
         ApiErrorResponse body = resp.getBody();
         assertThat(body).isNotNull();
-        assertThat(body.getStatus()).isEqualTo(404);
-        assertThat(body.getPath()).isEqualTo("/test/not-found");
-        assertThat(body.getMessage()).isEqualTo("Recurso no encontrado");
+        if (body != null) {
+            assertThat(body.getStatus()).isEqualTo(404);
+            assertThat(body.getPath()).isEqualTo("/test/not-found");
+            assertThat(body.getMessage()).isEqualTo("Recurso no encontrado");
+        }
     }
 }
+

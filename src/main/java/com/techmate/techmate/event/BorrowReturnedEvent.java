@@ -24,11 +24,16 @@ public class BorrowReturnedEvent extends DomainEvent {
     
     public BorrowReturnedEvent(Borrow borrow, Date returnDate) {
         super(borrow);
-        this.borrowId = borrow.getBorrowId();
+        this.borrowId = borrow.getId();
         this.userId = borrow.getUsuario() != null ? borrow.getUsuario().getId() : null;
         this.returnDate = returnDate;
         this.endDate = borrow.getEndDate();
         this.wasLate = returnDate != null && endDate != null && returnDate.after(endDate);
+    }
+
+    // Compatibility method: getId() returns borrowId
+    public Integer getId() {
+        return this.borrowId;
     }
     
     @Override
@@ -44,4 +49,5 @@ public class BorrowReturnedEvent extends DomainEvent {
         );
     }
 }
+
 

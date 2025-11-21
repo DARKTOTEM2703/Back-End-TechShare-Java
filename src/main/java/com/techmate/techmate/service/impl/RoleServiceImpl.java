@@ -5,10 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.techmate.techmate.dto.RoleDTO;
 import com.techmate.techmate.entity.Role;
-import com.techmate.techmate.repository.MaterialsRepository;
-import com.techmate.techmate.repository.RoleMaterialsRepository;
 import com.techmate.techmate.repository.RoleRepository;
-import com.techmate.techmate.repository.UsuarioRoleRepository;
 import com.techmate.techmate.service.RoleService;
 
 import jakarta.transaction.Transactional;
@@ -16,26 +13,17 @@ import jakarta.transaction.Transactional;
 @Service
 public class RoleServiceImpl implements RoleService {
 
-    private final UsuarioRoleRepository usuarioRoleRepository;
-    private final MaterialsRepository materialsRepository;
-    private final RoleMaterialsRepository roleMaterialsRepository;
     private final RoleRepository roleRepository;
     private final com.techmate.techmate.service.role.mapper.RoleMapper roleMapper;
     private final com.techmate.techmate.service.role.validator.RoleValidator roleValidator;
     private final com.techmate.techmate.service.role.query.RoleQueryService roleQueryService;
     private final com.techmate.techmate.service.role.manager.RoleAssociationManager roleAssociationManager;
 
-    public RoleServiceImpl(UsuarioRoleRepository usuarioRoleRepository,
-                           MaterialsRepository materialsRepository,
-                           RoleMaterialsRepository roleMaterialsRepository,
-                           RoleRepository roleRepository,
+    public RoleServiceImpl(RoleRepository roleRepository,
                            com.techmate.techmate.service.role.mapper.RoleMapper roleMapper,
                            com.techmate.techmate.service.role.validator.RoleValidator roleValidator,
                            com.techmate.techmate.service.role.query.RoleQueryService roleQueryService,
                            com.techmate.techmate.service.role.manager.RoleAssociationManager roleAssociationManager) {
-        this.usuarioRoleRepository = usuarioRoleRepository;
-        this.materialsRepository = materialsRepository;
-        this.roleMaterialsRepository = roleMaterialsRepository;
         this.roleRepository = roleRepository;
         this.roleMapper = roleMapper;
         this.roleValidator = roleValidator;
@@ -99,4 +87,5 @@ public class RoleServiceImpl implements RoleService {
     }
 
 }
+
 

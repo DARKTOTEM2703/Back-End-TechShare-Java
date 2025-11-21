@@ -5,6 +5,9 @@ import lombok.Data;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Entidad Borrow - Representa un préstamo de material.
+ */
 @Entity
 @Table(name = "borrow")
 @Data
@@ -40,7 +43,7 @@ public class Borrow {
     @JoinColumn(name = "user_id", nullable = false)
     private Usuario usuario;
 
-    // Legacy compatibility fields (not in DB)
+    // Legacy compatibility fields (not persisted in DB - @Transient)
     @Transient
     private Date startDate;
     
@@ -50,18 +53,37 @@ public class Borrow {
     @OneToMany(mappedBy = "borrow", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetailsBorrow> details;
 
-    // Compatibility getters/setters for legacy code that used 'borrowId'
+    // ══════════════════════════════════════════════════════════════
+    // ✅ COMPATIBLE METHODS (Legacy code support - borrowId)
+    // ══════════════════════════════════════════════════════════════
+    
+    /**
+     * Método compatible para código legacy que usa 'borrowId'.
+     * Internamente mapea a 'id'.
+     */
     public Integer getBorrowId() {
         return this.id;
     }
 
+    /**
+     * Método compatible para código legacy que usa 'borrowId'.
+     * Internamente mapea a 'id'.
+     */
     public void setBorrowId(Integer borrowId) {
         this.id = borrowId;
     }
 
-    // Compatibility method for calculating total amount
+    // ══════════════════════════════════════════════════════════════
+    // BUSINESS METHODS
+    // ══════════════════════════════════════════════════════════════
+    
+    /**
+     * Calcula el monto total del préstamo sumando los detalles.
+     * 
+     * @return Suma de los precios totales de todos los detalles del préstamo
+     */
     public double calculateTotalAmount() {
-        if (details != null) {
+        if (details != null && !details.isEmpty()) {
             return details.stream()
                     .mapToDouble(DetailsBorrow::getTotalPrice)
                     .sum();
@@ -69,4 +91,5 @@ public class Borrow {
         return 0;
     }
 }
+
 

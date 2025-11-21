@@ -26,7 +26,7 @@ public class MaterialsStockManagerTest {
 
     @Test
     void getAvailableStock_existing_returnsValue() {
-        Materials m = new Materials(); m.setMaterialsId(1); m.setBorrowable_stock(5);
+        Materials m = new Materials(); m.setId(1); m.setBorrowable_stock(5);
         when(materialsRepository.findById(1)).thenReturn(Optional.of(m));
         int avail = stockManager.getAvailableStock(1);
         assertThat(avail).isEqualTo(5);
@@ -40,7 +40,7 @@ public class MaterialsStockManagerTest {
 
     @Test
     void reduceStock_ok_updates() {
-        Materials m = new Materials(); m.setMaterialsId(3); m.setBorrowable_stock(10);
+        Materials m = new Materials(); m.setId(3); m.setBorrowable_stock(10);
         when(materialsRepository.findById(3)).thenReturn(Optional.of(m));
         stockManager.reduceStock(3, 4);
         verify(materialsRepository).save(m);
@@ -49,17 +49,18 @@ public class MaterialsStockManagerTest {
 
     @Test
     void reduceStock_insufficient_throws() {
-        Materials m = new Materials(); m.setMaterialsId(4); m.setBorrowable_stock(1);
+        Materials m = new Materials(); m.setId(4); m.setBorrowable_stock(1);
         when(materialsRepository.findById(4)).thenReturn(Optional.of(m));
     assertThatThrownBy(() -> stockManager.reduceStock(4, 2)).isInstanceOf(com.techmate.techmate.exception.InsufficientStockException.class);
     }
 
     @Test
     void restoreStock_increases_and_saves() {
-        Materials m = new Materials(); m.setMaterialsId(5); m.setBorrowable_stock(2);
+        Materials m = new Materials(); m.setId(5); m.setBorrowable_stock(2);
         when(materialsRepository.findById(5)).thenReturn(Optional.of(m));
         stockManager.restoreStock(5, 3);
         verify(materialsRepository).save(m);
         assertThat(m.getBorrowable_stock()).isEqualTo(5);
     }
 }
+

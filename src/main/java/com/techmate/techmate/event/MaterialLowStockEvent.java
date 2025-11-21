@@ -21,7 +21,7 @@ public class MaterialLowStockEvent extends DomainEvent {
     
     public MaterialLowStockEvent(Materials material, int threshold) {
         super(material);
-        this.materialId = material.getMaterialsId();
+        this.materialId = material.getId();
         this.materialName = material.getName();
         this.currentStock = material.getStock();
         this.threshold = threshold;
@@ -40,3 +40,4 @@ public class MaterialLowStockEvent extends DomainEvent {
         );
     }
 }
+

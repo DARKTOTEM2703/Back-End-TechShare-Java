@@ -27,3 +27,4 @@ public class GlobalExceptionHandlerTest {
         assertNotNull(body.getTimestamp());
     }
 }
+

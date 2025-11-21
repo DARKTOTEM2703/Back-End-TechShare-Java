@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import com.techmate.techmate.entity.Materials;
@@ -40,13 +41,15 @@ public interface MaterialsRepository extends JpaRepository<Materials, Integer> {
      * OPTIMIZADO: Usa @EntityGraph para eager loading
      */
     @EntityGraph(attributePaths = {"subCategory", "subCategory.category"})
+    @NonNull
     List<Materials> findAll();
     
     /**
      * Busca material por ID con todas las relaciones (1 query).
      */
     @EntityGraph(attributePaths = {"subCategory", "subCategory.category"})
-    Optional<Materials> findById(Integer id);
+    @NonNull
+    Optional<Materials> findById(@NonNull Integer id);
     
     // Validación: verifica si existe un material con el nombre dado
     boolean existsByName(String name);
@@ -71,7 +74,8 @@ public interface MaterialsRepository extends JpaRepository<Materials, Integer> {
      * Paginación optimizada de materiales.
      */
     @EntityGraph(attributePaths = {"subCategory", "subCategory.category"})
-    Page<Materials> findAll(Pageable pageable);
+    @NonNull
+    Page<Materials> findAll(@NonNull Pageable pageable);
     
     /**
      * Busca materiales por categoría con JOIN FETCH.
@@ -90,6 +94,7 @@ public interface MaterialsRepository extends JpaRepository<Materials, Integer> {
     List<Materials> findLowStock(@Param("threshold") int threshold);
 
 }
+
 
 
 

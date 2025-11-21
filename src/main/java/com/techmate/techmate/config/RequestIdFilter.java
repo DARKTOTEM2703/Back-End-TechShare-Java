@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -29,14 +30,13 @@ public class RequestIdFilter extends OncePerRequestFilter {
     
     private static final String REQUEST_ID_HEADER = "X-Request-ID";
     private static final String REQUEST_ID_MDC_KEY = "requestId";
-    private static final String USER_MDC_KEY = "user";
     private static final String IP_MDC_KEY = "clientIp";
     
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         
         try {
@@ -86,4 +86,5 @@ public class RequestIdFilter extends OncePerRequestFilter {
         return request.getRemoteAddr();
     }
 }
+
 

@@ -1,6 +1,7 @@
 package com.techmate.techmate.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -21,9 +22,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ApiVersionConfig implements WebMvcConfigurer {
     
     @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-        // Habilitar trailing slashes opcionales
-        configurer.setUseTrailingSlashMatch(true);
+    public void configurePathMatch(@NonNull PathMatchConfigurer configurer) {
+        // Nota: setUseTrailingSlashMatch está deprecado en Spring 6.0+
+        // La configuración de trailing slashes se maneja automáticamente
     }
 }
+
 

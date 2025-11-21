@@ -40,3 +40,4 @@ Categories findByName(String name);
     String findNameByCategoryId(@Param("categoryId") int categoryId);
 }
 
+

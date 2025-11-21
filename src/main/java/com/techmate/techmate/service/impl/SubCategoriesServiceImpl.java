@@ -54,12 +54,12 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
     // Método para convertir de entidad a DTO
     private SubCategoriesDTO convertToDTO(SubCategories subCategory) {
         SubCategoriesDTO dto = new SubCategoriesDTO();
-        dto.setSubCategoriesId(subCategory.getSubCategoryId());
+        dto.setId(subCategory.getSubCategoryId());
         dto.setName(subCategory.getName());
         dto.setImagePath(subCategory.getImagePath());
 
-        dto.setCategoryId(subCategory.getCategory().getCategoryId());
-        dto.setCategoryName(categoriesService.getCategoryNameById(subCategory.getCategory().getCategoryId())); // Llama
+        dto.setId(subCategory.getCategory().getId());
+        dto.setCategoryName(categoriesService.getCategoryNameById(subCategory.getCategory().getId())); // Llama
                                                                                                                // al
                                                                                                                // nuevo
                                                                                                                // método
@@ -73,9 +73,9 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
         subCategory.setImagePath(subCategoryDTO.getImagePath());
 
         // Buscar la categoría por ID y asignarla
-        Categories category = categoriesRepository.findById(subCategoryDTO.getCategoryId())
+        Categories category = categoriesRepository.findById(subCategoryDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Categoría no encontrada con ID: " + subCategoryDTO.getCategoryId()));
+                        "Categoría no encontrada con ID: " + subCategoryDTO.getId()));
         subCategory.setCategory(category);
 
         return subCategory;
@@ -125,7 +125,7 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
             subCategory.setImagePath(subCategoryDTO.getImagePath());
             // Buscar y asignar la categoría actualizada si se proporciona un nuevo ID de
             // categoría
-            Categories category = categoriesRepository.findById(subCategoryDTO.getCategoryId()).orElse(null);
+            Categories category = categoriesRepository.findById(subCategoryDTO.getId()).orElse(null);
             subCategory.setCategory(category);
 
 
@@ -183,4 +183,5 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
         return subCategory != null ? subCategory.getName() : null;
     }
 }
+
 

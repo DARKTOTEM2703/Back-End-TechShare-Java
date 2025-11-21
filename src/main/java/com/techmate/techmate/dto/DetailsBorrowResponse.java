@@ -14,3 +14,4 @@ public class DetailsBorrowResponse {
     private double totalPrice;
     private Integer materialsId;
 }
+

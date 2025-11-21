@@ -40,3 +40,4 @@ public final class JWTTestHelper {
         return createTokenWithRoles(id, "user@example.com", "user", "USER");
     }
 }
+

@@ -17,3 +17,4 @@ public class CurrentUserDTO {
     private String email;
     private List<String> roles;
 }
+

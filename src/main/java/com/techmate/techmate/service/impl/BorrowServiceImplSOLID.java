@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Primary;
 import java.util.*;
 
 import com.techmate.techmate.service.BorrowService;
-import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
 import com.techmate.techmate.service.borrow.processor.BorrowStateProcessor;
 import com.techmate.techmate.service.borrow.query.BorrowQueryService;
 import com.techmate.techmate.dto.BorrowDTO;
@@ -26,7 +25,6 @@ import com.techmate.techmate.security.TokenUtils;
  * ARQUITECTURA:
  * - BorrowQueryService: Consultas y filtros
  * - BorrowStateProcessor: Transiciones de estado
- * - BorrowMapper: Conversiones DTO ↔ Entity
  * 
  * @author TechShare Team - Refactorizado con SOLID
  */
@@ -36,7 +34,6 @@ public class BorrowServiceImplSOLID implements BorrowService {
 
     private final BorrowQueryService queryService;
     private final BorrowStateProcessor stateProcessor;
-    private final BorrowMapper mapper;
 
     // ==================== CONSTRUCTOR INJECTION (DIP) ====================
     
@@ -46,11 +43,9 @@ public class BorrowServiceImplSOLID implements BorrowService {
      */
     public BorrowServiceImplSOLID(
             BorrowQueryService queryService,
-            BorrowStateProcessor stateProcessor,
-            BorrowMapper mapper) {
+            BorrowStateProcessor stateProcessor) {
         this.queryService = queryService;
         this.stateProcessor = stateProcessor;
-        this.mapper = mapper;
     }
 
     // ==================== OPERACIONES DE CONSULTA ====================

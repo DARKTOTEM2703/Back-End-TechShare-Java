@@ -35,3 +35,4 @@ public class MoveTypeTest {
         assertNull(t);
     }
 }
+

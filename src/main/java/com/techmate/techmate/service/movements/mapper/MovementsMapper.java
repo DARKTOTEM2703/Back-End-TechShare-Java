@@ -11,16 +11,17 @@ public class MovementsMapper {
     public MovementResponse toResponse(MovementsDTO dto) {
         if (dto == null) return null;
         MovementResponse resp = new MovementResponse();
-        resp.setMovementsId(dto.getMovementsId());
+        resp.setId(dto.getId());
         resp.setMoveType(dto.getMoveType());
         resp.setQuantity(dto.getQuantity());
         resp.setDate(dto.getDate());
         resp.setComment(dto.getComment());
         resp.setAdminId(dto.getAdminId());
         resp.setAdminName(dto.getAdminName());
-        resp.setMaterialsId(dto.getMaterialsId());
+        resp.setId(dto.getId());
         resp.setMaterialsName(dto.getMaterialsName());
         return resp;
     }
 }
+
 

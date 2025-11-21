@@ -1,6 +1,7 @@
 package com.techmate.techmate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -23,10 +24,12 @@ public class EmailService {
             message.setSubject(subject);
             message.setText(text);
             mailSender.send(message);
-        } catch (Exception e) {
-            // Log and swallow exceptions to avoid breaking caller flow.
-            // AuthService will treat email delivery as best-effort.
+        } catch (MailException e) {
+            // Spring's MailException covers all mail-related errors
             org.slf4j.LoggerFactory.getLogger(EmailService.class).error("Error sending plain email to {}", to, e);
+        } catch (IllegalArgumentException e) {
+            // Catch parameter validation errors (invalid email, etc.)
+            org.slf4j.LoggerFactory.getLogger(EmailService.class).error("Invalid email parameter: {}", to, e);
         }
     }
 
@@ -42,12 +45,16 @@ public class EmailService {
             
             mailSender.send(message);
         } catch (MessagingException me) {
+            // MIME message construction or sending failed
             org.slf4j.LoggerFactory.getLogger(EmailService.class).error("MessagingException sending HTML email to {}", to, me);
-            // rethrow wrapped in RuntimeException so callers can optionally fallback, but since this runs async
-            // we swallow here and rely on sendEmail fallback if needed synchronously.
-        } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger(EmailService.class).error("Error sending HTML email to {}", to, e);
+        } catch (MailException me) {
+            // Spring's MailException for actual sending failures
+            org.slf4j.LoggerFactory.getLogger(EmailService.class).error("MailException sending HTML email to {}", to, me);
+        } catch (IllegalArgumentException e) {
+            // Parameter validation errors
+            org.slf4j.LoggerFactory.getLogger(EmailService.class).error("Invalid email parameter: {}", to, e);
         }
     }
 }
+
 

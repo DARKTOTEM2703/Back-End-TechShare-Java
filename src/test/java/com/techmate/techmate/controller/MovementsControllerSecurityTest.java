@@ -49,7 +49,7 @@ class MovementsControllerSecurityTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void securedGetMovementById_withValidToken_returnsOk() throws Exception {
         MovementsDTO dto = new MovementsDTO();
-        dto.setMovementsId(42);
+        dto.setId(42);
         dto.setQuantity(7);
 
         MovementResponse resp = new MovementResponse(42, MoveType.STOCK_ADD, 7, new java.util.Date(), "", 1, "Admin", 2, "Mat");
@@ -60,7 +60,7 @@ class MovementsControllerSecurityTest {
         mockMvc.perform(get("/admin/movement/42")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.movements_id").value(42))
+                .andExpect(jsonPath("$.id").value(42))
                 .andExpect(jsonPath("$.quantity").value(7));
     }
 
@@ -68,10 +68,10 @@ class MovementsControllerSecurityTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void securedCreateMovement_withValidToken_returnsCreated() throws Exception {
         MovementsDTO created = new MovementsDTO();
-        created.setMovementsId(99);
+        created.setId(99);
         created.setQuantity(2);
         created.setMoveType(MoveType.BORROW);
-        created.setMaterialsId(5);
+        created.setId(5);
 
         // El mapper debe convertir BORROW al MoveType correcto
         // El response debe reflejar lo que retorna el servicio
@@ -87,7 +87,8 @@ class MovementsControllerSecurityTest {
                 .param("comment", "ok")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.movements_id").value(99))
+                .andExpect(jsonPath("$.id").value(99))
                 .andExpect(jsonPath("$.move_type").value("OUT"));
     }
 }
+

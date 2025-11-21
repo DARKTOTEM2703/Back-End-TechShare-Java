@@ -24,3 +24,4 @@ public class UsuarioRole {
     private Role role;
 }
 
+

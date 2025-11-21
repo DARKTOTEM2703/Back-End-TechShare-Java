@@ -11,7 +11,7 @@ public class RoleMapper {
     public RoleDTO toDTO(Role role) {
         if (role == null) return null;
         RoleDTO dto = new RoleDTO();
-        dto.setRoleId(role.getRoleId());
+        dto.setId(role.getId());
         dto.setName(role.getNombre());
         return dto;
     }
@@ -19,9 +19,10 @@ public class RoleMapper {
     public Role toEntity(RoleDTO dto) {
         if (dto == null) return null;
         Role role = new Role();
-        role.setRoleId(dto.getRoleId());
+        role.setId(dto.getId());
         role.setNombre(dto.getName());
         return role;
     }
 }
+
 

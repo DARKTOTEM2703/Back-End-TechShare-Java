@@ -14,3 +14,4 @@ public class SubCategoryResponse {
     private int categoryId;
     private String categoryName;
 }
+

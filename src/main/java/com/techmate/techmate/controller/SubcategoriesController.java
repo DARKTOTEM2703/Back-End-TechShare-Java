@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 // ImageStorageStrategy not needed in controller after refactor
 import com.techmate.techmate.dto.SubCategoriesDTO;
@@ -26,6 +27,7 @@ import com.techmate.techmate.service.subcategories.mapper.SubCategoriesMapper;
 // CORS configurado globalmente en WebSecurityConfig - no necesita @CrossOrigin aquí
 @RestController
 @RequestMapping("admin/subcategories")
+@PreAuthorize("hasRole('ADMIN')")
 public class SubcategoriesController {
 
     private final SubCategoriesService subcategoriesService;
@@ -125,4 +127,5 @@ public class SubcategoriesController {
                 .body(imageBytes);
     }
 }
+
 

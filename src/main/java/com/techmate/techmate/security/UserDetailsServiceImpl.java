@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.techmate.techmate.entity.Usuario;
-import com.techmate.techmate.entity.UsuarioRole;
 import com.techmate.techmate.repository.UsuarioRepository;
 import com.techmate.techmate.repository.UsuarioRoleRepository;
 
@@ -69,5 +68,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             .orElse(null);
     }
 }
+
 
 

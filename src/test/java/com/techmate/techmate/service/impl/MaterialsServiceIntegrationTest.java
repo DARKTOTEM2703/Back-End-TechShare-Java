@@ -42,3 +42,4 @@ class MaterialsServiceIntegrationTest {
         assertThat(materialsService).isNotNull();
     }
 }
+

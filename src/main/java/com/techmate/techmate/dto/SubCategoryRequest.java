@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SubCategoryRequest {
 
+    private Integer id;
+
     @NotBlank(message = "El nombre no puede estar vacío")
     @Size(min = 3, max = 100, message = "El nombre de la subcategoría debe tener entre 3 y 100 caracteres.")
     private String name;
@@ -20,3 +22,4 @@ public class SubCategoryRequest {
     private Integer categoryId;
 
 }
+

@@ -204,8 +204,7 @@ CREATE TABLE IF NOT EXISTS movements (
 INSERT INTO roles (id, name, description, created_at)
 VALUES
 (1, 'ADMIN', 'Administrador del sistema', NOW()),
-(2, 'USER', 'Usuario regular', NOW()),
-(3, 'VENDOR', 'Vendedor de materiales', NOW())
+(2, 'USER', 'Usuario regular', NOW())
 ON DUPLICATE KEY UPDATE
     name = VALUES(name),
     description = VALUES(description);

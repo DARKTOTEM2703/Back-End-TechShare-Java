@@ -91,7 +91,7 @@ class BorrowServiceImplTest {
 
         // 📦 Configurar material de prueba
         testMaterial = new Materials();
-        testMaterial.setMaterialsId(10);
+        testMaterial.setId(10);
         testMaterial.setName("Arduino UNO R3");
         testMaterial.setDescription("Microcontrolador para proyectos IoT");
         testMaterial.setPrice(25.99);
@@ -100,7 +100,7 @@ class BorrowServiceImplTest {
 
         // 📋 Configurar detalle de préstamo
         testDetail = new DetailsBorrow();
-        testDetail.setDetailsBorrowId(1);
+        testDetail.setId(1);
         testDetail.setQuantity(3); // Solicita 3 unidades
         testDetail.setUnitPrice(25.99);
         testDetail.setTotalPrice(77.97); // 3 * 25.99
@@ -108,7 +108,7 @@ class BorrowServiceImplTest {
 
         // 📖 Configurar préstamo de prueba
         testBorrow = new Borrow();
-        testBorrow.setBorrowId(1);
+        testBorrow.setId(1);
         testBorrow.setDate(new Date());
     testBorrow.setStatus(Status.PENDING); // Estado inicial
         testBorrow.setAmount(77.97);
@@ -120,13 +120,13 @@ class BorrowServiceImplTest {
 
         // 📝 Configurar DTO de prueba
         testDetailDTO = new DetailsBorrowDTO();
-        testDetailDTO.setMaterialsId(10);
+        testDetailDTO.setId(10);
         testDetailDTO.setQuantity(3);
         testDetailDTO.setUnitPrice(25.99);
         testDetailDTO.setTotalPrice(77.97);
 
         testBorrowDTO = new BorrowDTO();
-        testBorrowDTO.setBorrowId(1);
+        testBorrowDTO.setId(1);
         testBorrowDTO.setDate(new Date());
     testBorrowDTO.setStatus(Status.PENDING);
         testBorrowDTO.setAmount(77.97);
@@ -140,7 +140,7 @@ class BorrowServiceImplTest {
         doAnswer(inv -> {
             Integer materialId = inv.getArgument(0);
             Integer qty = inv.getArgument(1);
-            if (materialId.equals(testMaterial.getMaterialsId())) {
+            if (materialId.equals(testMaterial.getId())) {
                 if (testMaterial.getBorrowable_stock() < qty) {
                     throw com.techmate.techmate.exception.BorrowBusinessException.insufficientStock(materialId, qty, testMaterial.getBorrowable_stock());
                 }
@@ -152,7 +152,7 @@ class BorrowServiceImplTest {
         doAnswer(inv -> {
             Integer materialId = inv.getArgument(0);
             Integer qty = inv.getArgument(1);
-            if (materialId.equals(testMaterial.getMaterialsId())) {
+            if (materialId.equals(testMaterial.getId())) {
                 testMaterial.setBorrowable_stock(testMaterial.getBorrowable_stock() - qty);
             }
             return null;
@@ -162,7 +162,7 @@ class BorrowServiceImplTest {
         doAnswer(inv -> {
             Integer materialId = inv.getArgument(0);
             Integer qty = inv.getArgument(1);
-            if (materialId.equals(testMaterial.getMaterialsId())) {
+            if (materialId.equals(testMaterial.getId())) {
                 testMaterial.setBorrowable_stock(testMaterial.getBorrowable_stock() + qty);
             }
             return null;
@@ -190,6 +190,9 @@ class BorrowServiceImplTest {
     verify(borrowStockManager).reduceStock(anyInt(), anyInt());
     verify(borrowRepository).save(any(Borrow.class));
         
+        // ✅ Verificar que se publica BorrowCreatedEvent
+        verify(eventPublisher).publishEvent(any(com.techmate.techmate.event.BorrowCreatedEvent.class));
+        
         // Verificar que el stock se redujo correctamente
         assertThat(testMaterial.getBorrowable_stock()).isEqualTo(12); // 15 - 3 = 12
         assertThat(testBorrow.getStartDate()).isNotNull();
@@ -211,6 +214,9 @@ class BorrowServiceImplTest {
     verify(borrowRepository).save(any(Borrow.class));
         assertThat(testBorrow.getStatus()).isEqualTo(Status.REJECTED);
         assertThat(testBorrow.getEndDate()).isNotNull();
+        
+        // ✅ NO debe publicar evento cuando se rechaza
+        verify(eventPublisher, never()).publishEvent(any());
         
         // Stock NO debe cambiar cuando se rechaza
         assertThat(testMaterial.getBorrowable_stock()).isEqualTo(15);
@@ -234,6 +240,9 @@ class BorrowServiceImplTest {
         // Then: Estado cambia a RETURNED, stock se restaura
     verify(borrowStockManager).restoreStock(anyInt(), anyInt());
     verify(borrowRepository).save(any(Borrow.class));
+        
+        // ✅ Verificar que se publica BorrowReturnedEvent
+        verify(eventPublisher).publishEvent(any(com.techmate.techmate.event.BorrowReturnedEvent.class));
         
         assertThat(testBorrow.getStatus()).isEqualTo(Status.RETURNED);
         assertThat(testMaterial.getBorrowable_stock()).isEqualTo(15); // 12 + 3 = 15 (restaurado)
@@ -330,7 +339,7 @@ class BorrowServiceImplTest {
         // Then: Retorna lista completa de DTOs
         assertThat(result).isNotNull();
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getBorrowId()).isEqualTo(testBorrow.getBorrowId());
+        assertThat(result.get(0).getId()).isEqualTo(testBorrow.getId());
         assertThat(result.get(0).getUsuarioId()).isEqualTo(100);
         assertThat(result.get(0).getAdminId()).isEqualTo(200);
         
@@ -398,7 +407,7 @@ class BorrowServiceImplTest {
     }
 
     @Test
-    @DisplayName("📅 Filtrar préstamos por rango de fechas")
+    @DisplayName("Filtrar préstamos por rango de fechas")
     void getBorrowByDate_Success() {
         // Given: Rango de fechas válido
         Date startDate = new Date(System.currentTimeMillis() - 86400000); // Ayer
@@ -413,7 +422,7 @@ class BorrowServiceImplTest {
         // Then: Retorna préstamos en el rango especificado
         assertThat(result).isNotNull();
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getBorrowId()).isEqualTo(1);
+        assertThat(result.get(0).getId()).isEqualTo(1);
         
         verify(borrowRepository).findByDateBetween(startDate, endDate);
     }
@@ -464,13 +473,13 @@ class BorrowServiceImplTest {
     void borrowAmountCalculation_Success() {
         // Given: Múltiples detalles con diferentes precios
         Materials material2 = new Materials();
-        material2.setMaterialsId(20);
+        material2.setId(20);
         material2.setName("Raspberry Pi 4");
         material2.setPrice(75.00);
         material2.setBorrowable_stock(5);
 
         DetailsBorrow detail2 = new DetailsBorrow();
-        detail2.setDetailsBorrowId(2);
+        detail2.setId(2);
         detail2.setQuantity(1); // 1 Raspberry Pi
         detail2.setUnitPrice(75.00);
         detail2.setTotalPrice(75.00);
@@ -504,17 +513,17 @@ class BorrowServiceImplTest {
         // Given: Préstamos en diferentes estados
         Borrow borrowProcess = new Borrow();
     borrowProcess.setStatus(Status.PENDING);
-        borrowProcess.setBorrowId(101);
+        borrowProcess.setId(101);
     borrowProcess.setDetails(new ArrayList<>());
         
         Borrow borrowBorrowed = new Borrow();
     borrowBorrowed.setStatus(Status.BORROWED);
-        borrowBorrowed.setBorrowId(102);
+        borrowBorrowed.setId(102);
     borrowBorrowed.setDetails(new ArrayList<>());
         
         Borrow borrowReturned = new Borrow();
         borrowReturned.setStatus(Status.RETURNED);
-        borrowReturned.setBorrowId(103);
+        borrowReturned.setId(103);
     borrowReturned.setDetails(new ArrayList<>());
 
         // When: Consultar cada estado

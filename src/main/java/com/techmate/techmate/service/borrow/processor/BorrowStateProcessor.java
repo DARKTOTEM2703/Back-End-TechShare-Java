@@ -132,7 +132,7 @@ public class BorrowStateProcessor {
         
         // Validar y reducir stock para cada detalle
         for (DetailsBorrow detail : borrow.getDetails()) {
-            Integer materialId = detail.getMaterials().getMaterialsId();
+            Integer materialId = detail.getMaterials().getId();
             int quantity = detail.getQuantity();
             
             // Validar stock disponible
@@ -157,7 +157,7 @@ public class BorrowStateProcessor {
         
         // Restaurar stock para cada detalle
         for (DetailsBorrow detail : borrow.getDetails()) {
-            Integer materialId = detail.getMaterials().getMaterialsId();
+            Integer materialId = detail.getMaterials().getId();
             int quantity = detail.getQuantity();
             
             // Restaurar stock
@@ -170,3 +170,4 @@ public class BorrowStateProcessor {
         borrow.setEndDate(new Date());
     }
 }
+

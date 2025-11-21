@@ -70,3 +70,4 @@ public class TokenUtilsTest {
         assertThat(role).isEqualTo("ROLE_USER");
     }
 }
+

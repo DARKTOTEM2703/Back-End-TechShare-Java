@@ -92,12 +92,12 @@ public class AuthService {
             String htmlContent = emailTemplateService.generateVerificationEmail(userName, verificationUrl);
             // send asynchronously; EmailService swallows/logs errors
             emailService.sendHtmlEmail(usuario.getEmail(), "Verificación de cuenta - TechShare", htmlContent);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // If template generation fails, try a simple text email asynchronously
             log.error("Fallo generando plantilla de email, encolando fallback de texto", e);
             try {
                 emailService.sendEmail(usuario.getEmail(), "Verificación de cuenta", "Por favor, verifica tu cuenta: " + verificationUrl);
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 // EmailService is async and resilient; log and continue. Do NOT throw to avoid 500 to client.
                 log.error("No se pudo encolar email de verificación para {}", usuario.getEmail(), ex);
             }
@@ -133,11 +133,11 @@ public class AuthService {
             log.info("Encolando email de verificación (resend) para usuario: {}", userName);
             String htmlContent = emailTemplateService.generateVerificationEmail(userName, verificationUrl);
             emailService.sendHtmlEmail(usuario.getEmail(), "Verificación de cuenta - TechShare", htmlContent);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Fallo generando plantilla de email en resend, encolando fallback de texto", e);
             try {
                 emailService.sendEmail(usuario.getEmail(), "Verificación de cuenta", "Por favor, verifica tu cuenta: " + verificationUrl);
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 log.error("No se pudo encolar email de verificación (resend) para {}", usuario.getEmail(), ex);
             }
         }
@@ -145,4 +145,5 @@ public class AuthService {
         return "Correo de verificación reenviado. Revisa tu bandeja de entrada.";
     }
 }
+
 

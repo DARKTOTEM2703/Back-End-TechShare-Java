@@ -43,3 +43,4 @@ public class CategoryResponse {
         this.imagePath = imagePath;
     }
 }
+

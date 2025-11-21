@@ -11,3 +11,4 @@ public interface ImageValidationStrategy {
      */
     void validate(MultipartFile image);
 }
+

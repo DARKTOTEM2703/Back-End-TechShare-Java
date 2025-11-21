@@ -41,3 +41,4 @@ public class MaterialRequest {
     public List<Integer> getRoleIds() { return roleIds; }
     public void setRoleIds(List<Integer> roleIds) { this.roleIds = roleIds; }
 }
+

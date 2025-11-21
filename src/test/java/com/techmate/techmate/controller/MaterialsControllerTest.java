@@ -48,7 +48,7 @@ class MaterialsControllerTest {
     @Test
     void getMaterialById_returnsMaterialResponse() throws Exception {
         MaterialsDTO dto = new MaterialsDTO();
-        dto.setMaterialsId(1);
+        dto.setId(1);
         dto.setName("Test Material");
 
         MaterialResponse resp = new MaterialResponse(1, "img.jpg", "Test Material", "desc", 10.0, 5, 5, 1, "Sub", java.util.List.of("ROLE_USER"));
@@ -76,7 +76,7 @@ class MaterialsControllerTest {
         reqDto.setImagePath("test.jpg");
 
         MaterialsDTO created = new MaterialsDTO();
-        created.setMaterialsId(2);
+        created.setId(2);
         created.setName("New Material");
         created.setImagePath("test.jpg");
 
@@ -96,3 +96,4 @@ class MaterialsControllerTest {
                 .andExpect(jsonPath("$.name").value("New Material"));
     }
 }
+

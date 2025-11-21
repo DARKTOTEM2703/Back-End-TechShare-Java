@@ -54,3 +54,4 @@ public class UserQueryService {
     }).orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException("Usuario no encontrado con ID: " + id));
     }
 }
+

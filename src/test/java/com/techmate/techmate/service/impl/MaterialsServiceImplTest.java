@@ -95,11 +95,11 @@ class MaterialsServiceImplTest {
         testSubCategory.setName("Componentes Electrónicos");
 
         testRole = new Role();
-        testRole.setRoleId(1);
+        testRole.setId(1);
         testRole.setNombre("user");
 
         testMaterial = new Materials();
-        testMaterial.setMaterialsId(1);
+        testMaterial.setId(1);
         testMaterial.setName("Arduino UNO");
         testMaterial.setDescription("Placa de desarrollo Arduino");
         testMaterial.setPrice(15.99);
@@ -111,7 +111,7 @@ class MaterialsServiceImplTest {
     testMaterial.setRoleMaterials(new java.util.ArrayList<>());
 
         testMaterialDTO = new MaterialsDTO();
-        testMaterialDTO.setMaterialsId(1);
+        testMaterialDTO.setId(1);
         testMaterialDTO.setName("Arduino UNO");
         testMaterialDTO.setDescription("Placa de desarrollo Arduino");
         testMaterialDTO.setPrice(15.99);
@@ -128,7 +128,7 @@ class MaterialsServiceImplTest {
             // Construir entidad basada en el DTO pasado al mapper (comportamiento realista)
             com.techmate.techmate.dto.MaterialsDTO dto = invocation.getArgument(0);
             Materials m = new Materials();
-            if (dto.getMaterialsId() != 0) m.setMaterialsId(dto.getMaterialsId());
+            if (dto.getId() != 0) m.setId(dto.getId());
             m.setName(dto.getName());
             m.setDescription(dto.getDescription());
             m.setPrice(dto.getPrice());
@@ -256,7 +256,7 @@ class MaterialsServiceImplTest {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getMaterialsId()).isEqualTo(1);
+        assertThat(result.getId()).isEqualTo(1);
         assertThat(result.getName()).isEqualTo("Arduino UNO");
         assertThat(result.getPrice()).isEqualTo(15.99);
         assertThat(result.getRoleNames()).contains("user");
@@ -385,13 +385,13 @@ class MaterialsServiceImplTest {
     void getAllMaterials_NotEmpty() {
         // Given
         Materials material2 = new Materials();
-        material2.setMaterialsId(2);
+        material2.setId(2);
         material2.setName("Raspberry Pi");
         material2.setSubCategory(testSubCategory);
         
         // Construir DTOs que devuelve el query service
         MaterialsDTO dto2 = new MaterialsDTO();
-        dto2.setMaterialsId(2);
+        dto2.setId(2);
         dto2.setName("Raspberry Pi");
         dto2.setSubCategoryId(1);
 
@@ -471,3 +471,4 @@ class MaterialsServiceImplTest {
         verify(roleMaterialsRepository, never()).save(any());
     }
 }
+

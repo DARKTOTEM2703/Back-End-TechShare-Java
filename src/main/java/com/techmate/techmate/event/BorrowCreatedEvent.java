@@ -25,12 +25,17 @@ public class BorrowCreatedEvent extends DomainEvent {
     
     public BorrowCreatedEvent(Borrow borrow) {
         super(borrow);
-        this.borrowId = borrow.getBorrowId();
+        this.borrowId = borrow.getId();
         this.userId = borrow.getUsuario() != null ? borrow.getUsuario().getId() : null;
         this.borrowDate = borrow.getDate();
         this.startDate = borrow.getStartDate();
         this.endDate = borrow.getEndDate();
         this.amount = borrow.getAmount();
+    }
+
+    // Compatibility method: getId() returns borrowId
+    public Integer getId() {
+        return this.borrowId;
     }
     
     @Override
@@ -46,4 +51,5 @@ public class BorrowCreatedEvent extends DomainEvent {
         );
     }
 }
+
 

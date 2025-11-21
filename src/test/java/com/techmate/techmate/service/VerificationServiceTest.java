@@ -84,3 +84,4 @@ class VerificationServiceTest {
         verify(usuarioRepository, times(1)).enableUserById(1);
     }
 }
+

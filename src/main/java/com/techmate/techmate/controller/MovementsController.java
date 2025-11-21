@@ -35,16 +35,31 @@ public class MovementsController {
 
     @PostMapping("/create")
 public ResponseEntity<?> createMovement(
-        @RequestParam("quantity") Integer quantity,
-        @RequestParam("moveType") MoveType moveType,
-        @RequestParam("id_material") Integer idMaterial,
-        @RequestParam(value = "comment", required = false) String comment, // Agregar comentario opcional
+        @RequestParam("quantity") 
+        @jakarta.validation.constraints.NotNull(message = "La cantidad no puede ser nula")
+        @jakarta.validation.constraints.Min(value = 1, message = "La cantidad debe ser mayor a 0")
+        Integer quantity,
+        
+        @RequestParam("moveType") 
+        @jakarta.validation.constraints.NotNull(message = "El tipo de movimiento no puede ser nulo")
+        MoveType moveType,
+        
+        @RequestParam("id_material") 
+        @jakarta.validation.constraints.NotNull(message = "El ID del material no puede ser nulo")
+        @jakarta.validation.constraints.Min(value = 1, message = "El ID del material debe ser mayor a 0")
+        Integer idMaterial,
+        
+        @RequestParam(value = "comment", required = false) 
+        @jakarta.validation.constraints.Size(max = 500, message = "El comentario no puede exceder 500 caracteres")
+        @com.techmate.techmate.validation.SafeString(allowSpecial = true)
+        String comment, // Agregar comentario opcional
+        
         Authentication authentication) {
 
     MovementsDTO movementsDTO = new MovementsDTO();
     movementsDTO.setQuantity(quantity);
     movementsDTO.setMoveType(moveType);
-    movementsDTO.setMaterialsId(idMaterial);
+    movementsDTO.setId(idMaterial);
     movementsDTO.setDate(new Date());
     movementsDTO.setComment(comment); // Establecer el comentario
 
@@ -181,4 +196,5 @@ public ResponseEntity<?> createMovement(
     }
 
 }
+
 

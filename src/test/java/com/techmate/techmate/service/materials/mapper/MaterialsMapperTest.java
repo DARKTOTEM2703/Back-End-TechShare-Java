@@ -15,7 +15,6 @@ import com.techmate.techmate.repository.RoleRepository;
 import com.techmate.techmate.repository.SubCategoriesRepository;
 import com.techmate.techmate.service.RoleService;
 import com.techmate.techmate.service.SubCategoriesService;
-import com.techmate.techmate.service.materials.mapper.MaterialsMapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,14 +49,14 @@ public class MaterialsMapperTest {
     void toDTO_fullMapping() {
         // construir entidad
         Materials m = new Materials();
-        m.setMaterialsId(1);
+        m.setId(1);
         m.setName("Resistor");
         m.setImagePath("img.jpg");
         SubCategories sc = new SubCategories();
         sc.setSubCategoryId(2);
         m.setSubCategory(sc);
 
-        Role r = new Role(); r.setRoleId(3); r.setNombre("student");
+        Role r = new Role(); r.setId(3); r.setNombre("student");
         RoleMaterials rm = new RoleMaterials(); rm.setRole(r); rm.setMaterials(m);
         m.setRoleMaterials(Arrays.asList(rm));
 
@@ -67,7 +66,7 @@ public class MaterialsMapperTest {
         MaterialsDTO dto = materialsMapper.toDTO(m);
 
         assertThat(dto).isNotNull();
-        assertThat(dto.getMaterialsId()).isEqualTo(1);
+        assertThat(dto.getId()).isEqualTo(1);
         assertThat(dto.getName()).isEqualTo("Resistor");
         assertThat(dto.getSubCategoryId()).isEqualTo(2);
         assertThat(dto.getSubCategoryName()).isEqualTo("Electronics");
@@ -93,7 +92,7 @@ public class MaterialsMapperTest {
         SubCategories sc = new SubCategories(); sc.setSubCategoryId(5);
         when(subCategoriesRepository.findById(5)).thenReturn(Optional.of(sc));
 
-        Role role = new Role(); role.setRoleId(7);
+        Role role = new Role(); role.setId(7);
         when(roleRepository.findById(7)).thenReturn(Optional.of(role));
 
         Materials m = materialsMapper.toEntity(dto);
@@ -104,6 +103,7 @@ public class MaterialsMapperTest {
         assertThat(m.getBorrowable_stock()).isEqualTo(10);
         assertThat(m.getSubCategory()).isNotNull();
         assertThat(m.getRoleMaterials()).hasSize(1);
-        assertThat(m.getRoleMaterials().get(0).getRole().getRoleId()).isEqualTo(7);
+        assertThat(m.getRoleMaterials().get(0).getRole().getId()).isEqualTo(7);
     }
 }
+

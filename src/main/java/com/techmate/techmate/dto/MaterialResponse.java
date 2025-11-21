@@ -56,3 +56,4 @@ public class MaterialResponse {
     public void setRoleNames(List<String> roleNames) { this.roleNames = roleNames; }
 }
 
+

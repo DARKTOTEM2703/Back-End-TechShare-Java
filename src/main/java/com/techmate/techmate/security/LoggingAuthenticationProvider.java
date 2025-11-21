@@ -39,3 +39,4 @@ public class LoggingAuthenticationProvider extends DaoAuthenticationProvider {
         return super.authenticate(authentication);
     }
 }
+

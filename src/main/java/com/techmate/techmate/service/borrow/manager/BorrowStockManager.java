@@ -137,3 +137,4 @@ public class BorrowStockManager implements IBorrowStockManager {
     return material.getBorrowable_stock() > 0;
     }
 }
+

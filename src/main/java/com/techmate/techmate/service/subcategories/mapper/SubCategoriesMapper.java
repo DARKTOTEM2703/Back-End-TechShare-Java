@@ -13,7 +13,7 @@ public class SubCategoriesMapper {
         if (req == null) return null;
         SubCategoriesDTO dto = new SubCategoriesDTO();
         dto.setName(req.getName());
-        dto.setCategoryId(req.getCategoryId());
+        dto.setId(req.getId());
         return dto;
     }
 
@@ -23,7 +23,8 @@ public class SubCategoriesMapper {
         if (image != null && serverUrl != null && !serverUrl.isEmpty() && !image.startsWith("http")) {
             image = serverUrl + "/admin/subcategories/images/" + image;
         }
-        return new SubCategoryResponse(dto.getSubCategoriesId(), dto.getName(), image, dto.getCategoryId(), dto.getCategoryName());
+        return new SubCategoryResponse(dto.getId(), dto.getName(), image, dto.getId(), dto.getCategoryName());
     }
 }
+
 

@@ -33,3 +33,4 @@ class SmokeControllerIntegrationTest {
                 .andExpect(status().is2xxSuccessful());
     }
 }
+

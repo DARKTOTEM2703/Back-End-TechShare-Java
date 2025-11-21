@@ -27,3 +27,4 @@ class AuthMapperTest {
         assertEquals("secret", u.getPassword());
     }
 }
+

@@ -1,7 +1,7 @@
 package com.techmate.techmate.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -185,100 +185,191 @@ public class MaterialsServiceImpl implements MaterialsService {
     @Override
     @Transactional
     public MaterialsDTO createMaterials(MaterialsDTO materialsDTO, MultipartFile image) {
-        // VALIDACIÓN 1: Nombre único
-        materialsValidator.validateUniqueName(materialsDTO.getName());
-
-        // VALIDACIÓN 2 Y ALMACENAMIENTO: Imagen (si se proporciona)
+        // 1. Validar nombre (SRP: Validación)
+        validateMaterialName(materialsDTO.getName());
+        
+        // 2. Procesar imagen (SRP: Gestión de imágenes)
         if (image != null && !image.isEmpty()) {
-            // Validar imagen (extensión, tamaño, etc.) usando el MultipartFile
-            imageValidationStrategy.validate(image);
-
-            // Guardar imagen en storage (filesystem, S3, etc.)
-            // Retorna ruta relativa: "uuid-1234.jpg"
-            // Observación de diseño: se guarda la imagen antes de persistir en BD para
-            // garantizar que la ruta exista cuando la entidad sea retornada. Si la
-            // persistencia falla, deberíamos eliminar la imagen almacenada o soportar
-            // compensación. Aquí delegamos la política de compensación a la capa
-            // de almacenamiento (p.ej. almacenamiento idempotente o lifecycle hooks).
-            String savedImagePath = imageStorageStrategy.saveImage(image);
-            
-            // Actualizar DTO con la ruta guardada
-            materialsDTO.setImagePath(savedImagePath);
+            processMaterialImage(materialsDTO, image);
         }
+        
+        // 3. Persistir (SRP: Persistencia)
+        Materials savedMaterial = persistMaterial(materialsDTO);
+        
+        // 4. Retornar DTO (SRP: Conversión)
+        return convertToDTO(savedMaterial);
+    }
 
-        // PERSISTENCIA: Convertir DTO → Entity y guardar en BD
-    Materials materials = convertToEntity(materialsDTO);
-    materials = materialsRepository.save(materials); // INSERT en BD
+    // ==================== HELPERS: createMaterials() ====================
 
-        // RESPUESTA: Convertir Entity → DTO para retornar al cliente
-        return convertToDTO(materials);
+    /**
+     * Valida que el nombre del material sea único en el sistema.
+     * 
+     * @param name Nombre del material a validar
+     * @throws IllegalArgumentException si ya existe un material con ese nombre
+     */
+    private void validateMaterialName(String name) {
+        materialsValidator.validateUniqueName(name);
+    }
+
+    /**
+     * Procesa y almacena la imagen del material.
+     * 
+     * @param dto DTO del material (se actualiza con ruta de imagen guardada)
+     * @param image Archivo de imagen a procesar
+     */
+    private void processMaterialImage(MaterialsDTO dto, MultipartFile image) {
+        // Validar imagen (extensión, tamaño, etc.)
+        imageValidationStrategy.validate(image);
+
+        // Guardar imagen en storage (filesystem, S3, etc.)
+        String savedImagePath = imageStorageStrategy.saveImage(image);
+        
+        // Actualizar DTO con la ruta guardada
+        dto.setImagePath(savedImagePath);
+    }
+
+    /**
+     * Convierte el DTO a entidad y persiste en la base de datos.
+     * 
+     * @param materialsDTO DTO del material a persistir
+     * @return Materials entidad guardada (con ID asignado)
+     */
+    private Materials persistMaterial(MaterialsDTO materialsDTO) {
+        Materials materials = convertToEntity(materialsDTO);
+        return materialsRepository.save(materials);
+    }
+
+    // ==================== HELPERS: updateMaterials() ====================
+
+    /**
+     * Busca un material por su ID.
+     * 
+     * @param materialsId ID del material
+     * @return Materials entidad encontrada
+     * @throws BusinessException si no existe
+     */
+    private Materials findMaterialById(int materialsId) {
+        return materialsRepository.findById(materialsId)
+                .orElseThrow(() -> new BusinessException("MATERIAL_NOT_FOUND", 
+                    "Material no encontrado con ID: " + materialsId));
+    }
+
+    /**
+     * Actualiza los atributos básicos del material.
+     * 
+     * @param material Entidad a actualizar
+     * @param dto Datos con los nuevos valores
+     */
+    private void updateMaterialAttributes(Materials material, MaterialsDTO dto) {
+        if (dto.getName() != null) {
+            material.setName(dto.getName());
+        }
+        material.setDescription(dto.getDescription());
+        material.setPrice(dto.getPrice());
+        material.setStock(material.getStock()); // Mantener stock actual
+        
+        // Resolver stock disponible desde el manager
+        int available = materialsStockManager.getAvailableStock(material.getId());
+        material.setBorrowable_stock(available);
+    }
+
+    /**
+     * Actualiza la subcategoría del material.
+     * 
+     * @param material Entidad a actualizar
+     * @param subCategoryId ID de la nueva subcategoría
+     * @throws BusinessException si la subcategoría no existe
+     */
+    private void updateMaterialSubCategory(Materials material, Integer subCategoryId) {
+        SubCategories subCategory = subCategoriesRepository.findById(subCategoryId)
+                .orElseThrow(() -> new BusinessException("SUBCATEGORY_NOT_FOUND", 
+                    "Subcategoría no encontrada con ID: " + subCategoryId));
+        material.setSubCategory(subCategory);
+    }
+
+    /**
+     * Actualiza la imagen del material.
+     * 
+     * @param material Entidad a actualizar
+     * @param image Nuevo archivo de imagen
+     */
+    private void updateMaterialImage(Materials material, MultipartFile image) {
+        imageValidationStrategy.validate(image);
+        String savedImagePath = imageStorageStrategy.saveImage(image);
+        material.setImagePath(savedImagePath);
+    }
+
+    /**
+     * Actualiza los roles asociados al material.
+     * 
+     * @param material Entidad a actualizar
+     * @param roleIds IDs de los nuevos roles
+     */
+    private void updateMaterialRoles(Materials material, List<Integer> roleIds) {
+        List<RoleMaterials> updatedRoleMaterials = roleIds.stream()
+                .map(roleId -> createRoleMaterialsAssociation(material, roleId))
+                .collect(Collectors.toList());
+        
+        material.getRoleMaterials().clear();
+        material.getRoleMaterials().addAll(updatedRoleMaterials);
+    }
+
+    /**
+     * Crea una asociación role-material.
+     * 
+     * @param material Material asociado
+     * @param roleId ID del rol
+     * @return RoleMaterials nueva asociación
+     * @throws BusinessException si el rol no existe
+     */
+    private RoleMaterials createRoleMaterialsAssociation(Materials material, Integer roleId) {
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new BusinessException("ROLE_NOT_FOUND", 
+                    "Rol no encontrado con ID: " + roleId));
+        
+        RoleMaterials roleMaterials = new RoleMaterials();
+        roleMaterials.setRole(role);
+        roleMaterials.setMaterials(material);
+        return roleMaterials;
+    }
+
+    /**
+     * Persiste el material y publica eventos de bajo stock si es necesario.
+     * 
+     * @param material Material a persistir
+     * @return Materials material guardado
+     */
+    private Materials persistAndPublishEvents(Materials material) {
+        Materials updated = materialsRepository.save(material);
+        checkAndPublishLowStockEvent(updated);
+        return updated;
     }
 
     @Override
     @Transactional
     public MaterialsDTO updateMaterials(int materialsId, MaterialsDTO materialsDTO, MultipartFile image) {
-        // Buscar el material existente por su ID
-        Materials existingMaterial = materialsRepository.findById(materialsId)
-                .orElseThrow(() -> new BusinessException("MATERIAL_NOT_FOUND", "Material no encontrado con ID: " + materialsId));
-
-    Integer stockMaterials= existingMaterial.getStock();
-    Integer stockBorrow= existingMaterial.getBorrowable_stock();
-
-    // Consultar stock actual a través del manager (preparación para lógica de préstamo)
-    int available = materialsStockManager.getAvailableStock(existingMaterial.getMaterialsId());
-    // Usar la fuente única de verdad para el stock disponible
-    stockBorrow = Integer.valueOf(available);
-
-        // Actualizar el nombre si es proporcionado (sin verificación de duplicado)
-        if (materialsDTO.getName() != null) {
-            existingMaterial.setName(materialsDTO.getName());
-        }
-
-        // Actualizar los demás valores del material
-        existingMaterial.setDescription(materialsDTO.getDescription());
-        existingMaterial.setPrice(materialsDTO.getPrice());
-        existingMaterial.setStock(stockMaterials);
-        existingMaterial.setBorrowable_stock(stockBorrow);
-
-        // Manejo de subcategoría
-    SubCategories subCategory = subCategoriesRepository.findById(materialsDTO.getSubCategoryId())
-        .orElseThrow(() -> new BusinessException("SUBCATEGORY_NOT_FOUND",
-            "Subcategoría no encontrada con ID: " + materialsDTO.getSubCategoryId()));
-        existingMaterial.setSubCategory(subCategory);
-
-        // Manejo de la imagen (si se proporciona una nueva)
+        // 1. Encontrar material (SRP: Obtención)
+        Materials existingMaterial = findMaterialById(materialsId);
+        
+        // 2. Actualizar datos básicos (SRP: Actualización de atributos)
+        updateMaterialAttributes(existingMaterial, materialsDTO);
+        
+        // 3. Resolver subcategoría (SRP: Resolución de relaciones)
+        updateMaterialSubCategory(existingMaterial, materialsDTO.getSubCategoryId());
+        
+        // 4. Procesar imagen (SRP: Gestión de imágenes)
         if (image != null && !image.isEmpty()) {
-            // Validar la nueva imagen (si se proporciona)
-            imageValidationStrategy.validate(image);
-
-            // Guardar la imagen y actualizar la ruta
-            String savedImagePath = imageStorageStrategy.saveImage(image);
-            existingMaterial.setImagePath(savedImagePath);
+            updateMaterialImage(existingMaterial, image);
         }
-
-        // Actualizar roles asociados al material
-        List<RoleMaterials> updatedRoleMaterials = new ArrayList<>();
-    for (Integer roleId : materialsDTO.getRoleIds()) {
-        Role role = roleRepository.findById(roleId)
-            .orElseThrow(() -> new BusinessException("ROLE_NOT_FOUND", "Rol no encontrado con ID: " + roleId));
-
-            RoleMaterials roleMaterials = new RoleMaterials();
-            roleMaterials.setRole(role);
-            roleMaterials.setMaterials(existingMaterial);
-            updatedRoleMaterials.add(roleMaterials);
-        }
-
-        // Limpiar la lista de roles actuales y agregar los actualizados
-        existingMaterial.getRoleMaterials().clear();
-        existingMaterial.getRoleMaterials().addAll(updatedRoleMaterials);
-
-        // Guardar el material actualizado en el repositorio
-        Materials updatedMaterial = materialsRepository.save(existingMaterial);
-
-        // Verificar si el stock está bajo y publicar evento si es necesario
-        checkAndPublishLowStockEvent(updatedMaterial);
-
-        // Convertir el material actualizado a DTO y devolverlo
+        
+        // 5. Actualizar roles (SRP: Gestión de relaciones many-to-many)
+        updateMaterialRoles(existingMaterial, materialsDTO.getRoleIds());
+        
+        // 6. Persistir y publicar eventos (SRP: Persistencia + eventos)
+        Materials updatedMaterial = persistAndPublishEvents(existingMaterial);
+        
+        // 7. Retornar DTO
         return convertToDTO(updatedMaterial);
     }
 
@@ -378,4 +469,5 @@ public class MaterialsServiceImpl implements MaterialsService {
     }
 
 }
+
 

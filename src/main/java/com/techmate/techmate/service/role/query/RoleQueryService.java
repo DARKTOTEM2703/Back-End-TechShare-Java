@@ -21,11 +21,12 @@ public class RoleQueryService {
     }
 
     public List<RoleDTO> getAllRoles() {
-        return roleRepository.findAll().stream().filter(r -> r.getRoleId() != 1).map(roleMapper::toDTO).collect(Collectors.toList());
+        return roleRepository.findAll().stream().filter(r -> r.getId() != 1).map(roleMapper::toDTO).collect(Collectors.toList());
     }
 
     public RoleDTO getById(int id) {
         return roleRepository.findById(id).map(roleMapper::toDTO).orElse(null);
     }
 }
+
 

@@ -66,11 +66,14 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     /**
      * Crea un nuevo bucket con límite de 100 requests por minuto
+     * Usa la API actualizada de Bucket4j 7.x
      */
     private Bucket createNewBucket() {
-        // API correcta de Bucket4j - evita deprecation warnings
-        io.github.bucket4j.Refill refill = io.github.bucket4j.Refill.intervally(REQUESTS_PER_MINUTE, Duration.ofMinutes(1));
-        Bandwidth limit = Bandwidth.classic(REQUESTS_PER_MINUTE, refill);
+        // Usar la API moderna de Bucket4j
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(REQUESTS_PER_MINUTE)
+                .refillIntervally(REQUESTS_PER_MINUTE, Duration.ofMinutes(1))
+                .build();
         return Bucket.builder()
                 .addLimit(limit)
                 .build();
@@ -103,3 +106,4 @@ public class RateLimitFilter extends OncePerRequestFilter {
                path.startsWith("/v3/api-docs");
     }
 }
+

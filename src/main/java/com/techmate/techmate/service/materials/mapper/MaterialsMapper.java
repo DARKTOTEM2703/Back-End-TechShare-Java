@@ -65,7 +65,7 @@ public class MaterialsMapper {
             imagePath = serverUrl + "/admin/materials/images/" + imagePath;
         }
 
-        return new MaterialResponse(dto.getMaterialsId(), imagePath, dto.getName(), dto.getDescription(),
+        return new MaterialResponse(dto.getId(), imagePath, dto.getName(), dto.getDescription(),
                 dto.getPrice(), dto.getStock(), dto.getBorrowable_stock(), dto.getSubCategoryId(),
                 dto.getSubCategoryName(), dto.getRoleNames());
     }
@@ -74,7 +74,7 @@ public class MaterialsMapper {
         if (materials == null) return null;
 
         MaterialsDTO dto = new MaterialsDTO();
-        dto.setMaterialsId(materials.getMaterialsId());
+        dto.setId(materials.getId());
         dto.setImagePath(materials.getImagePath());
         dto.setName(materials.getName());
         dto.setDescription(materials.getDescription());
@@ -95,7 +95,7 @@ public class MaterialsMapper {
 
         List<String> roleNames = materials.getRoleMaterials().stream()
                 .map(RoleMaterials::getRole)
-                .map(r -> roleService.getRoleNameById(r.getRoleId()))
+                .map(r -> roleService.getRoleNameById(r.getId()))
                 .collect(Collectors.toList());
 
         dto.setRoleIds(roleIds);
@@ -145,4 +145,5 @@ public class MaterialsMapper {
         return materials;
     }
 }
+
 

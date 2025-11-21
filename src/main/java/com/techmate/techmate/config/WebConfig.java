@@ -84,3 +84,4 @@ public class WebConfig implements WebMvcConfigurer {
                 .setCachePeriod(3600); // Cache por 1 hora
     }
 }
+

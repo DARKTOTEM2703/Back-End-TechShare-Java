@@ -9,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.techmate.techmate.entity.Usuario;
-import com.techmate.techmate.entity.UsuarioRole;
 
 /**
  * Implementación de la interfaz UserDetails para integrar la autenticación
@@ -191,4 +190,5 @@ public class UserDetailsImpl implements UserDetails {
         return this.enabled; // Usa el valor real del campo isEnabled del usuario
     }
 }
+
 

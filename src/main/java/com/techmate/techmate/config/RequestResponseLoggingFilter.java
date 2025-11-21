@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -27,7 +28,7 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
     private static final String REQUEST_ID = "requestId";
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
         // Generar ID único para la petición
@@ -103,7 +104,6 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         int status = response.getStatus();
         
-        String logLevel = status >= 400 ? "ERROR" : "INFO";
         String statusEmoji = getStatusEmoji(status);
         
         String logMessage = String.format("← Response %s %s %s | Status: %d | Duration: %dms", 
@@ -140,7 +140,7 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         // No filtrar endpoints de Actuator para reducir noise
         String path = request.getRequestURI();
         return path.startsWith("/actuator/health") || 
@@ -150,4 +150,5 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
                path.startsWith("/api-docs");
     }
 }
+
 

@@ -15,7 +15,7 @@ public class MovementsMapperTest {
     @Test
     void toResponse_mapsAllFields() {
         MovementsDTO dto = new MovementsDTO();
-        dto.setMovementsId(42);
+        dto.setId(42);
     dto.setMoveType(MoveType.STOCK_ADD);
         dto.setQuantity(5);
         Date now = new Date();
@@ -23,20 +23,21 @@ public class MovementsMapperTest {
         dto.setComment("test comment");
         dto.setAdminId(7);
         dto.setAdminName("admin");
-        dto.setMaterialsId(99);
+        dto.setId(99);
         dto.setMaterialsName("material-name");
 
         MovementsMapper mapper = new MovementsMapper();
         MovementResponse resp = mapper.toResponse(dto);
 
-        assertEquals(dto.getMovementsId(), resp.getMovementsId());
+        assertEquals(dto.getId(), resp.getId());
         assertEquals(dto.getMoveType(), resp.getMoveType());
         assertEquals(dto.getQuantity(), resp.getQuantity());
         assertEquals(dto.getDate(), resp.getDate());
         assertEquals(dto.getComment(), resp.getComment());
         assertEquals(dto.getAdminId(), resp.getAdminId());
         assertEquals(dto.getAdminName(), resp.getAdminName());
-        assertEquals(dto.getMaterialsId(), resp.getMaterialsId());
+        assertEquals(dto.getId(), resp.getId());
         assertEquals(dto.getMaterialsName(), resp.getMaterialsName());
     }
 }
+

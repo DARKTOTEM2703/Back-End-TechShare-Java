@@ -1,36 +1,32 @@
 package com.techmate.techmate.service;
 
-import java.util.Date;
-import java.util.*;
-
-
 import org.springframework.stereotype.Service;
 
-import com.techmate.techmate.dto.MovementsDTO;
-
-import jakarta.servlet.http.HttpServletRequest;
-
+/**
+ * ✅ Interface Segregation Principle (ISP)
+ * 
+ * Interfaz consolidada que agrupa las interfaces segregadas.
+ * Esto mantiene compatibilidad hacia atrás mientras permite que los clientes
+ * dependan solo de las interfaces específicas que necesitan.
+ * 
+ * Clientes que necesitan:
+ * - Solo CRUD → Implementan IMovementCrudService
+ * - Solo Queries → Implementan IMovementQueryService
+ * - Solo Token → Implementan ITokenService
+ * - Todo (excepto Token) → Implementan MovementsService (como ahora)
+ * 
+ * ✨ REFACTOR: Se removió ITokenService de MovementsService
+ * Razón: ISP Principle - Los clientes de movimientos NO deben depender de token operations
+ * 
+ * @author TechShare Team
+ * @version 2.0 (ISP Refactored - TokenService separated)
+ */
 @Service
-public interface MovementsService {
+public interface MovementsService extends IMovementCrudService, IMovementQueryService {
 
-    //Seleccionar materials por id
-    MovementsDTO createMovementsDTO(MovementsDTO movementsDTO, Integer userId);
-
-    MovementsDTO getMovementsByID(Integer movementsId);
-
-    List<MovementsDTO> getAllMovementsDTO();
-
-    List<MovementsDTO> getMovementsByType(String type);
-
-    List<MovementsDTO> getMovementsByDate(Date startDate, Date endDate);
-
-    void deleteMovementById(Integer movementsId); // Método para eliminar
-
-    void decodeToken(HttpServletRequest request); // Método para obtener datos usando el token
-
-    Integer getUserIdFromToken(String token);
-
-    Optional<List<Integer>> getRolesFromToken(String token);
+    // Interfaz consolidada que combina solo las operaciones de movimientos
+    // Token operations están en TokenService (segregadas correctamente)
 
 }
+
 

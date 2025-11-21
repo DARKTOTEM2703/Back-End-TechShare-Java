@@ -57,3 +57,4 @@ public class OpenApiConfig {
     // OpenApiCustomiser bean removed: schema registered inside customOpenAPI to avoid runtime dependency issues
 }
 
+

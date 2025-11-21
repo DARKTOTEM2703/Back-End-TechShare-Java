@@ -53,3 +53,4 @@ public class TokenSecretValidator {
         log.debug("JWT secret found in environment/properties for profile '{}'. Length validated: {}", profile, ok);
     }
 }
+

@@ -3,6 +3,7 @@ package com.techmate.techmate.config;
 import com.techmate.techmate.entity.MoveType;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
+import org.springframework.lang.Nullable;
 
 /**
  * Converter to support legacy string values for MoveType request params.
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class MoveTypeConverter implements Converter<String, MoveType> {
 
     @Override
-    public MoveType convert(String source) {
+    public MoveType convert(@Nullable String source) {
         if (source == null) return null;
         String s = source.trim().toUpperCase();
         // Legacy mappings
@@ -33,4 +34,5 @@ public class MoveTypeConverter implements Converter<String, MoveType> {
         }
     }
 }
+
 

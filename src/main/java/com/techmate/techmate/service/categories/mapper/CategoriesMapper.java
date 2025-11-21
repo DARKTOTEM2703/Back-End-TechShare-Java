@@ -25,14 +25,14 @@ public class CategoriesMapper {
         if (image != null && serverUrl != null && !serverUrl.isEmpty() && !image.startsWith("http")) {
             image = serverUrl + "/admin/categories/images/" + image;
         }
-        return new CategoryResponse(dto.getCategoryId(), dto.getName(), image);
+        return new CategoryResponse(dto.getId(), dto.getName(), image);
     }
 
     // Entity <-> DTO (kept for services that may use it)
     public CategoriesDTO toDTO(Categories c) {
         if (c == null) return null;
         CategoriesDTO dto = new CategoriesDTO();
-        dto.setCategoryId(c.getCategoryId());
+        dto.setId(c.getId());
         dto.setName(c.getName());
         dto.setImagePath(c.getImagePath());
         return dto;
@@ -41,10 +41,11 @@ public class CategoriesMapper {
     public Categories toEntity(CategoriesDTO dto) {
         if (dto == null) return null;
         Categories c = new Categories();
-        c.setCategoryId(dto.getCategoryId());
+        c.setId(dto.getId());
         c.setName(dto.getName());
         c.setImagePath(dto.getImagePath());
         return c;
     }
 }
+
 

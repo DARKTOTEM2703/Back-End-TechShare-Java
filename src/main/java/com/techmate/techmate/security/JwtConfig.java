@@ -47,3 +47,4 @@ public class JwtConfig {
         TokenUtils.init(jwtSecret);
     }
 }
+

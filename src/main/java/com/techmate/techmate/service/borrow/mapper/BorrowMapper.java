@@ -25,22 +25,22 @@ public class BorrowMapper {
         List<DetailsBorrowResponse> details = null;
         if (b.getDetails() != null) {
             details = b.getDetails().stream()
-                    .map(d -> new DetailsBorrowResponse(d.getDetailsBorrowId(), d.getQuantity(), d.getUnitPrice(), d.getTotalPrice(), d.getMaterialsId()))
+                    .map(d -> new DetailsBorrowResponse(d.getId(), d.getQuantity(), d.getUnitPrice(), d.getTotalPrice(), d.getId()))
                     .collect(Collectors.toList());
         }
 
-        return new BorrowResponse(b.getBorrowId(), b.getDate(), b.getStartDate(), b.getEndDate(), b.getReturnDate(), b.getStatus(), b.getAmount(), b.getUsuarioId(), b.getUsuarioName(), b.getAdminId(), b.getAdminName(), details);
+        return new BorrowResponse(b.getId(), b.getDate(), b.getStartDate(), b.getEndDate(), b.getReturnDate(), b.getStatus(), b.getAmount(), b.getUsuarioId(), b.getUsuarioName(), b.getAdminId(), b.getAdminName(), details);
     }
 
     // Entity -> DTO
     public BorrowDTO toDTO(Borrow borrow) {
         if (borrow == null) return null;
         BorrowDTO dto = new BorrowDTO();
-        dto.setBorrowId(borrow.getBorrowId());
+        dto.setId(borrow.getId());
         dto.setDate(borrow.getDate());
         dto.setStatus(borrow.getStatus());
         dto.setAmount(borrow.getAmount());
-        dto.setStartDate(borrow.getStartDate());
+        // Nota: startDate y admin ya no están en la Entity (fueron removidos)
         dto.setEndDate(borrow.getEndDate());
         dto.setReturnDate(borrow.getReturnDate());
 
@@ -49,27 +49,21 @@ public class BorrowMapper {
             dto.setUsuarioName(borrow.getUsuario().getUser_name());
         }
 
-        if (borrow.getAdmin() != null) {
-            dto.setAdminId(borrow.getAdmin().getId());
-            dto.setAdminName(borrow.getAdmin().getUser_name());
-        }
-
         if (borrow.getDetails() != null) {
             dto.setDetails(borrow.getDetails().stream().map(this::detailsToDTO).collect(Collectors.toList()));
         }
 
         return dto;
     }
-
     // DTO -> Entity
     public Borrow toEntity(BorrowDTO borrowDTO) {
         if (borrowDTO == null) return null;
         Borrow borrow = new Borrow();
-        borrow.setBorrowId(borrowDTO.getBorrowId());
+        borrow.setId(borrowDTO.getId());
         borrow.setDate(borrowDTO.getDate());
         borrow.setStatus(borrowDTO.getStatus());
         borrow.setAmount(borrowDTO.getAmount());
-        borrow.setStartDate(borrowDTO.getStartDate());
+        // Nota: startDate no se persiste (fue removido de Entity)
         borrow.setEndDate(borrowDTO.getEndDate());
         borrow.setReturnDate(borrowDTO.getReturnDate());
         // Note: relationships should be set by services when necessary
@@ -80,22 +74,23 @@ public class BorrowMapper {
     public DetailsBorrowDTO detailsToDTO(DetailsBorrow detailsBorrow) {
         if (detailsBorrow == null) return null;
         DetailsBorrowDTO dto = new DetailsBorrowDTO();
-        dto.setDetailsBorrowId(detailsBorrow.getDetailsBorrowId());
+        dto.setId(detailsBorrow.getId());
         dto.setQuantity(detailsBorrow.getQuantity());
         dto.setUnitPrice(detailsBorrow.getUnitPrice());
         dto.setTotalPrice(detailsBorrow.getTotalPrice());
-        if (detailsBorrow.getMaterials() != null) dto.setMaterialsId(detailsBorrow.getMaterials().getMaterialsId());
-        if (detailsBorrow.getBorrow() != null) dto.setBorrowId(detailsBorrow.getBorrow().getBorrowId());
+        if (detailsBorrow.getMaterials() != null) dto.setId(detailsBorrow.getMaterials().getId());
+        if (detailsBorrow.getBorrow() != null) dto.setId(detailsBorrow.getBorrow().getId());
         return dto;
     }
 
     public DetailsBorrow detailsToEntity(DetailsBorrowDTO detailsDTO) {
         if (detailsDTO == null) return null;
         DetailsBorrow d = new DetailsBorrow();
-        d.setDetailsBorrowId(detailsDTO.getDetailsBorrowId());
+        d.setId(detailsDTO.getId());
         d.setQuantity(detailsDTO.getQuantity());
         d.setUnitPrice(detailsDTO.getUnitPrice());
         d.setTotalPrice(detailsDTO.getTotalPrice());
         return d;
     }
 }
+

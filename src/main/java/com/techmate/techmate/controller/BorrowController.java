@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.*;
 
 import com.techmate.techmate.dto.BorrowDTO;
@@ -21,6 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 // CORS configurado globalmente en WebSecurityConfig - no necesita @CrossOrigin aquí
 @RestController
 @RequestMapping("admin/borrow")
+@PreAuthorize("hasRole('ADMIN')")
 public class BorrowController {
     private final BorrowService borrowService;
     private final BorrowMapper borrowMapper;
@@ -76,4 +78,5 @@ public ResponseEntity<?> updateBorrowStatus(
 
 
 }
+
 

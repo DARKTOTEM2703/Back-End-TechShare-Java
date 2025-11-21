@@ -17,7 +17,7 @@ public class JacksonSnakeCaseTest {
         mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
         Borrow b = new Borrow();
-        b.setBorrowId(123);
+        b.setId(123);
         b.setDate(new Date());
         b.setAmount(10.5);
 
@@ -27,3 +27,4 @@ public class JacksonSnakeCaseTest {
         assertTrue(json.contains("amount"));
     }
 }
+

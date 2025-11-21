@@ -11,3 +11,4 @@ public interface IBorrowStockManager {
     boolean isMaterialBorrowable(Integer materialId);
 }
 
+

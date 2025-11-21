@@ -13,9 +13,6 @@ import com.techmate.techmate.entity.VerificationToken;
 import com.techmate.techmate.repository.RoleRepository;
 import com.techmate.techmate.repository.UsuarioRepository;
 import com.techmate.techmate.repository.VerificationTokenRepository;
-import com.techmate.techmate.service.AuthService;
-import com.techmate.techmate.service.EmailService;
-import com.techmate.techmate.service.EmailTemplateService;
 import com.techmate.techmate.service.mapper.AuthMapper;
 import com.techmate.techmate.repository.UsuarioRoleRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +61,7 @@ class AuthServiceTest {
         
         // Mock roleRepository para retornar rol 'user' con ID 2
         com.techmate.techmate.entity.Role userRole = new com.techmate.techmate.entity.Role();
-    userRole.setRoleId(2);
+    userRole.setId(2);
     userRole.setNombre("user");
     when(roleRepository.findById(2)).thenReturn(Optional.of(userRole));
     when(roleRepository.findByName("user")).thenReturn(Optional.of(userRole));
@@ -101,3 +98,4 @@ class AuthServiceTest {
         assertThrows(IllegalArgumentException.class, () -> authService.registerUser(req));
     }
 }
+

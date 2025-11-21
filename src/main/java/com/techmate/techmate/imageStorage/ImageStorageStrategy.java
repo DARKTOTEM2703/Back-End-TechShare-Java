@@ -8,3 +8,4 @@ public interface ImageStorageStrategy {
     public byte[] getImage(String filename);
 }
 
+

@@ -38,3 +38,4 @@ public abstract class DomainEvent extends ApplicationEvent {
      */
     public abstract String getEventType();
 }
+

@@ -49,3 +49,4 @@ public class RegisterRequest {
     // Roles es opcional - si no se envía, se asignará el rol por defecto
     private Set<@Min(value = 1, message = "ID de rol inválido") Integer> roles;
 }
+

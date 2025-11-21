@@ -17,3 +17,4 @@ public class TestAuthUtils {
         return JWTTestHelper.createTokenWithRoles(id, email, username, roles);
     }
 }
+
