@@ -1,11 +1,19 @@
 package com.techmate.techmate.service.borrow.manager;
 
+import java.util.Date;
+
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.techmate.techmate.entity.Borrow;
 import com.techmate.techmate.entity.Materials;
+import com.techmate.techmate.entity.MoveType;
+import com.techmate.techmate.entity.Movements;
+import com.techmate.techmate.entity.Usuario;
 import com.techmate.techmate.exception.BorrowBusinessException;
 import com.techmate.techmate.repository.MaterialsRepository;
+import com.techmate.techmate.repository.MovementsRepository;
 
 /**
  * Gestor de stock especializado para operaciones de préstamo siguiendo SRP.
@@ -29,14 +37,17 @@ import com.techmate.techmate.repository.MaterialsRepository;
 public class BorrowStockManager implements IBorrowStockManager {
     
     private final MaterialsRepository materialsRepository;
+    private final MovementsRepository movementsRepository;
     
     /**
      * Constructor injection para cumplir con DIP.
      * 
      * @param materialsRepository Repositorio de materiales
+     * @param movementsRepository Repositorio de movimientos
      */
-    public BorrowStockManager(MaterialsRepository materialsRepository) {
+    public BorrowStockManager(MaterialsRepository materialsRepository, MovementsRepository movementsRepository) {
         this.materialsRepository = materialsRepository;
+        this.movementsRepository = movementsRepository;
     }
     
     /**
@@ -135,6 +146,120 @@ public class BorrowStockManager implements IBorrowStockManager {
 
     // Un material es prestable si tiene stock > 0
     return material.getBorrowable_stock() > 0;
+    }
+    
+    /**
+     * MÉTODO SRP: Reserva stock y registra movimiento de salida (BORROW) de forma atómica.
+     * 
+     * RESPONSABILIDAD ÚNICA: Gestionar stock + auditoría de movimiento en una sola transacción.
+     * 
+     * BENEFICIOS:
+     * - Testeable: Se puede probar aisladamente con mocks
+     * - Reutilizable: Otros servicios pueden usarlo sin duplicar lógica
+     * - Mantenible: Cambios en gestión de stock centralizados aquí
+     * - Transaccional: Garantiza atomicidad (stock + movimiento juntos)
+     * 
+     * @param material Material a reservar
+     * @param quantity Cantidad a reservar
+     * @param borrow Préstamo asociado
+     * @param usuario Usuario que realiza el préstamo
+     * @throws BorrowBusinessException si no hay stock suficiente
+     */
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void reserveStockAndLogMovement(Materials material, int quantity, Borrow borrow, Usuario usuario) {
+        // Validar parámetros
+        if (material == null || borrow == null || usuario == null) {
+            throw new IllegalArgumentException("Material, borrow y usuario no pueden ser null");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
+        }
+        
+        // 1. Validar stock disponible
+        if (material.getBorrowable_stock() < quantity) {
+            throw BorrowBusinessException.insufficientStock(
+                material.getId(), 
+                quantity, 
+                material.getBorrowable_stock()
+            );
+        }
+        
+        // 2. Decrementar stock disponible
+        int newStock = material.getBorrowable_stock() - quantity;
+        material.setBorrowable_stock(newStock);
+        
+        // 3. Persistir cambios en material
+        materialsRepository.save(material);
+        
+        // 4. Crear registro de movimiento (SALIDA/BORROW)
+        Movements movement = new Movements();
+        movement.setMoveType(MoveType.BORROW);
+        movement.setResourceId(material.getId());
+        movement.setMaterials(material);
+        movement.setUsuario(usuario);
+        movement.setMovementDate(new Date());
+        movement.setNotes(String.format(
+            "Préstamo #%d - Cantidad: %d - Stock restante: %d",
+            borrow.getId(),
+            quantity,
+            newStock
+        ));
+        
+        // 5. Persistir movimiento
+        movementsRepository.save(movement);
+    }
+    
+    /**
+     * MÉTODO SRP: Libera stock y registra movimiento de entrada (RETURN) de forma atómica.
+     * 
+     * RESPONSABILIDAD ÚNICA: Restaurar stock + auditoría de movimiento en una sola transacción.
+     * 
+     * BENEFICIOS:
+     * - Simetría con reserveStockAndLogMovement() (patrón consistente)
+     * - Auditoría completa (trazabilidad de entradas/salidas)
+     * - Transaccional: Rollback automático si falla alguna operación
+     * - Reutilizable: Devoluciones, ajustes de inventario, etc.
+     * 
+     * @param material Material a liberar
+     * @param quantity Cantidad a liberar
+     * @param borrow Préstamo asociado
+     * @param usuario Usuario que devuelve
+     */
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void releaseStockAndLogMovement(Materials material, int quantity, Borrow borrow, Usuario usuario) {
+        // Validar parámetros
+        if (material == null || borrow == null || usuario == null) {
+            throw new IllegalArgumentException("Material, borrow y usuario no pueden ser null");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
+        }
+        
+        // 1. Incrementar stock disponible
+        int newStock = material.getBorrowable_stock() + quantity;
+        material.setBorrowable_stock(newStock);
+        
+        // 2. Persistir cambios en material
+        materialsRepository.save(material);
+        
+        // 3. Crear registro de movimiento (ENTRADA/RETURN)
+        Movements movement = new Movements();
+        movement.setMoveType(MoveType.RETURN);
+        movement.setResourceId(material.getId());
+        movement.setMaterials(material);
+        movement.setUsuario(usuario);
+        movement.setMovementDate(new Date());
+        movement.setNotes(String.format(
+            "Devolución préstamo #%d - Cantidad: %d - Stock disponible: %d",
+            borrow.getId(),
+            quantity,
+            newStock
+        ));
+        
+        // 4. Persistir movimiento
+        movementsRepository.save(movement);
     }
 }
 
