@@ -14,7 +14,7 @@ class HttpResponseHandlingTest {
     @DisplayName("ResponseEntity should handle OK status")
     void responseEntityShouldHandleOkStatus() {
         ResponseEntity<String> response = ResponseEntity.ok("Success");
-        
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Success", response.getBody());
     }
@@ -33,7 +33,7 @@ class HttpResponseHandlingTest {
     @DisplayName("ResponseEntity should handle NOT_FOUND")
     void responseEntityShouldHandleNotFound() {
         ResponseEntity<Void> notFound = ResponseEntity.notFound().build();
-        
+
         assertEquals(HttpStatus.NOT_FOUND, notFound.getStatusCode());
     }
 
@@ -41,7 +41,7 @@ class HttpResponseHandlingTest {
     @DisplayName("ResponseEntity should handle empty body")
     void responseEntityShouldHandleEmptyBody() {
         ResponseEntity<String> response = ResponseEntity.ok("");
-        
+
         assertTrue(response.getBody().isEmpty());
     }
 
@@ -49,7 +49,7 @@ class HttpResponseHandlingTest {
     @DisplayName("ResponseEntity should handle NULL body")
     void responseEntityShouldHandleNullBody() {
         ResponseEntity<String> response = ResponseEntity.ok(null);
-        
+
         assertNull(response.getBody());
     }
 
@@ -57,7 +57,7 @@ class HttpResponseHandlingTest {
     @DisplayName("ResponseEntity status should be retrievable")
     void responseEntityStatusShouldBeRetrievable() {
         ResponseEntity<String> response = ResponseEntity.ok("test");
-        
+
         assertNotNull(response.getStatusCode());
         assertTrue(response.getStatusCode().is2xxSuccessful());
     }
@@ -101,4 +101,3 @@ class HttpResponseHandlingTest {
         assertEquals(response1.getStatusCode(), response2.getStatusCode());
     }
 }
-

@@ -27,47 +27,47 @@ import java.util.UUID;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RequestIdFilter extends OncePerRequestFilter {
-    
+
     private static final String REQUEST_ID_HEADER = "X-Request-ID";
     private static final String REQUEST_ID_MDC_KEY = "requestId";
     private static final String IP_MDC_KEY = "clientIp";
-    
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws ServletException, IOException {
-        
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
+
         try {
             // 1. Obtener o generar Request ID
             String requestId = request.getHeader(REQUEST_ID_HEADER);
             if (requestId == null || requestId.isEmpty()) {
                 requestId = UUID.randomUUID().toString();
             }
-            
+
             // 2. Añadir Request ID al MDC (Mapped Diagnostic Context)
             MDC.put(REQUEST_ID_MDC_KEY, requestId);
-            
+
             // 3. Añadir IP del cliente al MDC
             String clientIp = getClientIp(request);
             MDC.put(IP_MDC_KEY, clientIp);
-            
+
             // 4. Añadir usuario autenticado al MDC (si existe)
-            // Nota: El usuario se añadirá después de la autenticación en JwtAuthenticationFilter
-            
+            // Nota: El usuario se añadirá después de la autenticación en
+            // JwtAuthenticationFilter
+
             // 5. Añadir Request ID a la respuesta para correlación
             response.setHeader(REQUEST_ID_HEADER, requestId);
-            
+
             // 6. Continuar con la cadena de filtros
             filterChain.doFilter(request, response);
-            
+
         } finally {
             // 7. Limpiar MDC al finalizar la petición (importante para evitar memory leaks)
             MDC.clear();
         }
     }
-    
+
     /**
      * Obtiene la IP real del cliente considerando proxies y load balancers.
      */
@@ -77,14 +77,12 @@ public class RequestIdFilter extends OncePerRequestFilter {
             // X-Forwarded-For puede contener múltiples IPs, la primera es la del cliente
             return xForwardedFor.split(",")[0].trim();
         }
-        
+
         String xRealIp = request.getHeader("X-Real-IP");
         if (xRealIp != null && !xRealIp.isEmpty()) {
             return xRealIp;
         }
-        
+
         return request.getRemoteAddr();
     }
 }
-
-

@@ -101,9 +101,8 @@ class EnumAndConstantsTest {
     void multipleEnumInstancesShouldBeIndependent() {
         TestStatus status1 = TestStatus.ACTIVE;
         TestStatus status2 = TestStatus.INACTIVE;
-        
+
         assertNotSame(status1, status2);
         assertNotEquals(status1, status2);
     }
 }
-

@@ -20,14 +20,30 @@ public class MoveTypeJacksonIntegrationTest {
         private MoveType moveType;
         private Integer id;
 
-        public MoveType getMoveType() { return moveType; }
-        public void setMoveType(MoveType moveType) { this.moveType = moveType; }
-        public Integer getId() { return id; }
-        public void setId(Integer id) { this.id = id; }
+        public MoveType getMoveType() {
+            return moveType;
+        }
+
+        public void setMoveType(MoveType moveType) {
+            this.moveType = moveType;
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
 
         // Backward compatibility method for legacy code
-        public Integer getMaterialsId() { return id; }
-        public void setMaterialsId(Integer materialsId) { this.id = materialsId; }
+        public Integer getMaterialsId() {
+            return id;
+        }
+
+        public void setMaterialsId(Integer materialsId) {
+            this.id = materialsId;
+        }
     }
 
     @Test
@@ -49,4 +65,3 @@ public class MoveTypeJacksonIntegrationTest {
         assertEquals(2, des.getId());
     }
 }
-

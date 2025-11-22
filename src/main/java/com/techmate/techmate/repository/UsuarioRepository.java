@@ -13,19 +13,19 @@ import com.techmate.techmate.entity.Usuario;
 import java.util.Optional;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
-    
+public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
+
     @NonNull
-    Optional<Usuario> findById(@NonNull Integer id);  // Método para buscar el usuario por ID
-    
-    Optional <Usuario> getUsuarioUsernamById(int usernameId);
-    
+    Optional<Usuario> findById(@NonNull Integer id); // Método para buscar el usuario por ID
+
+    Optional<Usuario> getUsuarioUsernamById(int usernameId);
+
     // Query simple sin JOIN FETCH para evitar ConcurrentModificationException
     // Los roles se cargan por separado en UserDetailsServiceImpl
     Optional<Usuario> findOneByEmail(String email);
 
     Optional<Usuario> findByEmail(String email);
-    
+
     // Query nativa para activar usuario sin cargar relaciones complejas
     @Modifying
     @Transactional
@@ -33,6 +33,3 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
     void enableUserById(@Param("userId") Integer userId);
 
 }
-
-
-

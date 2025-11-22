@@ -20,12 +20,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class ApiVersionConfig implements WebMvcConfigurer {
-    
+
     @Override
     public void configurePathMatch(@NonNull PathMatchConfigurer configurer) {
         // Nota: setUseTrailingSlashMatch está deprecado en Spring 6.0+
         // La configuración de trailing slashes se maneja automáticamente
     }
 }
-
-

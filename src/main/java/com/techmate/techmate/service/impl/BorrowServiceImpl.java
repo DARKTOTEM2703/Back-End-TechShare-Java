@@ -44,10 +44,12 @@ public class BorrowServiceImpl implements BorrowService {
         this.eventPublisher = eventPublisher;
     }
 
-    // ==================== FALLBACK HELPERS (compatibilidad con tests) ====================
+    // ==================== FALLBACK HELPERS (compatibilidad con tests)
+    // ====================
     /**
      * Valida disponibilidad de stock usando IBorrowStockManager si existe;
-     * en caso contrario aplica la lógica directa con el repositorio (fallback para tests).
+     * en caso contrario aplica la lógica directa con el repositorio (fallback para
+     * tests).
      */
     private void validateStockAvailabilityOrFallback(Integer materialId, int requestedQuantity) {
         if (borrowStockManager != null) {
@@ -58,7 +60,8 @@ public class BorrowServiceImpl implements BorrowService {
         Materials material = materialsRepository.findById(materialId)
                 .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
         if (material.getBorrowable_stock() < requestedQuantity) {
-            throw BorrowBusinessException.insufficientStock(materialId, requestedQuantity, material.getBorrowable_stock());
+            throw BorrowBusinessException.insufficientStock(materialId, requestedQuantity,
+                    material.getBorrowable_stock());
         }
     }
 
@@ -99,28 +102,27 @@ public class BorrowServiceImpl implements BorrowService {
         dto.setAmount(borrow.getAmount());
         dto.setStartDate(borrow.getStartDate());
         dto.setEndDate(borrow.getEndDate());
-        dto.setReturnDate(borrow.getReturnDate());;
-    
+        dto.setReturnDate(borrow.getReturnDate());
+        ;
+
         // Asegúrate de que el usuario y admin se asignen correctamente
         if (borrow.getUsuario() != null) {
             dto.setUsuarioId(borrow.getUsuario().getId());
             dto.setUsuarioName(borrow.getUsuario().getUser_name());
         }
-    
+
         if (borrow.getAdmin() != null) {
             dto.setAdminId(borrow.getAdmin().getId());
             dto.setAdminName(borrow.getAdmin().getUser_name());
         }
-    
+
         // Mapear los detalles del préstamo
         dto.setDetails(borrow.getDetails().stream()
                 .map(this::convertDetailsBorrowToDTO)
                 .collect(Collectors.toList()));
-    
+
         return dto;
     }
-    
-
 
     private DetailsBorrowDTO convertDetailsBorrowToDTO(DetailsBorrow detailsBorrow) {
         DetailsBorrowDTO dto = new DetailsBorrowDTO();
@@ -149,17 +151,17 @@ public class BorrowServiceImpl implements BorrowService {
     public void updateBorrowStatus(Integer borrowId, Status newStatus, Integer adminId) throws Exception {
         // 1. Obtener préstamo (SRP: Obtención)
         Borrow borrow = findBorrowById(borrowId);
-        
+
         // 2. Validar precondiciones (SRP: Validación)
         validateBorrowStatusTransition(borrow, newStatus);
-        
+
         // 3. Resolver admin (SRP: Resolución)
         Usuario admin = findAdminById(adminId);
         borrow.setAdmin(admin);
-        
+
         // 4. Aplicar transición de estado (SRP: State machine)
         applyStatusTransition(borrow, newStatus);
-        
+
         // 5. Persistir (SRP: Persistencia)
         borrowRepository.save(borrow);
     }
@@ -175,25 +177,25 @@ public class BorrowServiceImpl implements BorrowService {
      */
     private Borrow findBorrowById(Integer borrowId) {
         return borrowRepository.findById(borrowId)
-                .orElseThrow(() -> new BusinessException("BORROW_NOT_FOUND", 
-                    "Préstamo no encontrado con ID: " + borrowId));
+                .orElseThrow(() -> new BusinessException("BORROW_NOT_FOUND",
+                        "Préstamo no encontrado con ID: " + borrowId));
     }
 
     /**
      * Valida si la transición de estado es permitida.
      * 
-     * @param borrow Préstamo actual
+     * @param borrow    Préstamo actual
      * @param newStatus Nuevo estado solicitado
      * @throws BusinessException si la transición no es válida
      */
     private void validateBorrowStatusTransition(Borrow borrow, Status newStatus) {
         Status currentStatus = borrow.getStatus();
-        
+
         if (currentStatus != Status.PENDING && currentStatus != Status.BORROWED) {
             throw new BusinessException("INVALID_STATUS_TRANSITION",
                     "Solo se puede modificar el estado de un préstamo en estado PENDING o BORROWED");
         }
-        
+
         // Validación específica para RETURNED
         if (newStatus == Status.RETURNED && currentStatus != Status.BORROWED) {
             throw new BusinessException("INVALID_STATUS_TRANSITION",
@@ -210,14 +212,14 @@ public class BorrowServiceImpl implements BorrowService {
      */
     private Usuario findAdminById(Integer adminId) {
         return usuarioRepository.findById(adminId)
-                .orElseThrow(() -> new BusinessException("USER_NOT_FOUND", 
-                    "Administrador no encontrado con ID: " + adminId));
+                .orElseThrow(() -> new BusinessException("USER_NOT_FOUND",
+                        "Administrador no encontrado con ID: " + adminId));
     }
 
     /**
      * Aplica la transición de estado al préstamo según el nuevo estado.
      * 
-     * @param borrow Préstamo a transicionar
+     * @param borrow    Préstamo a transicionar
      * @param newStatus Nuevo estado
      * @throws Exception si hay error en la transición
      */
@@ -238,8 +240,8 @@ public class BorrowServiceImpl implements BorrowService {
                 break;
 
             default:
-                throw new BusinessException("INVALID_BORROW_STATUS", 
-                    "Estado no válido para modificar el préstamo");
+                throw new BusinessException("INVALID_BORROW_STATUS",
+                        "Estado no válido para modificar el préstamo");
         }
     }
 
@@ -255,20 +257,33 @@ public class BorrowServiceImpl implements BorrowService {
 
     /**
      * Maneja la transición de aprobación (PENDING → BORROWED).
-     * Valida disponibilidad de stock y reduce el stock para cada detalle.
+     * REFACTORIZADO CON SRP: Delega gestión de stock + auditoría al BorrowStockManager.
+     * 
+     * ANTES: El servicio manejaba stock directamente (3 responsabilidades: validar, reducir, auditar)
+     * AHORA: El servicio solo coordina, BorrowStockManager gestiona stock + movimientos
      * 
      * @param borrow Préstamo a aprobar
      * @throws Exception si no hay stock disponible
      */
     private void handleBorrowApproved(Borrow borrow) throws Exception {
-        // Validar y reducir stock para cada detalle
-        for (DetailsBorrow detail : borrow.getDetails()) {
-            Integer materialId = detail.getMaterials().getId();
-            int qty = detail.getQuantity();
-            validateStockAvailabilityOrFallback(materialId, qty);
-            reduceStockOrFallback(materialId, qty);
-        }
+        // Obtener usuario del préstamo para auditoría
+        Usuario usuario = borrow.getUsuario();
         
+        // SRP: Delegar gestión de stock + movimientos al manager especializado
+        for (DetailsBorrow detail : borrow.getDetails()) {
+            Materials material = detail.getMaterials();
+            int quantity = detail.getQuantity();
+            
+            // Una sola llamada: reserva stock + crea movimiento (atómico)
+            if (borrowStockManager != null) {
+                borrowStockManager.reserveStockAndLogMovement(material, quantity, borrow, usuario);
+            } else {
+                // Fallback para tests sin manager
+                validateStockAvailabilityOrFallback(material.getId(), quantity);
+                reduceStockOrFallback(material.getId(), quantity);
+            }
+        }
+
         borrow.setStartDate(new Date());
         borrow.setStatus(Status.BORROWED);
         publishBorrowCreatedEvent(borrow);
@@ -276,24 +291,37 @@ public class BorrowServiceImpl implements BorrowService {
 
     /**
      * Maneja la transición de devolución (BORROWED → RETURNED).
-     * Restaura el stock para cada detalle del préstamo.
+     * REFACTORIZADO CON SRP: Delega gestión de stock + auditoría al BorrowStockManager.
+     * 
+     * ANTES: El servicio restauraba stock directamente (sin auditoría de movimientos)
+     * AHORA: El servicio delega, BorrowStockManager restaura stock + registra movimiento RETURN
      * 
      * @param borrow Préstamo a devolver
      */
     private void handleBorrowReturned(Borrow borrow) {
-        // Restaurar stock para cada detalle
-        for (DetailsBorrow detail : borrow.getDetails()) {
-            Integer materialId = detail.getMaterials().getId();
-            int qty = detail.getQuantity();
-            restoreStockOrFallback(materialId, qty);
-        }
+        // Obtener usuario del préstamo para auditoría
+        Usuario usuario = borrow.getUsuario();
         
+        // SRP: Delegar restauración de stock + movimientos al manager especializado
+        for (DetailsBorrow detail : borrow.getDetails()) {
+            Materials material = detail.getMaterials();
+            int quantity = detail.getQuantity();
+            
+            // Una sola llamada: libera stock + crea movimiento (atómico)
+            if (borrowStockManager != null) {
+                borrowStockManager.releaseStockAndLogMovement(material, quantity, borrow, usuario);
+            } else {
+                // Fallback para tests sin manager
+                restoreStockOrFallback(material.getId(), quantity);
+            }
+        }
+
         borrow.setStatus(Status.RETURNED);
         borrow.setReturnDate(new Date());
         borrow.setEndDate(new Date());
         publishBorrowReturnedEvent(borrow);
     }
-    
+
     @Override
     public List<BorrowDTO> getAllBorrowDTO() {
         return borrowRepository.findAll().stream()
@@ -349,7 +377,8 @@ public class BorrowServiceImpl implements BorrowService {
      * 
      * PROPÓSITO:
      * - Notificar al sistema que se ha aprobado y entregado un préstamo
-     * - Permitir reacciones asíncronas (emails de confirmación, actualización de estadísticas, etc.)
+     * - Permitir reacciones asíncronas (emails de confirmación, actualización de
+     * estadísticas, etc.)
      * 
      * INFORMACIÓN DEL EVENTO:
      * - ID del préstamo
@@ -365,12 +394,14 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     /**
-     * Publica un evento cuando se devuelve un préstamo (transición BORROWED → RETURNED).
+     * Publica un evento cuando se devuelve un préstamo (transición BORROWED →
+     * RETURNED).
      * 
      * PROPÓSITO:
      * - Notificar al sistema que se ha completado una devolución
      * - Detectar devoluciones tardías para aplicar penalizaciones
-     * - Permitir reacciones asíncronas (emails, cálculo de multas, actualización de historial)
+     * - Permitir reacciones asíncronas (emails, cálculo de multas, actualización de
+     * historial)
      * 
      * LÓGICA:
      * - El evento detecta automáticamente si la devolución fue tardía
@@ -386,5 +417,3 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
 }
-
-

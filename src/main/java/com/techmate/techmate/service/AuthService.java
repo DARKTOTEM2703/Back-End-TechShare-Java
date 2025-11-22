@@ -17,14 +17,13 @@ import com.techmate.techmate.service.mapper.AuthMapper;
 import com.techmate.techmate.repository.RoleRepository;
 import com.techmate.techmate.repository.UsuarioRoleRepository;
 
-
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class AuthService {
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
-    
+
     private final UsuarioRepository usuarioRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final RoleRepository roleRepository;
@@ -96,9 +95,11 @@ public class AuthService {
             // If template generation fails, try a simple text email asynchronously
             log.error("Fallo generando plantilla de email, encolando fallback de texto", e);
             try {
-                emailService.sendEmail(usuario.getEmail(), "Verificación de cuenta", "Por favor, verifica tu cuenta: " + verificationUrl);
+                emailService.sendEmail(usuario.getEmail(), "Verificación de cuenta",
+                        "Por favor, verifica tu cuenta: " + verificationUrl);
             } catch (RuntimeException ex) {
-                // EmailService is async and resilient; log and continue. Do NOT throw to avoid 500 to client.
+                // EmailService is async and resilient; log and continue. Do NOT throw to avoid
+                // 500 to client.
                 log.error("No se pudo encolar email de verificación para {}", usuario.getEmail(), ex);
             }
         }
@@ -136,7 +137,8 @@ public class AuthService {
         } catch (RuntimeException e) {
             log.error("Fallo generando plantilla de email en resend, encolando fallback de texto", e);
             try {
-                emailService.sendEmail(usuario.getEmail(), "Verificación de cuenta", "Por favor, verifica tu cuenta: " + verificationUrl);
+                emailService.sendEmail(usuario.getEmail(), "Verificación de cuenta",
+                        "Por favor, verifica tu cuenta: " + verificationUrl);
             } catch (RuntimeException ex) {
                 log.error("No se pudo encolar email de verificación (resend) para {}", usuario.getEmail(), ex);
             }
@@ -145,5 +147,3 @@ public class AuthService {
         return "Correo de verificación reenviado. Revisa tu bandeja de entrada.";
     }
 }
-
-

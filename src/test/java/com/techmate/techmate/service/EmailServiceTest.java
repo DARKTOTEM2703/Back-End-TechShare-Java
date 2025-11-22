@@ -68,7 +68,8 @@ class EmailServiceTest {
     void sendHtmlEmail_WithValidParams_ShouldAcceptCall() {
         // Verify that the method accepts typical email parameters
         try {
-            var method = EmailService.class.getDeclaredMethod("sendHtmlEmail", String.class, String.class, String.class);
+            var method = EmailService.class.getDeclaredMethod("sendHtmlEmail", String.class, String.class,
+                    String.class);
             assertEquals("sendHtmlEmail", method.getName());
             assertEquals(3, method.getParameterCount());
         } catch (NoSuchMethodException e) {
@@ -87,15 +88,17 @@ class EmailServiceTest {
     @Test
     @DisplayName("Should handle multiple email addresses correctly")
     void sendEmail_WithMultipleRecipients_ShouldHandleEach() {
-        // This test verifies that the service structure supports sending to multiple recipients
-        String[] recipients = {"user1@example.com", "user2@example.com", "user3@example.com"};
+        // This test verifies that the service structure supports sending to multiple
+        // recipients
+        String[] recipients = { "user1@example.com", "user2@example.com", "user3@example.com" };
         String subject = "Test Subject";
         String text = "Test Message";
 
         // Just verify the method exists and can be called multiple times
         for (String recipient : recipients) {
             assertDoesNotThrow(() -> {
-                var method = EmailService.class.getDeclaredMethod("sendEmail", String.class, String.class, String.class);
+                var method = EmailService.class.getDeclaredMethod("sendEmail", String.class, String.class,
+                        String.class);
                 assertNotNull(method);
             });
         }
@@ -109,8 +112,7 @@ class EmailServiceTest {
             var method = EmailService.class.getDeclaredMethod("sendEmail", String.class, String.class, String.class);
             assertTrue(
                     method.isAnnotationPresent(org.springframework.scheduling.annotation.Async.class),
-                    "sendEmail should be annotated with @Async"
-            );
+                    "sendEmail should be annotated with @Async");
         } catch (NoSuchMethodException e) {
             fail("sendEmail method not found");
         }
@@ -121,14 +123,13 @@ class EmailServiceTest {
     void shouldHaveAsyncAnnotationOnHtmlEmail() {
         // Verify async annotation on sendHtmlEmail method
         try {
-            var method = EmailService.class.getDeclaredMethod("sendHtmlEmail", String.class, String.class, String.class);
+            var method = EmailService.class.getDeclaredMethod("sendHtmlEmail", String.class, String.class,
+                    String.class);
             assertTrue(
                     method.isAnnotationPresent(org.springframework.scheduling.annotation.Async.class),
-                    "sendHtmlEmail should be annotated with @Async"
-            );
+                    "sendHtmlEmail should be annotated with @Async");
         } catch (NoSuchMethodException e) {
             fail("sendHtmlEmail method not found");
         }
     }
 }
-

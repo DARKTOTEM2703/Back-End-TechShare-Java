@@ -120,4 +120,3 @@ class CollectionOperationsTest {
         assertEquals("default", map.getOrDefault("key2", "default"));
     }
 }
-

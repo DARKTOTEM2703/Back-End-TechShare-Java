@@ -25,7 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -46,13 +45,14 @@ class MovementsControllerSecurityTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = "admin", roles = { "ADMIN" })
     void securedGetMovementById_withValidToken_returnsOk() throws Exception {
         MovementsDTO dto = new MovementsDTO();
         dto.setId(42);
         dto.setQuantity(7);
 
-        MovementResponse resp = new MovementResponse(42, MoveType.STOCK_ADD, 7, new java.util.Date(), "", 1, "Admin", 2, "Mat");
+        MovementResponse resp = new MovementResponse(42, MoveType.STOCK_ADD, 7, new java.util.Date(), "", 1, "Admin", 2,
+                "Mat");
 
         when(movementsService.getMovementsByID(42)).thenReturn(dto);
         when(movementsMapper.toResponse(eq(dto))).thenReturn(resp);
@@ -65,7 +65,7 @@ class MovementsControllerSecurityTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = "admin", roles = { "ADMIN" })
     void securedCreateMovement_withValidToken_returnsCreated() throws Exception {
         MovementsDTO created = new MovementsDTO();
         created.setId(99);
@@ -75,7 +75,8 @@ class MovementsControllerSecurityTest {
 
         // El mapper debe convertir BORROW al MoveType correcto
         // El response debe reflejar lo que retorna el servicio
-        MovementResponse resp = new MovementResponse(99, MoveType.BORROW, 2, new java.util.Date(), "ok", 7, "Admin", 5, "Mat5");
+        MovementResponse resp = new MovementResponse(99, MoveType.BORROW, 2, new java.util.Date(), "ok", 7, "Admin", 5,
+                "Mat5");
 
         when(movementsService.createMovementsDTO(any(), any())).thenReturn(created);
         when(movementsMapper.toResponse(any())).thenReturn(resp);
@@ -91,4 +92,3 @@ class MovementsControllerSecurityTest {
                 .andExpect(jsonPath("$.move_type").value("OUT"));
     }
 }
-

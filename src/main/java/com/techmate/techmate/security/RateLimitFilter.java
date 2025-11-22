@@ -25,15 +25,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
-    
+
     // Configuración: 100 requests por minuto
     private static final int REQUESTS_PER_MINUTE = 100;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain chain) throws ServletException, IOException {
-        
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain chain) throws ServletException, IOException {
+
         // Excluir endpoints públicos de rate limiting
         String requestURI = request.getRequestURI();
         if (isExcludedPath(requestURI)) {
@@ -52,8 +52,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.setContentType("application/json");
             response.getWriter().write(
-                "{\"error\":\"Too Many Requests\",\"message\":\"Rate limit exceeded. Please try again later.\"}"
-            );
+                    "{\"error\":\"Too Many Requests\",\"message\":\"Rate limit exceeded. Please try again later.\"}");
         }
     }
 
@@ -87,12 +86,12 @@ public class RateLimitFilter extends OncePerRequestFilter {
         if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
             return xForwardedFor.split(",")[0].trim();
         }
-        
+
         String xRealIP = request.getHeader("X-Real-IP");
         if (xRealIP != null && !xRealIP.isEmpty()) {
             return xRealIP;
         }
-        
+
         return request.getRemoteAddr();
     }
 
@@ -100,10 +99,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
      * Paths excluidos del rate limiting (health checks, actuator)
      */
     private boolean isExcludedPath(String path) {
-        return path.startsWith("/actuator/") || 
-               path.equals("/") ||
-               path.startsWith("/swagger-ui") ||
-               path.startsWith("/v3/api-docs");
+        return path.startsWith("/actuator/") ||
+                path.equals("/") ||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs");
     }
 }
-

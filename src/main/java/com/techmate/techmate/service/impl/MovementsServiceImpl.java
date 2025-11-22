@@ -1,9 +1,7 @@
 package com.techmate.techmate.service.impl;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -39,14 +37,14 @@ public class MovementsServiceImpl implements MovementsService {
     private final com.techmate.techmate.service.movements.query.MovementQueryService movementQueryService;
 
     public MovementsServiceImpl(MovementsRepository movementsRepository,
-                                UsuarioRepository usuarioRepository,
-                                UserDetailsServiceImpl userService,
-                                MaterialsRepository materialsRepository,
-                                MaterialsService materialsService,
-                                com.techmate.techmate.service.movements.mapper.MovementMapper movementMapper,
-                                com.techmate.techmate.service.movements.validator.MovementValidator movementValidator,
-                                com.techmate.techmate.service.movements.manager.MovementStockManager movementStockManager,
-                                com.techmate.techmate.service.movements.query.MovementQueryService movementQueryService) {
+            UsuarioRepository usuarioRepository,
+            UserDetailsServiceImpl userService,
+            MaterialsRepository materialsRepository,
+            MaterialsService materialsService,
+            com.techmate.techmate.service.movements.mapper.MovementMapper movementMapper,
+            com.techmate.techmate.service.movements.validator.MovementValidator movementValidator,
+            com.techmate.techmate.service.movements.manager.MovementStockManager movementStockManager,
+            com.techmate.techmate.service.movements.query.MovementQueryService movementQueryService) {
         this.movementsRepository = movementsRepository;
         this.usuarioRepository = usuarioRepository;
         this.userService = userService;
@@ -68,9 +66,8 @@ public class MovementsServiceImpl implements MovementsService {
      */
     private Usuario loadAndValidateUser(Integer userId) {
         return usuarioRepository.findById(userId)
-            .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
-                String.format("Usuario con ID %d no encontrado", userId)
-            ));
+                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                        String.format("Usuario con ID %d no encontrado", userId)));
     }
 
     /**
@@ -78,9 +75,8 @@ public class MovementsServiceImpl implements MovementsService {
      */
     private Materials loadAndValidateMaterial(Integer materialId) {
         return materialsRepository.findById(materialId)
-            .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
-                String.format("Material con ID %d no encontrado", materialId)
-            ));
+                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                        String.format("Material con ID %d no encontrado", materialId)));
     }
 
     // ─── MAPEO (DTO ↔ Entity) ───
@@ -156,9 +152,8 @@ public class MovementsServiceImpl implements MovementsService {
     public MovementsDTO getMovementsByID(Integer movementsId) {
         // 1️⃣ CARGAR movimiento
         Movements movements = movementsRepository.findById(movementsId)
-            .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
-                String.format("Movimiento con ID %d no encontrado", movementsId)
-            ));
+                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                        String.format("Movimiento con ID %d no encontrado", movementsId)));
 
         // 2️⃣ CONVERTIR a DTO
         return convertToDTO(movements);
@@ -174,9 +169,8 @@ public class MovementsServiceImpl implements MovementsService {
     public MovementsDTO updateMovement(Integer movementsId, MovementsDTO movementsDTO) {
         // 1️⃣ CARGAR movimiento existente
         Movements movement = movementsRepository.findById(movementsId)
-            .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
-                String.format("Movimiento con ID %d no encontrado", movementsId)
-            ));
+                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                        String.format("Movimiento con ID %d no encontrado", movementsId)));
 
         // 2️⃣ VALIDAR nuevos datos
         movementValidator.validateQuantity(movementsDTO);
@@ -224,8 +218,9 @@ public class MovementsServiceImpl implements MovementsService {
                 return MoveType.ADJUSTMENT;
             default:
                 throw new IllegalArgumentException(
-                    String.format("Tipo de movimiento inválido: %s. Tipos válidos: STOCK_ADD, RETURN, BORROW, ADJUSTMENT", type)
-                );
+                        String.format(
+                                "Tipo de movimiento inválido: %s. Tipos válidos: STOCK_ADD, RETURN, BORROW, ADJUSTMENT",
+                                type));
         }
     }
 
@@ -255,16 +250,16 @@ public class MovementsServiceImpl implements MovementsService {
 
         // 2️⃣ OBTENER todos y aplicar paginación manual
         List<MovementsDTO> allMovements = movementQueryService.getAll();
-        
+
         // 3️⃣ CALCULAR índices de paginación
         int startIndex = pageNumber * pageSize;
         int endIndex = Math.min(startIndex + pageSize, allMovements.size());
-        
+
         // 4️⃣ RETORNAR sublist paginada
         if (startIndex >= allMovements.size()) {
             return Collections.emptyList();
         }
-        
+
         return allMovements.subList(startIndex, endIndex);
     }
 
@@ -273,9 +268,8 @@ public class MovementsServiceImpl implements MovementsService {
     public void deleteMovementById(Integer movementsId) {
         // 1️⃣ VERIFICAR que existe
         movementsRepository.findById(movementsId)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format("Movimiento con ID %d no encontrado", movementsId)
-            ));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Movimiento con ID %d no encontrado", movementsId)));
 
         // 2️⃣ ELIMINAR
         movementsRepository.deleteById(movementsId);
@@ -284,5 +278,3 @@ public class MovementsServiceImpl implements MovementsService {
     }
 
 }
-
-

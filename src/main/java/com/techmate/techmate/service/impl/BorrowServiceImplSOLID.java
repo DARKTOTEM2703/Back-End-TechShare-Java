@@ -13,7 +13,8 @@ import com.techmate.techmate.entity.Status;
 import com.techmate.techmate.security.TokenUtils;
 
 /**
- * 🎯 Implementación del servicio de préstamos refactorizada con principios SOLID.
+ * 🎯 Implementación del servicio de préstamos refactorizada con principios
+ * SOLID.
  * 
  * PRINCIPIOS SOLID APLICADOS:
  * - SRP: Solo coordina operaciones, delega responsabilidades específicas
@@ -36,7 +37,7 @@ public class BorrowServiceImplSOLID implements BorrowService {
     private final BorrowStateProcessor stateProcessor;
 
     // ==================== CONSTRUCTOR INJECTION (DIP) ====================
-    
+
     /**
      * Constructor injection para cumplir con DIP.
      * Facilita testing y reduce acoplamiento.
@@ -82,16 +83,17 @@ public class BorrowServiceImplSOLID implements BorrowService {
      * ⚙️ Actualiza el estado de un préstamo.
      * Delega en el procesador de estados especializado.
      * 
-     * @param borrowId ID del préstamo
+     * @param borrowId  ID del préstamo
      * @param newStatus Nuevo estado
-     * @param adminId ID del administrador
+     * @param adminId   ID del administrador
      */
     @Override
     public void updateBorrowStatus(Integer borrowId, Status newStatus, Integer adminId) throws Exception {
         try {
             stateProcessor.processStateTransition(borrowId, newStatus, adminId);
         } catch (RuntimeException e) {
-            // Convertir RuntimeException a Exception para mantener compatibilidad con interfaz
+            // Convertir RuntimeException a Exception para mantener compatibilidad con
+            // interfaz
             throw new Exception(e.getMessage(), e);
         }
     }

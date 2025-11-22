@@ -34,60 +34,50 @@ public class MovementsController {
     }
 
     @PostMapping("/create")
-public ResponseEntity<?> createMovement(
-        @RequestParam("quantity") 
-        @jakarta.validation.constraints.NotNull(message = "La cantidad no puede ser nula")
-        @jakarta.validation.constraints.Min(value = 1, message = "La cantidad debe ser mayor a 0")
-        Integer quantity,
-        
-        @RequestParam("moveType") 
-        @jakarta.validation.constraints.NotNull(message = "El tipo de movimiento no puede ser nulo")
-        MoveType moveType,
-        
-        @RequestParam("id_material") 
-        @jakarta.validation.constraints.NotNull(message = "El ID del material no puede ser nulo")
-        @jakarta.validation.constraints.Min(value = 1, message = "El ID del material debe ser mayor a 0")
-        Integer idMaterial,
-        
-        @RequestParam(value = "comment", required = false) 
-        @jakarta.validation.constraints.Size(max = 500, message = "El comentario no puede exceder 500 caracteres")
-        @com.techmate.techmate.validation.SafeString(allowSpecial = true)
-        String comment, // Agregar comentario opcional
-        
-        Authentication authentication) {
+    public ResponseEntity<?> createMovement(
+            @RequestParam("quantity") @jakarta.validation.constraints.NotNull(message = "La cantidad no puede ser nula") @jakarta.validation.constraints.Min(value = 1, message = "La cantidad debe ser mayor a 0") Integer quantity,
 
-    MovementsDTO movementsDTO = new MovementsDTO();
-    movementsDTO.setQuantity(quantity);
-    movementsDTO.setMoveType(moveType);
-    movementsDTO.setId(idMaterial);
-    movementsDTO.setDate(new Date());
-    movementsDTO.setComment(comment); // Establecer el comentario
+            @RequestParam("moveType") @jakarta.validation.constraints.NotNull(message = "El tipo de movimiento no puede ser nulo") MoveType moveType,
 
-    Integer userId = null;
+            @RequestParam("id_material") @jakarta.validation.constraints.NotNull(message = "El ID del material no puede ser nulo") @jakarta.validation.constraints.Min(value = 1, message = "El ID del material debe ser mayor a 0") Integer idMaterial,
 
-    // Obtener información del usuario desde el SecurityContext
-    String userEmail = authentication.getName(); // Obtenemos el email del usuario autenticado
-    log.info("Usuario autenticado: {}", userEmail);
+            @RequestParam(value = "comment", required = false) @jakarta.validation.constraints.Size(max = 500, message = "El comentario no puede exceder 500 caracteres") @com.techmate.techmate.validation.SafeString(allowSpecial = true) String comment, // Agregar
+                                                                                                                                                                                                                                                            // comentario
+                                                                                                                                                                                                                                                            // opcional
 
-    // Obtener roles del usuario
-    String userRole = TokenUtils.getAuthenticatedUserRole();
-    log.info("Rol del usuario: {}", userRole);
+            Authentication authentication) {
 
-    // TODO: Implementar método en el servicio para obtener userId por email
-    // Por ahora usamos un placeholder - en una implementación real:
-    // userId = userService.getUserIdByEmail(userEmail);
-    userId = extractUserIdFromAuthentication(authentication);
+        MovementsDTO movementsDTO = new MovementsDTO();
+        movementsDTO.setQuantity(quantity);
+        movementsDTO.setMoveType(moveType);
+        movementsDTO.setId(idMaterial);
+        movementsDTO.setDate(new Date());
+        movementsDTO.setComment(comment); // Establecer el comentario
 
-    MovementsDTO createdMovement = movementsService.createMovementsDTO(movementsDTO, userId);
-    MovementResponse resp = movementsMapper.toResponse(createdMovement);
-    return ResponseEntity.status(HttpStatus.CREATED).body(resp);
-}
+        Integer userId = null;
 
+        // Obtener información del usuario desde el SecurityContext
+        String userEmail = authentication.getName(); // Obtenemos el email del usuario autenticado
+        log.info("Usuario autenticado: {}", userEmail);
+
+        // Obtener roles del usuario
+        String userRole = TokenUtils.getAuthenticatedUserRole();
+        log.info("Rol del usuario: {}", userRole);
+
+        // TODO: Implementar método en el servicio para obtener userId por email
+        // Por ahora usamos un placeholder - en una implementación real:
+        // userId = userService.getUserIdByEmail(userEmail);
+        userId = extractUserIdFromAuthentication(authentication);
+
+        MovementsDTO createdMovement = movementsService.createMovementsDTO(movementsDTO, userId);
+        MovementResponse resp = movementsMapper.toResponse(createdMovement);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resp);
+    }
 
     // Obtener un movimiento por ID
     @GetMapping("/{id}")
     public ResponseEntity<MovementResponse> getMovementById(@PathVariable("id") Integer id) {
-        
+
         MovementsDTO movementsDTO = movementsService.getMovementsByID(id);
         if (movementsDTO == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -98,7 +88,7 @@ public ResponseEntity<?> createMovement(
 
     @GetMapping("/all")
     public ResponseEntity<List<MovementResponse>> getAllMovements() {
-        
+
         // Llamar al servicio para obtener la lista de movimientos
         List<MovementsDTO> movementsList = movementsService.getAllMovementsDTO();
 
@@ -118,7 +108,7 @@ public ResponseEntity<?> createMovement(
 
     @GetMapping("/type/{type}")
     public ResponseEntity<List<MovementResponse>> getMovementsByType(@PathVariable String type) {
-        
+
         List<MovementsDTO> movementDTOsList = movementsService.getMovementsByType(type);
 
         if (movementDTOsList.isEmpty()) {
@@ -136,7 +126,7 @@ public ResponseEntity<?> createMovement(
     public ResponseEntity<List<MovementResponse>> getMovementsByDate(
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
             @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        
+
         List<MovementsDTO> movementsDTOs = movementsService.getMovementsByDate(startDate, endDate);
 
         if (movementsDTOs.isEmpty()) {
@@ -152,7 +142,7 @@ public ResponseEntity<?> createMovement(
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteMovement(@PathVariable Integer id) {
-        
+
         movementsService.deleteMovementById(id);
         return ResponseEntity.noContent().build(); // 204 No Content
     }
@@ -171,7 +161,7 @@ public ResponseEntity<?> createMovement(
                     // Por ahora usamos el token si está disponible
                     log.info("Usuario autenticado por email: {}", userEmail);
                 }
-                
+
                 // Intentar obtener el ID desde los detalles del token JWT
                 if (authentication.getDetails() instanceof Map) {
                     @SuppressWarnings("unchecked")
@@ -180,7 +170,7 @@ public ResponseEntity<?> createMovement(
                         return ((Number) details.get("id")).intValue();
                     }
                 }
-                
+
                 // Último recurso: usar credentials si es un token
                 if (authentication.getCredentials() != null) {
                     String token = authentication.getCredentials().toString();
@@ -196,5 +186,3 @@ public ResponseEntity<?> createMovement(
     }
 
 }
-
-

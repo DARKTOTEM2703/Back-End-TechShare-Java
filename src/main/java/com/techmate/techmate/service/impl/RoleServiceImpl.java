@@ -20,10 +20,10 @@ public class RoleServiceImpl implements RoleService {
     private final com.techmate.techmate.service.role.manager.RoleAssociationManager roleAssociationManager;
 
     public RoleServiceImpl(RoleRepository roleRepository,
-                           com.techmate.techmate.service.role.mapper.RoleMapper roleMapper,
-                           com.techmate.techmate.service.role.validator.RoleValidator roleValidator,
-                           com.techmate.techmate.service.role.query.RoleQueryService roleQueryService,
-                           com.techmate.techmate.service.role.manager.RoleAssociationManager roleAssociationManager) {
+            com.techmate.techmate.service.role.mapper.RoleMapper roleMapper,
+            com.techmate.techmate.service.role.validator.RoleValidator roleValidator,
+            com.techmate.techmate.service.role.query.RoleQueryService roleQueryService,
+            com.techmate.techmate.service.role.manager.RoleAssociationManager roleAssociationManager) {
         this.roleRepository = roleRepository;
         this.roleMapper = roleMapper;
         this.roleValidator = roleValidator;
@@ -51,22 +51,22 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RoleDTO getRoleById(int roleId) {
-    return roleQueryService.getById(roleId);
+        return roleQueryService.getById(roleId);
     }
 
     @Override
     public RoleDTO updateRole(int roleId, RoleDTO roleDTO) {
-    Role rol = roleRepository.findById(roleId)
-        .orElseThrow(() -> new RuntimeException("Role not found with ID: " + roleId));
-    roleValidator.validateUniqueName(roleDTO.getName());
-    rol.setNombre(roleDTO.getName());
-    Role updatedRole = roleRepository.save(rol);
-    return convertToDTO(updatedRole);
+        Role rol = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Role not found with ID: " + roleId));
+        roleValidator.validateUniqueName(roleDTO.getName());
+        rol.setNombre(roleDTO.getName());
+        Role updatedRole = roleRepository.save(rol);
+        return convertToDTO(updatedRole);
     }
 
     @Override
     public List<RoleDTO> getAllRole() {
-    return roleQueryService.getAllRoles();
+        return roleQueryService.getAllRoles();
     }
 
     public String getRoleNameById(int roleId) {
@@ -87,5 +87,3 @@ public class RoleServiceImpl implements RoleService {
     }
 
 }
-
-

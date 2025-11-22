@@ -34,33 +34,32 @@ public class BorrowController {
 
     // Actualizar el estado de un préstamo
     @PutMapping("/update/{borrowId}")
-public ResponseEntity<?> updateBorrowStatus(
-        @PathVariable Integer borrowId,
-        @RequestParam("status") Status newStatus,
-        HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> updateBorrowStatus(
+            @PathVariable Integer borrowId,
+            @RequestParam("status") Status newStatus,
+            HttpServletRequest request) throws Exception {
 
-    BorrowDTO borrowDTO = new BorrowDTO();
+        BorrowDTO borrowDTO = new BorrowDTO();
 
-    borrowDTO.setStartDate(new Date());
+        borrowDTO.setStartDate(new Date());
 
-    String token = request.getHeader("Authorization");
-    Integer adminId = null;
+        String token = request.getHeader("Authorization");
+        Integer adminId = null;
 
-    if (token != null && token.startsWith("Bearer ")) {
-        token = token.substring(7);
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
 
-        adminId = borrowService.getUserIdFromToken(token);
-        System.out.println("Id de usuario extraído del token:  " + adminId);
+            adminId = borrowService.getUserIdFromToken(token);
+            System.out.println("Id de usuario extraído del token:  " + adminId);
+        }
+
+        borrowService.updateBorrowStatus(borrowId, newStatus, adminId);
+        return ResponseEntity.ok("Estado del préstamo actualizado correctamente.");
     }
-
-    borrowService.updateBorrowStatus(borrowId, newStatus, adminId);
-    return ResponseEntity.ok("Estado del préstamo actualizado correctamente.");
-}
-
 
     @GetMapping("/all")
     public ResponseEntity<List<BorrowResponse>> getAllBorrow() {
-        
+
         List<BorrowDTO> borrowsList = borrowService.getAllBorrowDTO();
 
         if (borrowsList.isEmpty()) {
@@ -68,15 +67,10 @@ public ResponseEntity<?> updateBorrowStatus(
         }
 
         List<BorrowResponse> response = borrowsList.stream()
-            .map(b -> borrowMapper.toResponse(b))
-            .toList();
+                .map(b -> borrowMapper.toResponse(b))
+                .toList();
 
         return ResponseEntity.ok(response);
     }
-    
-    
-
 
 }
-
-

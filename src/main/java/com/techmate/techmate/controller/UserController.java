@@ -50,5 +50,3 @@ public class UserController {
                         HttpStatus.NOT_FOUND, "Usuario con ID " + id + " no encontrado"));
     }
 }
-
-

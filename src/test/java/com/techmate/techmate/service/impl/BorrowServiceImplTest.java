@@ -138,9 +138,9 @@ class BorrowServiceImplTest {
         when(borrowStockManager.getAvailableStock(anyInt())).thenAnswer(inv -> testMaterial.getBorrowable_stock());
         // Validación dinámica: validar disponibilidad lanzando excepción si se solicita más de lo disponible
         doAnswer(inv -> {
-            Integer materialId = inv.getArgument(0);
-            Integer qty = inv.getArgument(1);
-            if (materialId.equals(testMaterial.getId())) {
+            int materialId = inv.getArgument(0);
+            int qty = inv.getArgument(1);
+            if (materialId == testMaterial.getId()) {
                 if (testMaterial.getBorrowable_stock() < qty) {
                     throw com.techmate.techmate.exception.BorrowBusinessException.insufficientStock(materialId, qty, testMaterial.getBorrowable_stock());
                 }
@@ -150,9 +150,9 @@ class BorrowServiceImplTest {
 
         // Reducir stock en el objeto de prueba cuando se invoque reduceStock
         doAnswer(inv -> {
-            Integer materialId = inv.getArgument(0);
-            Integer qty = inv.getArgument(1);
-            if (materialId.equals(testMaterial.getId())) {
+            int materialId = inv.getArgument(0);
+            int qty = inv.getArgument(1);
+            if (materialId == testMaterial.getId()) {
                 testMaterial.setBorrowable_stock(testMaterial.getBorrowable_stock() - qty);
             }
             return null;
@@ -160,13 +160,32 @@ class BorrowServiceImplTest {
 
         // Restaurar stock en el objeto de prueba cuando se invoque restoreStock
         doAnswer(inv -> {
-            Integer materialId = inv.getArgument(0);
-            Integer qty = inv.getArgument(1);
-            if (materialId.equals(testMaterial.getId())) {
+            int materialId = inv.getArgument(0);
+            int qty = inv.getArgument(1);
+            if (materialId == testMaterial.getId()) {
                 testMaterial.setBorrowable_stock(testMaterial.getBorrowable_stock() + qty);
             }
             return null;
         }).when(borrowStockManager).restoreStock(anyInt(), anyInt());
+        
+        // ✅ SRP: Configurar mocks para los nuevos métodos con auditoría
+        doAnswer(inv -> {
+            Materials material = inv.getArgument(0);
+            int qty = inv.getArgument(1);  // int primitivo, no Integer
+            if (material.getId() == testMaterial.getId()) {
+                testMaterial.setBorrowable_stock(testMaterial.getBorrowable_stock() - qty);
+            }
+            return null;
+        }).when(borrowStockManager).reserveStockAndLogMovement(any(), anyInt(), any(), any());
+        
+        doAnswer(inv -> {
+            Materials material = inv.getArgument(0);
+            int qty = inv.getArgument(1);  // int primitivo, no Integer
+            if (material.getId() == testMaterial.getId()) {
+                testMaterial.setBorrowable_stock(testMaterial.getBorrowable_stock() + qty);
+            }
+            return null;
+        }).when(borrowStockManager).releaseStockAndLogMovement(any(), anyInt(), any(), any());
 
         // El processor no necesita un stub específico aquí; las pruebas usan el servicio directamente
     }
@@ -187,7 +206,8 @@ class BorrowServiceImplTest {
     // Then: Estado cambia a LOANED and stock se reduce
         verify(borrowRepository).findById(1);
         verify(usuarioRepository).findById(200);
-    verify(borrowStockManager).reduceStock(anyInt(), anyInt());
+    // ✅ SRP: Ahora usa reserveStockAndLogMovement en lugar de reduceStock
+    verify(borrowStockManager).reserveStockAndLogMovement(any(), anyInt(), any(), any());
     verify(borrowRepository).save(any(Borrow.class));
         
         // ✅ Verificar que se publica BorrowCreatedEvent
@@ -238,7 +258,8 @@ class BorrowServiceImplTest {
         borrowService.updateBorrowStatus(1, Status.RETURNED, 200);
 
         // Then: Estado cambia a RETURNED, stock se restaura
-    verify(borrowStockManager).restoreStock(anyInt(), anyInt());
+    // ✅ SRP: Ahora usa releaseStockAndLogMovement en lugar de restoreStock
+    verify(borrowStockManager).releaseStockAndLogMovement(any(), anyInt(), any(), any());
     verify(borrowRepository).save(any(Borrow.class));
         
         // ✅ Verificar que se publica BorrowReturnedEvent
@@ -258,6 +279,10 @@ class BorrowServiceImplTest {
         
         when(borrowRepository.findById(1)).thenReturn(Optional.of(testBorrow));
         when(usuarioRepository.findById(200)).thenReturn(Optional.of(testAdmin));
+        
+        // ✅ SRP: Configurar mock para que lance excepción en reserveStockAndLogMovement
+        doThrow(com.techmate.techmate.exception.BorrowBusinessException.insufficientStock(10, 3, 2))
+            .when(borrowStockManager).reserveStockAndLogMovement(any(), anyInt(), any(), any());
 
         // When & Then: Debe lanzar excepción por stock insuficiente
     assertThatThrownBy(() -> borrowService.updateBorrowStatus(1, Status.BORROWED, 200))

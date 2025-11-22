@@ -13,7 +13,7 @@ class TypeConversionTest {
     void stringToIntegerConversionShouldWork() {
         String str = "42";
         Integer num = Integer.parseInt(str);
-        
+
         assertEquals(42, num);
     }
 
@@ -22,7 +22,7 @@ class TypeConversionTest {
     void integerToStringConversionShouldWork() {
         Integer num = 42;
         String str = String.valueOf(num);
-        
+
         assertEquals("42", str);
     }
 
@@ -31,7 +31,7 @@ class TypeConversionTest {
     void stringToDoubleConversionShouldWork() {
         String str = "3.14";
         Double num = Double.parseDouble(str);
-        
+
         assertTrue(Math.abs(3.14 - num) < 0.001);
     }
 
@@ -40,7 +40,7 @@ class TypeConversionTest {
     void booleanStringConversionShouldWork() {
         String str1 = "true";
         String str2 = "false";
-        
+
         assertTrue(Boolean.parseBoolean(str1));
         assertFalse(Boolean.parseBoolean(str2));
     }
@@ -50,7 +50,7 @@ class TypeConversionTest {
     void primitiveToWrapperConversionShouldWork() {
         int primitive = 42;
         Integer wrapper = Integer.valueOf(primitive);
-        
+
         assertEquals(primitive, wrapper);
     }
 
@@ -59,7 +59,7 @@ class TypeConversionTest {
     void wrapperToPrimitiveConversionShouldWork() {
         Integer wrapper = 42;
         int primitive = wrapper.intValue();
-        
+
         assertEquals(42, primitive);
     }
 
@@ -68,7 +68,7 @@ class TypeConversionTest {
     void autoBoxingShouldWork() {
         int num = 42;
         Integer boxed = num; // Auto-boxing
-        
+
         assertEquals(num, boxed);
     }
 
@@ -77,7 +77,7 @@ class TypeConversionTest {
     void autoUnboxingShouldWork() {
         Integer boxed = 42;
         int unboxed = boxed; // Auto-unboxing
-        
+
         assertEquals(42, unboxed);
     }
 
@@ -86,7 +86,7 @@ class TypeConversionTest {
     void stringToLongConversionShouldWork() {
         String str = "1000000";
         Long num = Long.parseLong(str);
-        
+
         assertEquals(1000000L, num);
     }
 
@@ -95,7 +95,7 @@ class TypeConversionTest {
     void charToStringConversionShouldWork() {
         char ch = 'A';
         String str = String.valueOf(ch);
-        
+
         assertEquals("A", str);
     }
 
@@ -103,7 +103,7 @@ class TypeConversionTest {
     @DisplayName("Object casting should be safe")
     void objectCastingShouldBeSafe() {
         Object obj = "test";
-        
+
         assertTrue(obj instanceof String);
         String str = (String) obj;
         assertEquals("test", str);
@@ -114,7 +114,7 @@ class TypeConversionTest {
     void enumConversionShouldWork() {
         String enumStr = "PENDING";
         TestEnum enumValue = TestEnum.valueOf(enumStr);
-        
+
         assertEquals(TestEnum.PENDING, enumValue);
     }
 
@@ -129,4 +129,3 @@ class TypeConversionTest {
         assertTrue(millis > 0);
     }
 }
-

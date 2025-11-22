@@ -13,7 +13,7 @@ class NumberOperationsTest {
     void integerArithmeticShouldWorkCorrectly() {
         int a = 10;
         int b = 3;
-        
+
         assertEquals(13, a + b);
         assertEquals(7, a - b);
         assertEquals(30, a * b);
@@ -25,7 +25,7 @@ class NumberOperationsTest {
     void longArithmeticShouldWorkCorrectly() {
         long a = 1000000L;
         long b = 500000L;
-        
+
         assertEquals(1500000L, a + b);
         assertEquals(500000L, a - b);
     }
@@ -35,7 +35,7 @@ class NumberOperationsTest {
     void doubleArithmeticShouldWorkCorrectly() {
         double a = 10.5;
         double b = 3.2;
-        
+
         assertTrue(Math.abs(13.7 - (a + b)) < 0.001);
         assertTrue(Math.abs(7.3 - (a - b)) < 0.001);
     }
@@ -45,7 +45,7 @@ class NumberOperationsTest {
     void moduloOperationShouldWork() {
         int a = 10;
         int b = 3;
-        
+
         assertEquals(1, a % b);
     }
 
@@ -108,7 +108,7 @@ class NumberOperationsTest {
     void floatingPointPrecisionConcept() {
         double a = 0.1 + 0.2;
         double b = 0.3;
-        
+
         // Use delta comparison for floating point
         assertTrue(Math.abs(a - b) < 0.0001);
     }
@@ -119,7 +119,7 @@ class NumberOperationsTest {
         int num = 42;
         String str = String.valueOf(num);
         assertEquals("42", str);
-        
+
         int parsed = Integer.parseInt(str);
         assertEquals(42, parsed);
     }
@@ -129,10 +129,9 @@ class NumberOperationsTest {
     void bitwiseOperationsShouldWork() {
         int a = 5; // 0101
         int b = 3; // 0011
-        
+
         assertEquals(7, a | b); // OR
         assertEquals(1, a & b); // AND
         assertEquals(6, a ^ b); // XOR
     }
 }
-

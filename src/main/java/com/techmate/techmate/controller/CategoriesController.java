@@ -31,7 +31,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
  * relacionadas
  * con las categorías en el sistema.
  */
-// CORS configurado globalmente en WebSecurityConfig - no necesita @CrossOrigin aquí
+// CORS configurado globalmente en WebSecurityConfig - no necesita @CrossOrigin
+// aquí
 @RestController
 @RequestMapping("admin/categories")
 @Validated
@@ -55,7 +56,7 @@ public class CategoriesController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createCategory(
-        @Valid @ModelAttribute CategoryRequest categoriesRequest,
+            @Valid @ModelAttribute CategoryRequest categoriesRequest,
             @RequestParam("image") MultipartFile image,
             BindingResult bindingResult) {
 
@@ -86,7 +87,7 @@ public class CategoriesController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable("id") Integer id) {
-        
+
         CategoriesDTO category = categoriesService.getCategoryById(id);
         if (category == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -103,7 +104,7 @@ public class CategoriesController {
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateCategory(
             @PathVariable("id") Integer id,
-        @Valid @ModelAttribute CategoryRequest categoriesRequest,
+            @Valid @ModelAttribute CategoryRequest categoriesRequest,
             @RequestParam(value = "image", required = false) MultipartFile image,
             BindingResult bindingResult) { // Agregamos BindingResult
 
@@ -136,10 +137,10 @@ public class CategoriesController {
 
     @GetMapping("/all")
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
-        
+
         List<CategoryResponse> categories = categoriesService.getAllCategories().stream()
-            .map(category -> categoriesMapper.toResponse(category, appProperties.getServerUrl()))
-            .collect(Collectors.toList());
+                .map(category -> categoriesMapper.toResponse(category, appProperties.getServerUrl()))
+                .collect(Collectors.toList());
 
         if (categories.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // No hay subcategorías
@@ -149,7 +150,7 @@ public class CategoriesController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable("id") Integer id) {
-        
+
         // Delegar la eliminación al servicio directamente
         categoriesService.deleteCategory(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Categoría eliminada correctamente
@@ -157,7 +158,7 @@ public class CategoriesController {
 
     @GetMapping("/images/{filename:.+}")
     public ResponseEntity<byte[]> getImage(@PathVariable String filename) throws IOException {
-        
+
         byte[] imageBytes = imageStorageStrategy.getImage(filename); // Utiliza el método getImage de la estrategia
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE,
@@ -165,5 +166,3 @@ public class CategoriesController {
                 .body(imageBytes);
     }
 }
-
-

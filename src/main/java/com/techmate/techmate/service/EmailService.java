@@ -38,23 +38,23 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            
+
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true); // true = HTML
-            
+
             mailSender.send(message);
         } catch (MessagingException me) {
             // MIME message construction or sending failed
-            org.slf4j.LoggerFactory.getLogger(EmailService.class).error("MessagingException sending HTML email to {}", to, me);
+            org.slf4j.LoggerFactory.getLogger(EmailService.class).error("MessagingException sending HTML email to {}",
+                    to, me);
         } catch (MailException me) {
             // Spring's MailException for actual sending failures
-            org.slf4j.LoggerFactory.getLogger(EmailService.class).error("MailException sending HTML email to {}", to, me);
+            org.slf4j.LoggerFactory.getLogger(EmailService.class).error("MailException sending HTML email to {}", to,
+                    me);
         } catch (IllegalArgumentException e) {
             // Parameter validation errors
             org.slf4j.LoggerFactory.getLogger(EmailService.class).error("Invalid email parameter: {}", to, e);
         }
     }
 }
-
-

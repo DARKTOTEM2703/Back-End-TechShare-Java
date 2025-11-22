@@ -62,7 +62,7 @@ class EmailControllerTest {
         // Arrange
         doNothing().when(emailService).sendEmail(anyString(), anyString(), anyString());
 
-        String[] emails = {"user1@example.com", "user2@example.com", "user3@example.com"};
+        String[] emails = { "user1@example.com", "user2@example.com", "user3@example.com" };
         String subject = "Bulk Notification";
         String text = "Important message";
 
@@ -130,7 +130,7 @@ class EmailControllerTest {
         // Arrange
         String to = "test@example.com";
         String subject = "Empty Message";
-        String text = "This is a valid message body";  // Debe cumplir @Size(min=5) y @NotBlank
+        String text = "This is a valid message body"; // Debe cumplir @Size(min=5) y @NotBlank
 
         doNothing().when(emailService).sendEmail(to, subject, text);
 
@@ -145,4 +145,3 @@ class EmailControllerTest {
         verify(emailService).sendEmail(to, subject, text);
     }
 }
-

@@ -14,7 +14,8 @@ public class MoveTypeConverter implements Converter<String, MoveType> {
 
     @Override
     public MoveType convert(@Nullable String source) {
-        if (source == null) return null;
+        if (source == null)
+            return null;
         String s = source.trim().toUpperCase();
         // Legacy mappings
         switch (s) {
@@ -34,5 +35,3 @@ public class MoveTypeConverter implements Converter<String, MoveType> {
         }
     }
 }
-
-

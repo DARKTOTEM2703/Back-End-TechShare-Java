@@ -19,31 +19,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MaterialsDTO {
-    
+
     @NotNull(message = "El ID del material no puede ser nulo")
     @Min(value = 1, message = "El ID del material debe ser mayor a 0")
     private int id;
-    
+
     private String imagePath;
-    
+
     @NotBlank(message = "El nombre del material no puede estar vacío")
     @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
     @SafeString(allowSpecial = false)
     private String name;
-    
+
     @NotBlank(message = "La descripción del material no puede estar vacía")
     @Size(min = 5, max = 500, message = "La descripción debe tener entre 5 y 500 caracteres")
     @SafeString(allowSpecial = true)
     private String description;
-    
+
     @NotNull(message = "El precio no puede ser nulo")
     @Min(value = 0, message = "El precio debe ser mayor o igual a 0")
     private double price;
-    
+
     @NotNull(message = "El stock no puede ser nulo")
     @Min(value = 0, message = "El stock debe ser mayor o igual a 0")
     private int stock;
-    
+
     @NotNull(message = "El stock prestable no puede ser nulo")
     @Min(value = 0, message = "El stock prestable debe ser mayor o igual a 0")
     private int borrowable_stock;
@@ -51,10 +51,10 @@ public class MaterialsDTO {
     @NotNull(message = "El ID de la subcategoría no puede ser nulo")
     @Min(value = 1, message = "El ID de la subcategoría debe ser mayor a 0")
     private int subCategoryId;
-    
+
     private String subCategoryName;
 
-    private List<Integer> roleIds; 
+    private List<Integer> roleIds;
     private List<String> roleNames;
 
     public int getId() {
@@ -64,10 +64,15 @@ public class MaterialsDTO {
     public void setId(int id) {
         this.id = id;
     }
-    
+
     // ✅ COMPATIBILITY METHOD
-    public int getMaterialsId() { return this.id; }
-    public void setMaterialsId(int materialsId) { this.id = materialsId; }
+    public int getMaterialsId() {
+        return this.id;
+    }
+
+    public void setMaterialsId(int materialsId) {
+        this.id = materialsId;
+    }
 
     public String getName() {
         return name;
@@ -117,4 +122,3 @@ public class MaterialsDTO {
         this.subCategoryName = subCategoryName;
     }
 }
-

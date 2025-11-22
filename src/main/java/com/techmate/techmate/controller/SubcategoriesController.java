@@ -58,7 +58,7 @@ public class SubcategoriesController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getSubcategoryById(@PathVariable("id") Integer id) {
-        
+
         SubCategoriesDTO subcategory = subcategoriesService.getSubCategoryById(id);
 
         if (subcategory == null) {
@@ -90,8 +90,8 @@ public class SubcategoriesController {
     public ResponseEntity<?> getAllSubcategories() {
         try {
             List<SubCategoryResponse> subcategories = subcategoriesService.getAllSubCategories().stream()
-                .map(subcategory -> subCategoriesMapper.toResponse(subcategory, serverUrl))
-                .collect(Collectors.toList());
+                    .map(subcategory -> subCategoriesMapper.toResponse(subcategory, serverUrl))
+                    .collect(Collectors.toList());
 
             if (subcategories == null || subcategories.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT); // No hay subcategorías
@@ -100,20 +100,21 @@ public class SubcategoriesController {
             return new ResponseEntity<>(subcategories, HttpStatus.OK);
         } catch (Exception e) {
             // Manejo de errores inesperados
-            return new ResponseEntity<>("Error al obtener las subcategorías: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error al obtener las subcategorías: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteSubcategory(@PathVariable("id") Integer id) {
-        
+
         subcategoriesService.deleteSubCategory(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Eliminación exitosa
     }
 
     @GetMapping("/images/{filename:.+}")
     public ResponseEntity<byte[]> getImage(@PathVariable String filename) throws IOException {
-        
+
         Path imagePath = Paths.get(storageLocation).resolve(filename);
         File file = imagePath.toFile();
 
@@ -127,5 +128,3 @@ public class SubcategoriesController {
                 .body(imageBytes);
     }
 }
-
-

@@ -2,6 +2,7 @@ package com.techmate.techmate.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Table(name = "details_borrow")
@@ -28,6 +29,7 @@ public class DetailsBorrow {
 
     @ManyToOne
     @JoinColumn(name = "borrow_id")
+    @ToString.Exclude  // ✅ Evita ciclo infinito con Borrow.toString()
     private Borrow borrow;     // Préstamo asociado a este detalle
 
     // Compatibility getters/setters

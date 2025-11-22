@@ -43,7 +43,7 @@ class EntityStateManagementTest {
     void entityStateTransitionsShouldWork() {
         String state = "PENDING";
         assertEquals("PENDING", state);
-        
+
         state = "COMPLETED";
         assertEquals("COMPLETED", state);
     }
@@ -61,7 +61,7 @@ class EntityStateManagementTest {
     void multipleEntitiesShouldBeIndependent() {
         Integer id1 = 1;
         Integer id2 = 2;
-        
+
         assertNotEquals(id1, id2);
     }
 
@@ -70,7 +70,7 @@ class EntityStateManagementTest {
     void entityEqualityBasedOnIdShouldWork() {
         Integer id1 = 10;
         Integer id2 = 10;
-        
+
         assertEquals(id1, id2);
     }
 
@@ -86,9 +86,8 @@ class EntityStateManagementTest {
     void entityCollectionsShouldBeIndependent() {
         java.util.List<Integer> list1 = new java.util.ArrayList<>();
         java.util.List<Integer> list2 = new java.util.ArrayList<>();
-        
+
         list1.add(1);
         assertFalse(list2.contains(1));
     }
 }
-

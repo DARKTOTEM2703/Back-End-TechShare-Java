@@ -56,8 +56,12 @@ public class MaterialsMapperTest {
         sc.setSubCategoryId(2);
         m.setSubCategory(sc);
 
-        Role r = new Role(); r.setId(3); r.setNombre("student");
-        RoleMaterials rm = new RoleMaterials(); rm.setRole(r); rm.setMaterials(m);
+        Role r = new Role();
+        r.setId(3);
+        r.setNombre("student");
+        RoleMaterials rm = new RoleMaterials();
+        rm.setRole(r);
+        rm.setMaterials(m);
         m.setRoleMaterials(Arrays.asList(rm));
 
         when(subCategoriesService.getSubCategoryNameById(2)).thenReturn("Electronics");
@@ -89,10 +93,12 @@ public class MaterialsMapperTest {
         dto.setSubCategoryId(5);
         dto.setRoleIds(Arrays.asList(7));
 
-        SubCategories sc = new SubCategories(); sc.setSubCategoryId(5);
+        SubCategories sc = new SubCategories();
+        sc.setSubCategoryId(5);
         when(subCategoriesRepository.findById(5)).thenReturn(Optional.of(sc));
 
-        Role role = new Role(); role.setId(7);
+        Role role = new Role();
+        role.setId(7);
         when(roleRepository.findById(7)).thenReturn(Optional.of(role));
 
         Materials m = materialsMapper.toEntity(dto);
@@ -106,4 +112,3 @@ public class MaterialsMapperTest {
         assertThat(m.getRoleMaterials().get(0).getRole().getId()).isEqualTo(7);
     }
 }
-

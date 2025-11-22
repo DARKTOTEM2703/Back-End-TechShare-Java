@@ -24,4 +24,3 @@ public class MovementResponse {
     private int materialsId;
     private String materialsName;
 }
-

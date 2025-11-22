@@ -2,6 +2,7 @@ package com.techmate.techmate.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class Borrow {
     private Usuario admin;
     
     @OneToMany(mappedBy = "borrow", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude  // ✅ Evita ciclo infinito con DetailsBorrow.toString()
     private List<DetailsBorrow> details;
 
     // ══════════════════════════════════════════════════════════════

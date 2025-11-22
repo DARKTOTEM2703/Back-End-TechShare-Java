@@ -21,23 +21,23 @@ public class UsuarioDTO {
     @NotNull(message = "El ID del usuario no puede ser nulo")
     @Min(value = 1, message = "El ID del usuario debe ser mayor a 0")
     private Integer id;
-    
+
     @NotBlank(message = "El nombre de usuario no puede estar vacío")
     private String username;
-    
+
     @NotBlank(message = "El nombre no puede estar vacío")
     private String firstName;
-    
+
     @NotBlank(message = "El apellido no puede estar vacío")
     private String lastName;
-    
+
     @NotBlank(message = "El email no puede estar vacío")
     @Email(message = "El email debe ser válido")
     private String email;
-    
+
     @NotNull(message = "Los roles no pueden ser nulos")
     private Set<String> roles;
-    
+
     // ══════════════════════════════════════════════════════════════
     // ✅ COMPATIBLE METHODS (Legacy code support)
     // ══════════════════════════════════════════════════════════════
@@ -47,21 +47,21 @@ public class UsuarioDTO {
     public Integer getId() {
         return this.id;
     }
-    
+
     /**
      * Método compatible para código legacy que usa 'id'.
      */
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     /**
      * Método compatible para código legacy que usa 'userName'.
      */
     public String getUserName() {
         return this.username;
     }
-    
+
     /**
      * Método compatible para código legacy que usa 'userName'.
      */
@@ -69,5 +69,3 @@ public class UsuarioDTO {
         this.username = userName;
     }
 }
-
-

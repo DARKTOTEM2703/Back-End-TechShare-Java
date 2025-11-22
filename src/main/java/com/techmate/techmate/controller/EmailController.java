@@ -20,24 +20,12 @@ public class EmailController {
 
     @GetMapping("/sendEmail")
     public String sendEmail(
-            @RequestParam 
-            @Email(message = "El campo 'to' debe ser un email válido")
-            String to, 
-            
-            @RequestParam 
-            @NotBlank(message = "El asunto no puede estar vacío")
-            @Size(min = 3, max = 200, message = "El asunto debe tener entre 3 y 200 caracteres")
-            @SafeString(allowSpecial = true)
-            String subject, 
-            
-            @RequestParam 
-            @NotBlank(message = "El cuerpo del mensaje no puede estar vacío")
-            @Size(min = 5, max = 5000, message = "El mensaje debe tener entre 5 y 5000 caracteres")
-            @SafeString(allowSpecial = true)
-            String text) {
+            @RequestParam @Email(message = "El campo 'to' debe ser un email válido") String to,
+
+            @RequestParam @NotBlank(message = "El asunto no puede estar vacío") @Size(min = 3, max = 200, message = "El asunto debe tener entre 3 y 200 caracteres") @SafeString(allowSpecial = true) String subject,
+
+            @RequestParam @NotBlank(message = "El cuerpo del mensaje no puede estar vacío") @Size(min = 5, max = 5000, message = "El mensaje debe tener entre 5 y 5000 caracteres") @SafeString(allowSpecial = true) String text) {
         emailService.sendEmail(to, subject, text);
         return "Email sent successfully!";
     }
 }
-
-

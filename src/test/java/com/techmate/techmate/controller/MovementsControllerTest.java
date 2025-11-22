@@ -14,7 +14,6 @@ import com.techmate.techmate.entity.MoveType;
 import com.techmate.techmate.service.MovementsService;
 import com.techmate.techmate.service.movements.mapper.MovementsMapper;
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -50,14 +49,16 @@ class MovementsControllerTest {
         MovementsDTO dto = new MovementsDTO();
         dto.setId(1);
         dto.setQuantity(5);
-    dto.setMoveType(MoveType.STOCK_ADD);
+        dto.setMoveType(MoveType.STOCK_ADD);
 
-    MovementResponse resp = new MovementResponse(1, MoveType.STOCK_ADD, 5, new java.util.Date(), "", 1, "Admin", 2, "MaterialName");
+        MovementResponse resp = new MovementResponse(1, MoveType.STOCK_ADD, 5, new java.util.Date(), "", 1, "Admin", 2,
+                "MaterialName");
 
         when(movementsService.getMovementsByID(1)).thenReturn(dto);
         when(movementsMapper.toResponse(eq(dto))).thenReturn(resp);
 
-        // call path /admin/movement/1 and include request param id=1 to satisfy the controller signature
+        // call path /admin/movement/1 and include request param id=1 to satisfy the
+        // controller signature
         mockMvc.perform(get("/admin/movement/1").param("id", "1").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -68,16 +69,17 @@ class MovementsControllerTest {
     void createMovement_handlesParamsAndReturnsCreated() throws Exception {
         MovementsDTO reqDto = new MovementsDTO();
         reqDto.setQuantity(3);
-    reqDto.setMoveType(MoveType.BORROW);
+        reqDto.setMoveType(MoveType.BORROW);
         reqDto.setId(2);
 
         MovementsDTO created = new MovementsDTO();
         created.setId(10);
         created.setQuantity(3);
-    created.setMoveType(MoveType.BORROW);
+        created.setMoveType(MoveType.BORROW);
         created.setId(2);
 
-    MovementResponse resp = new MovementResponse(10, MoveType.BORROW, 3, new java.util.Date(), "test", 5, "Admin", 2, "MaterialName");
+        MovementResponse resp = new MovementResponse(10, MoveType.BORROW, 3, new java.util.Date(), "test", 5, "Admin",
+                2, "MaterialName");
 
         String token = JWTTestHelper.createTokenWithRoles(5, "user@example.com", "user", "USER");
         when(movementsService.createMovementsDTO(any(MovementsDTO.class), eq(5))).thenReturn(created);
@@ -101,4 +103,3 @@ class MovementsControllerTest {
                 .andExpect(jsonPath("$.move_type").value("OUT"));
     }
 }
-

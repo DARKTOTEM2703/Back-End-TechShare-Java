@@ -14,7 +14,7 @@ class ArrayListProcessingTest {
     @Test
     @DisplayName("Array creation and access should work")
     void arrayCreationAndAccessShouldWork() {
-        int[] array = {1, 2, 3, 4, 5};
+        int[] array = { 1, 2, 3, 4, 5 };
         assertEquals(5, array.length);
         assertEquals(1, array[0]);
         assertEquals(5, array[4]);
@@ -23,7 +23,7 @@ class ArrayListProcessingTest {
     @Test
     @DisplayName("Array initialization with values")
     void arrayInitializationWithValues() {
-        String[] names = {"Alice", "Bob", "Charlie"};
+        String[] names = { "Alice", "Bob", "Charlie" };
         assertEquals(3, names.length);
         assertEquals("Alice", names[0]);
     }
@@ -31,9 +31,9 @@ class ArrayListProcessingTest {
     @Test
     @DisplayName("List creation from array should work")
     void listCreationFromArrayShouldWork() {
-        Integer[] array = {1, 2, 3};
+        Integer[] array = { 1, 2, 3 };
         List<Integer> list = Arrays.asList(array);
-        
+
         assertEquals(3, list.size());
         assertTrue(list.contains(2));
     }
@@ -45,7 +45,7 @@ class ArrayListProcessingTest {
         list.add("first");
         list.add("second");
         list.add("third");
-        
+
         assertEquals(3, list.size());
         assertEquals("first", list.get(0));
         assertEquals("third", list.get(2));
@@ -58,7 +58,7 @@ class ArrayListProcessingTest {
         list.add("item1");
         list.add("item2");
         list.add("item3");
-        
+
         list.remove("item2");
         assertEquals(2, list.size());
         assertFalse(list.contains("item2"));
@@ -69,20 +69,20 @@ class ArrayListProcessingTest {
     void listIterationShouldWork() {
         List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
         int sum = 0;
-        
+
         for (Integer item : list) {
             sum += item;
         }
-        
+
         assertEquals(15, sum);
     }
 
     @Test
     @DisplayName("Array sorting should work")
     void arraySortingShouldWork() {
-        int[] array = {5, 2, 8, 1, 9};
+        int[] array = { 5, 2, 8, 1, 9 };
         Arrays.sort(array);
-        
+
         assertEquals(1, array[0]);
         assertEquals(9, array[4]);
     }
@@ -90,9 +90,9 @@ class ArrayListProcessingTest {
     @Test
     @DisplayName("Array binary search should work")
     void arrayBinarySearchShouldWork() {
-        int[] array = {1, 2, 3, 4, 5};
+        int[] array = { 1, 2, 3, 4, 5 };
         int index = Arrays.binarySearch(array, 3);
-        
+
         assertEquals(2, index);
     }
 
@@ -103,7 +103,7 @@ class ArrayListProcessingTest {
         List<Integer> filtered = list.stream()
                 .filter(n -> n > 2)
                 .collect(java.util.stream.Collectors.toList());
-        
+
         assertEquals(3, filtered.size());
     }
 
@@ -114,7 +114,7 @@ class ArrayListProcessingTest {
         List<String> uppercase = list.stream()
                 .map(String::toUpperCase)
                 .collect(java.util.stream.Collectors.toList());
-        
+
         assertEquals("HELLO", uppercase.get(0));
         assertEquals("WORLD", uppercase.get(1));
     }
@@ -122,10 +122,10 @@ class ArrayListProcessingTest {
     @Test
     @DisplayName("Array equals should work")
     void arrayEqualsShouldWork() {
-        int[] array1 = {1, 2, 3};
-        int[] array2 = {1, 2, 3};
-        int[] array3 = {1, 2, 4};
-        
+        int[] array1 = { 1, 2, 3 };
+        int[] array2 = { 1, 2, 3 };
+        int[] array3 = { 1, 2, 4 };
+
         assertTrue(Arrays.equals(array1, array2));
         assertFalse(Arrays.equals(array1, array3));
     }
@@ -135,7 +135,7 @@ class ArrayListProcessingTest {
     void arrayFillShouldWork() {
         int[] array = new int[5];
         Arrays.fill(array, 10);
-        
+
         for (int value : array) {
             assertEquals(10, value);
         }
@@ -146,9 +146,8 @@ class ArrayListProcessingTest {
     void listContainsAllShouldWork() {
         List<String> list1 = Arrays.asList("a", "b", "c");
         List<String> list2 = Arrays.asList("a", "b");
-        
+
         assertTrue(list1.containsAll(list2));
         assertFalse(list2.containsAll(list1));
     }
 }
-

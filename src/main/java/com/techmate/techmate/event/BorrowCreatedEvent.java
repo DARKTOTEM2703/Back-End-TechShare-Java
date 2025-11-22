@@ -15,14 +15,14 @@ import com.techmate.techmate.entity.Borrow;
  */
 @Getter
 public class BorrowCreatedEvent extends DomainEvent {
-    
+
     private final Integer borrowId;
     private final Integer userId;
     private final Date borrowDate;
     private final Date startDate;
     private final Date endDate;
     private final double amount;
-    
+
     public BorrowCreatedEvent(Borrow borrow) {
         super(borrow);
         this.borrowId = borrow.getId();
@@ -37,19 +37,16 @@ public class BorrowCreatedEvent extends DomainEvent {
     public Integer getId() {
         return this.borrowId;
     }
-    
+
     @Override
     public String getEventType() {
         return "BORROW_CREATED";
     }
-    
+
     @Override
     public String toString() {
         return String.format(
-            "BorrowCreatedEvent[borrowId=%d, userId=%d, amount=%.2f, eventId=%s]",
-            borrowId, userId, amount, getEventId()
-        );
+                "BorrowCreatedEvent[borrowId=%d, userId=%d, amount=%.2f, eventId=%s]",
+                borrowId, userId, amount, getEventId());
     }
 }
-
-

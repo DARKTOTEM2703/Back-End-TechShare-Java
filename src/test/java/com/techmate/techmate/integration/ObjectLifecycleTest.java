@@ -22,7 +22,7 @@ class ObjectLifecycleTest {
     void objectIdentityShouldBeUnique() {
         Object obj1 = new Object();
         Object obj2 = new Object();
-        
+
         assertNotSame(obj1, obj2);
     }
 
@@ -31,7 +31,7 @@ class ObjectLifecycleTest {
     void objectReferenceEqualityShouldWork() {
         Object obj = new Object();
         Object reference = obj;
-        
+
         assertSame(obj, reference);
     }
 
@@ -40,7 +40,7 @@ class ObjectLifecycleTest {
     void objectToStringShouldNotBeNull() {
         Object obj = new Object();
         String str = obj.toString();
-        
+
         assertNotNull(str);
     }
 
@@ -50,7 +50,7 @@ class ObjectLifecycleTest {
         Object obj = new Object();
         int hash1 = obj.hashCode();
         int hash2 = obj.hashCode();
-        
+
         assertEquals(hash1, hash2);
     }
 
@@ -59,7 +59,7 @@ class ObjectLifecycleTest {
     void objectClassShouldBeRetrievable() {
         Object obj = new Object();
         Class<?> clazz = obj.getClass();
-        
+
         assertNotNull(clazz);
         assertEquals(Object.class, clazz);
     }
@@ -68,7 +68,7 @@ class ObjectLifecycleTest {
     @DisplayName("Object type checking should work")
     void objectTypeCheckingShouldWork() {
         String str = "test";
-        
+
         assertTrue(str instanceof String);
         assertTrue(str instanceof Object);
     }
@@ -78,7 +78,7 @@ class ObjectLifecycleTest {
     void objectCastingShouldWork() {
         Object obj = "test";
         String str = (String) obj;
-        
+
         assertEquals("test", str);
     }
 
@@ -87,7 +87,7 @@ class ObjectLifecycleTest {
     void objectNullComparisonShouldWork() {
         Object obj = null;
         Object notNull = new Object();
-        
+
         assertNull(obj);
         assertNotNull(notNull);
     }
@@ -97,7 +97,7 @@ class ObjectLifecycleTest {
     void objectEqualityOverrideShouldWork() {
         String str1 = "test";
         String str2 = new String("test");
-        
+
         assertEquals(str1, str2);
         assertNotSame(str1, str2);
     }
@@ -107,7 +107,7 @@ class ObjectLifecycleTest {
     void objectStateChangesShouldBeTrackable() {
         StringBuilder sb = new StringBuilder("Hello");
         sb.append(" World");
-        
+
         assertEquals("Hello World", sb.toString());
     }
 
@@ -115,9 +115,8 @@ class ObjectLifecycleTest {
     @DisplayName("Object collection containing should work")
     void objectCollectionContainingShouldWork() {
         java.util.List<String> list = Arrays.asList("a", "b", "c");
-        
+
         assertTrue(list.contains("a"));
         assertFalse(list.contains("d"));
     }
 }
-

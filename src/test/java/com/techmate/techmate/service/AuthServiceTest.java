@@ -49,25 +49,27 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         // Mock AppProperties and its nested configuration
         AppProperties.Verification verification = new AppProperties.Verification();
         verification.setUrl("http://localhost:8080/verify?token=");
         when(appProperties.getVerification()).thenReturn(verification);
-        
+
         // Mock EmailTemplateService
         when(emailTemplateService.generateVerificationEmail(anyString(), anyString()))
-            .thenReturn("<html>Test Email</html>");
-        
+                .thenReturn("<html>Test Email</html>");
+
         // Mock roleRepository para retornar rol 'user' con ID 2
         com.techmate.techmate.entity.Role userRole = new com.techmate.techmate.entity.Role();
-    userRole.setId(2);
-    userRole.setNombre("user");
-    when(roleRepository.findById(2)).thenReturn(Optional.of(userRole));
-    when(roleRepository.findByName("user")).thenReturn(Optional.of(userRole));
-        
-    authService = new AuthService(usuarioRepository, verificationTokenRepository, roleRepository, usuarioRoleRepository, emailService, emailTemplateService, authMapper, appProperties);
+        userRole.setId(2);
+        userRole.setNombre("user");
+        when(roleRepository.findById(2)).thenReturn(Optional.of(userRole));
+        when(roleRepository.findByName("user")).thenReturn(Optional.of(userRole));
+
+        authService = new AuthService(usuarioRepository, verificationTokenRepository, roleRepository,
+                usuarioRoleRepository, emailService, emailTemplateService, authMapper, appProperties);
     }
+
     @Test
     void registerUser_success() throws jakarta.mail.MessagingException {
         RegisterRequest req = new RegisterRequest();
@@ -98,4 +100,3 @@ class AuthServiceTest {
         assertThrows(IllegalArgumentException.class, () -> authService.registerUser(req));
     }
 }
-

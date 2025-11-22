@@ -14,12 +14,13 @@ import com.techmate.techmate.entity.Usuario;
  * Implementación de la interfaz UserDetails para integrar la autenticación
  * de Spring Security con la entidad Usuario.
  * 
- * Esta clase convierte la información de la entidad Usuario en un formato 
+ * Esta clase convierte la información de la entidad Usuario en un formato
  * que Spring Security entiende para realizar la autenticación y autorización.
  * 
  * IMPORTANTE: Esta clase NO almacena la entidad Usuario completa para evitar
  * problemas de lazy loading y ConcurrentModificationException con Hibernate.
- * En su lugar, extrae solo los datos primitivos necesarios para la autenticación.
+ * En su lugar, extrae solo los datos primitivos necesarios para la
+ * autenticación.
  */
 public class UserDetailsImpl implements UserDetails {
 
@@ -32,9 +33,10 @@ public class UserDetailsImpl implements UserDetails {
     private final String lastName;
     private final boolean enabled;
     private final List<String> roleNames; // Lista de nombres de roles del usuario (ej: "ADMIN")
-    
+
     public UserDetailsImpl(Usuario usuario, List<String> roleNames) {
-        // Extraer datos primitivos del usuario para evitar mantener referencia a entidad con lazy collections
+        // Extraer datos primitivos del usuario para evitar mantener referencia a
+        // entidad con lazy collections
         this.userId = usuario.getId();
         this.email = usuario.getEmail();
         this.password = usuario.getPassword();
@@ -99,9 +101,12 @@ public class UserDetailsImpl implements UserDetails {
      */
     public List<Integer> getIdRoles() {
         // No disponemos de los IDs de role directamente aquí; devolvemos lista vacía.
-        // Si se requiere el id de roles, cambiar a pasar una estructura que contenga el id.
+        // Si se requiere el id de roles, cambiar a pasar una estructura que contenga el
+        // id.
         return List.of();
-    }    /**
+    }
+
+    /**
      * Método para obtener los roles del usuario en forma de `GrantedAuthority`.
      *
      * @return Colección de roles (autoridades) asociadas al usuario.
@@ -119,7 +124,8 @@ public class UserDetailsImpl implements UserDetails {
      * IMPORTANTE: Spring Security espera que los roles tengan el prefijo "ROLE_"
      * cuando se usa .hasRole("ADMIN"). Por eso convertimos "admin" a "ROLE_ADMIN".
      *
-     * @return Colección de objetos `GrantedAuthority` basados en los roles del usuario.
+     * @return Colección de objetos `GrantedAuthority` basados en los roles del
+     *         usuario.
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -135,8 +141,6 @@ public class UserDetailsImpl implements UserDetails {
                 })
                 .collect(Collectors.toList());
     }
-
-
 
     /**
      * Obtiene la contraseña del usuario.
@@ -157,8 +161,6 @@ public class UserDetailsImpl implements UserDetails {
     public String getUsername() {
         return this.email;
     }
-
-    
 
     /**
      * Método adicional para obtener el nombre completo del usuario.
@@ -190,5 +192,3 @@ public class UserDetailsImpl implements UserDetails {
         return this.enabled; // Usa el valor real del campo isEnabled del usuario
     }
 }
-
-

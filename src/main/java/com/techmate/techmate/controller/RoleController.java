@@ -30,12 +30,11 @@ public class RoleController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createRol(@RequestBody RoleDTO roleDTO) {
-        
+
         // Guardar el rol usando el servicio
         RoleDTO createdRole = roleService.createRole(roleDTO);
         return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<RoleDTO> getRoleByID(@PathVariable("id") Integer id) {
@@ -61,8 +60,6 @@ public class RoleController {
         }
     }
 
-    
-
     @GetMapping("/all")
     public ResponseEntity<List<RoleDTO>> getAllRoles() {
         List<RoleDTO> roles = roleService.getAllRole(); // Llama al servicio para obtener todos los roles
@@ -74,8 +71,5 @@ public class RoleController {
         roleService.cleanupRoleAssociations(roleId);
         return ResponseEntity.ok("Las asociaciones para el rol con ID " + roleId + " fueron eliminadas correctamente.");
     }
-    
 
 }
-
-

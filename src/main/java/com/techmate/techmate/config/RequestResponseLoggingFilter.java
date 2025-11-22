@@ -28,7 +28,8 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
     private static final String REQUEST_ID = "requestId";
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
         // Generar ID único para la petición
@@ -63,20 +64,20 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
         String method = request.getMethod();
         String uri = request.getRequestURI();
         String queryString = request.getQueryString();
-        
+
         StringBuilder logMessage = new StringBuilder();
         logMessage.append(String.format("→ Incoming Request [%s] %s %s", requestId, method, uri));
-        
+
         if (queryString != null) {
             logMessage.append("?").append(queryString);
         }
-        
+
         // Log headers (solo algunos importantes)
         String contentType = request.getContentType();
         if (contentType != null) {
             logMessage.append(" | Content-Type: ").append(contentType);
         }
-        
+
         String userAgent = request.getHeader("User-Agent");
         if (userAgent != null) {
             logMessage.append(" | User-Agent: ").append(userAgent.substring(0, Math.min(50, userAgent.length())));
@@ -99,16 +100,17 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
         }
     }
 
-    private void logResponse(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response, long duration) {
+    private void logResponse(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response,
+            long duration) {
         String method = request.getMethod();
         String uri = request.getRequestURI();
         int status = response.getStatus();
-        
+
         String statusEmoji = getStatusEmoji(status);
-        
-        String logMessage = String.format("← Response %s %s %s | Status: %d | Duration: %dms", 
-            statusEmoji, method, uri, status, duration);
-        
+
+        String logMessage = String.format("← Response %s %s %s | Status: %d | Duration: %dms",
+                statusEmoji, method, uri, status, duration);
+
         if (status >= 500) {
             log.error(logMessage);
         } else if (status >= 400) {
@@ -132,10 +134,14 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
     }
 
     private String getStatusEmoji(int status) {
-        if (status >= 500) return "❌";
-        if (status >= 400) return "⚠️";
-        if (status >= 300) return "↪️";
-        if (status >= 200) return "✅";
+        if (status >= 500)
+            return "❌";
+        if (status >= 400)
+            return "⚠️";
+        if (status >= 300)
+            return "↪️";
+        if (status >= 200)
+            return "✅";
         return "ℹ️";
     }
 
@@ -143,12 +149,10 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         // No filtrar endpoints de Actuator para reducir noise
         String path = request.getRequestURI();
-        return path.startsWith("/actuator/health") || 
-               path.startsWith("/actuator/prometheus") ||
-               path.startsWith("/swagger-ui") ||
-               path.startsWith("/v3/api-docs") ||
-               path.startsWith("/api-docs");
+        return path.startsWith("/actuator/health") ||
+                path.startsWith("/actuator/prometheus") ||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/api-docs");
     }
 }
-
-

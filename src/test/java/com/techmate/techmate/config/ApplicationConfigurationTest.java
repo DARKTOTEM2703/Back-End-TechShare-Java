@@ -63,8 +63,8 @@ class ApplicationConfigurationTest {
     void applicationShouldLoadSecurityConfiguration() {
         // Verify that beans are created without errors
         assertNotNull(applicationContext);
-        assertTrue(applicationContext.containsBean("springSecurityFilterChain") || 
-                   applicationContext.getBeanDefinitionNames().length > 0);
+        assertTrue(applicationContext.containsBean("springSecurityFilterChain") ||
+                applicationContext.getBeanDefinitionNames().length > 0);
     }
 
     @Test
@@ -88,4 +88,3 @@ class ApplicationConfigurationTest {
         assertTrue(beanNames.length > 0, "Application configuration should have loaded beans");
     }
 }
-

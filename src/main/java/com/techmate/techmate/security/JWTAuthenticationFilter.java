@@ -28,23 +28,23 @@ import org.springframework.http.HttpStatus;
  *
  * Descripción general (flujo):
  * 1) `attemptAuthentication` lee JSON {email, password} del body y crea un
- *    UsernamePasswordAuthenticationToken que delega al AuthenticationManager.
+ * UsernamePasswordAuthenticationToken que delega al AuthenticationManager.
  * 2) Si la autenticación es correcta, `successfulAuthentication` se encarga de
- *    generar el JWT (vía TokenUtils), añadirlo a la cabecera `Authorization`
- *    y devolver también un JSON con datos mínimos (útil para SPAs).
+ * generar el JWT (vía TokenUtils), añadirlo a la cabecera `Authorization`
+ * y devolver también un JSON con datos mínimos (útil para SPAs).
  *
  * Buenas prácticas y motivos de diseño:
  * - Leemos JSON en lugar de parámetros form para evitar el prompt de BasicAuth
- *   y para facilitar clientes SPA que envían JSON.
+ * y para facilitar clientes SPA que envían JSON.
  * - Devolvemos el token tanto en cabecera como en el body JSON porque algunos
- *   clientes prefieren leer directamente el JSON (easier testing) y otros usan
- *   la cabecera; ambos enfoques están soportados.
+ * clientes prefieren leer directamente el JSON (easier testing) y otros usan
+ * la cabecera; ambos enfoques están soportados.
  * - No se llama a `super.successfulAuthentication` para evitar que Spring
- *   desencadene comportamientos de login basados en sesiones (la app es
- *   stateless y usa JWT).
+ * desencadene comportamientos de login basados en sesiones (la app es
+ * stateless y usa JWT).
  * - IMPORTANTE: Siempre usar HTTPS en producción para evitar que el token sea
- *   interceptado (TLS protege la cabecera y el body). Considerar refresh tokens
- *   y revocación si necesitas logout/rotación de tokens.
+ * interceptado (TLS protege la cabecera y el body). Considerar refresh tokens
+ * y revocación si necesitas logout/rotación de tokens.
  */
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -65,7 +65,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 sb.append(line);
             }
             String payload = sb.toString();
-            if (payload == null) payload = "";
+            if (payload == null)
+                payload = "";
             // Quitar BOM u otros caracteres invisibles al inicio que rompen el parser
             payload = payload.replace("\uFEFF", "").trim();
 
@@ -74,10 +75,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 throw new AuthenticationServiceException("La solicitud de autenticación está vacía");
             }
 
-            authCredentials = com.techmate.techmate.config.JacksonConfig.objectMapper().readValue(payload, AuthCredentials.class);
+            authCredentials = com.techmate.techmate.config.JacksonConfig.objectMapper().readValue(payload,
+                    AuthCredentials.class);
         } catch (IOException e) {
             log.warn("Attempted authentication with invalid payload: {}", e.getMessage());
-            // Devolver un error que Spring Security podrá transformar en 401/400 según configuración
+            // Devolver un error que Spring Security podrá transformar en 401/400 según
+            // configuración
             throw new AuthenticationServiceException("Solicitud de autenticación inválida");
         }
 
@@ -92,22 +95,22 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException failed) throws IOException, ServletException {
-    log.warn("Autenticación fallida para la petición {}: {}", request.getRequestURI(), failed.getMessage());
+        log.warn("Autenticación fallida para la petición {}: {}", request.getRequestURI(), failed.getMessage());
 
-    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
 
-    ApiErrorResponse body = ApiErrorResponse.builder()
-        .timestamp(java.time.LocalDateTime.now())
-        .status(HttpStatus.UNAUTHORIZED.value())
-        .error("No autorizado")
-        .message(failed.getMessage() != null ? failed.getMessage() : "Autenticación fallida")
-        .path(request.getRequestURI())
-        .code("UNAUTHENTICATED")
-        .validationErrors(java.util.List.of())
-        .build();
+        ApiErrorResponse body = ApiErrorResponse.builder()
+                .timestamp(java.time.LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("No autorizado")
+                .message(failed.getMessage() != null ? failed.getMessage() : "Autenticación fallida")
+                .path(request.getRequestURI())
+                .code("UNAUTHENTICATED")
+                .validationErrors(java.util.List.of())
+                .build();
 
-    com.techmate.techmate.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), body);
+        com.techmate.techmate.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), body);
     }
 
     @Override
@@ -158,7 +161,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         resp.put("email", userDetails.getUsername());
         resp.put("roles", roleList);
 
-    com.techmate.techmate.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), resp);
+        com.techmate.techmate.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), resp);
 
         log.info("Usuario {} autenticado correctamente, id={}, roles={}", userDetails.getUsername(), userId, roleList);
 
@@ -166,5 +169,3 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // cree una sesión HTTP (la aplicación es stateless y gestiona auth con JWT).
     }
 }
-
-

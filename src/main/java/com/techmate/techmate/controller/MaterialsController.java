@@ -58,14 +58,14 @@ public class MaterialsController {
             @ModelAttribute MaterialRequest materialRequest) {
 
         try {
-        // Mapear request público -> DTO interno usando MaterialsMapper
-        MaterialsDTO requestDto = materialsMapper.fromRequest(materialRequest);
-        requestDto.setImagePath(image != null ? image.getOriginalFilename() : null);
+            // Mapear request público -> DTO interno usando MaterialsMapper
+            MaterialsDTO requestDto = materialsMapper.fromRequest(materialRequest);
+            requestDto.setImagePath(image != null ? image.getOriginalFilename() : null);
 
-        MaterialsDTO createdMaterial = materialsService.createMaterials(requestDto, image);
+            MaterialsDTO createdMaterial = materialsService.createMaterials(requestDto, image);
 
-        // Mapear DTO interno -> response público
-        MaterialResponse resp = materialsMapper.toResponse(createdMaterial, appProperties.getServerUrl());
+            // Mapear DTO interno -> response público
+            MaterialResponse resp = materialsMapper.toResponse(createdMaterial, appProperties.getServerUrl());
 
             return new ResponseEntity<>(resp, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
@@ -101,7 +101,8 @@ public class MaterialsController {
 
         MaterialsDTO materialsDTO = materialsMapper.fromRequest(materialRequest);
         // image handled by controller when provided
-        if (image != null) materialsDTO.setImagePath(image.getOriginalFilename());
+        if (image != null)
+            materialsDTO.setImagePath(image.getOriginalFilename());
 
         MaterialsDTO updatedMaterial = materialsService.updateMaterials(id, materialsDTO, image);
 
@@ -117,9 +118,9 @@ public class MaterialsController {
     /**
      * Obtiene todos los materiales con paginación y ordenamiento
      * 
-     * @param page Número de página (default 0)
-     * @param size Tamaño de página (default 10, max 100)
-     * @param sortBy Campo de ordenamiento (default: id)
+     * @param page    Número de página (default 0)
+     * @param size    Tamaño de página (default 10, max 100)
+     * @param sortBy  Campo de ordenamiento (default: id)
      * @param sortDir Dirección de ordenamiento: asc o desc (default: asc)
      * @return Respuesta paginada con materiales
      */
@@ -131,24 +132,26 @@ public class MaterialsController {
             @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir) {
         try {
             // Validar parámetros
-            if (page < 0) page = 0;
-            if (size < 1 || size > 100) size = 10; // Máximo 100 elementos por página
-            
+            if (page < 0)
+                page = 0;
+            if (size < 1 || size > 100)
+                size = 10; // Máximo 100 elementos por página
+
             // Crear objeto de paginación y ordenamiento
-            Sort sort = sortDir.equalsIgnoreCase("desc") 
-                ? Sort.by(sortBy).descending() 
-                : Sort.by(sortBy).ascending();
-            
+            Sort sort = sortDir.equalsIgnoreCase("desc")
+                    ? Sort.by(sortBy).descending()
+                    : Sort.by(sortBy).ascending();
+
             Pageable pageable = PageRequest.of(page, size, sort);
-            
+
             // Obtener datos paginados del servicio
             Page<MaterialsDTO> materialsPage = materialsService.getAllMaterialsPaginated(pageable);
-            
+
             // Mapear DTOs a respuestas
             List<MaterialResponse> responseList = materialsPage.getContent().stream()
                     .map(material -> materialsMapper.toResponse(material, appProperties.getServerUrl()))
                     .collect(Collectors.toList());
-            
+
             // Construir respuesta paginada
             PageResponse<MaterialResponse> pageResponse = PageResponse.<MaterialResponse>builder()
                     .content(responseList)
@@ -161,7 +164,7 @@ public class MaterialsController {
                     .hasPrevious(materialsPage.hasPrevious())
                     .hasNext(materialsPage.hasNext())
                     .build();
-            
+
             return new ResponseEntity<>(pageResponse, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.error("Invalid pagination parameters provided: {}", e.getMessage());
@@ -243,5 +246,3 @@ public class MaterialsController {
                 .body(imageBytes);
     }
 }
-
-

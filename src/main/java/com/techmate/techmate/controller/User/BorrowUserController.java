@@ -64,9 +64,11 @@ public class BorrowUserController {
     }
 
     private List<DetailsBorrowDTO> convertJsonToDetailsList(String detailsJson) {
-    com.fasterxml.jackson.databind.ObjectMapper objectMapper = com.techmate.techmate.config.JacksonConfig.objectMapper();
+        com.fasterxml.jackson.databind.ObjectMapper objectMapper = com.techmate.techmate.config.JacksonConfig
+                .objectMapper();
         try {
-            return objectMapper.readValue(detailsJson, new TypeReference<List<DetailsBorrowDTO>>() {});
+            return objectMapper.readValue(detailsJson, new TypeReference<List<DetailsBorrowDTO>>() {
+            });
         } catch (Exception e) {
             throw new RuntimeException("Error al convertir el JSON a la lista de detalles.", e);
         }
@@ -79,7 +81,7 @@ public class BorrowUserController {
 
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
-            
+
             userId = borrowUserService.getUserIdFromToken(token);
             List<BorrowDTO> borrows = borrowUserService.getAllBorrowsByUserId(userId);
             return ResponseEntity.ok(borrows);
@@ -87,5 +89,3 @@ public class BorrowUserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }
-
-
