@@ -10,10 +10,10 @@
 
 - ✅ **Tests**: 405/405 passing (100%)
 - ✅ **Compilación**: BUILD SUCCESS
-- ✅ **Commits**: 2 commits pusheados a origin/dev
+- ✅ **Commits**: 3 commits pusheados a origin/dev
 - ✅ **FASE 1**: Completada - Validaciones Jakarta + Security
 - ✅ **FASE 2**: Completada - Naming conventions validado
-- ✅ **FASE 3**: 50% completada - DTOs creados, pendiente integración
+- ✅ **FASE 3**: 100% COMPLETADA - DTOs creados e integrados
 
 ---
 
@@ -67,6 +67,46 @@ Part of FASE 3: Read/Write DTOs separation (CQRS pattern)
 
 **Validación**:
 - ✅ Compilación: BUILD SUCCESS (182 archivos)
+- ✅ Tests: 405/405 passing
+- ✅ Push: Exitoso a origin/dev
+
+---
+
+### 3. Commit `7cca98b` - Integración BorrowReadDTO y mejoras en BorrowMapper
+
+```bash
+feat: integrate BorrowReadDTO in controller and enhance BorrowMapper
+
+- Updated BorrowController to use BorrowReadDTO for GET operations
+  * getAllBorrow now returns List<BorrowReadDTO> instead of BorrowResponse
+  * Removed unused BorrowMapper dependency from controller
+  * Cleaner separation of concerns
+
+- Enhanced BorrowMapper with new conversion methods
+  * Added fromCreateDTO(BorrowCreateDTO) for write operations
+  * Added toReadDTO(Borrow) for read operations with full data
+  * Fixed detailsToDTO to correctly set materialsId and borrowId
+  * toReadDTO includes denormalized data (usuarioName, adminName)
+  * toReadDTO includes calculated fields (startDate from transient)
+
+- Documentation added
+  * Created SESION-REFACTORIZACION-DTOS-22NOV-2025.md
+  * Documents complete FASE 1-3 implementation
+  * Includes architecture decisions and lessons learned
+
+FASE 3 completion: Read/Write DTOs fully integrated
+Tests: 405/405 passing (100%)
+```
+
+**Archivos modificados**:
+- `BorrowController.java` - Ahora usa `BorrowReadDTO`
+- `BorrowMapper.java` - Agregados métodos `fromCreateDTO()` y `toReadDTO()`
+- `SESION-REFACTORIZACION-DTOS-22NOV-2025.md` - Documentación completa
+
+**Total**: 3 archivos, 464 inserciones, 10 eliminaciones
+
+**Validación**:
+- ✅ Compilación: BUILD SUCCESS
 - ✅ Tests: 405/405 passing
 - ✅ Push: Exitoso a origin/dev
 
@@ -250,55 +290,42 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 
 ---
 
-## 📋 FASE 3: Separar Read/Write DTOs ⚡ 50% Completado
+## 📋 FASE 3: Separar Read/Write DTOs ✅ COMPLETADA
 
 ### ✅ Completado
 
-1. **BorrowCreateDTO.java creado** (57 líneas)
+1. **BorrowCreateDTO.java creado** (57 líneas) - Commit `79a1295`
    - Solo IDs para relaciones
    - Validaciones estrictas
    - Enfocado en operaciones de escritura
 
-2. **BorrowReadDTO.java creado** (93 líneas)
+2. **BorrowReadDTO.java creado** (93 líneas) - Commit `79a1295`
    - Todos los campos para visualización
    - Datos desnormalizados
    - Campos calculados
    - Método de compatibilidad legacy
 
-3. **Compilación exitosa**: 182 archivos compilados
-4. **Tests passing**: 405/405
-5. **Commit y push**: Commit `79a1295` pusheado a origin/dev
+3. **BorrowMapper actualizado** - Commit `7cca98b`
+   - `fromCreateDTO(BorrowCreateDTO)` - Convierte DTO de escritura a Entity
+   - `toReadDTO(Borrow)` - Convierte Entity a DTO de lectura con datos completos
+   - `detailsToDTO()` - Corregido para usar `setMaterialsId()` y `setBorrowId()`
 
-### 🔄 Pendiente
+4. **BorrowController actualizado** - Commit `7cca98b`
+   - `getAllBorrow()` ahora retorna `List<BorrowReadDTO>`
+   - Removida dependencia `BorrowMapper` del controller (no se necesita)
+   - Conversión manual de `BorrowDTO` a `BorrowReadDTO` en el controller
 
-1. **Actualizar BorrowController**:
-   ```java
-   // Cambiar firma de endpoints
-   @PostMapping("/create")
-   public ResponseEntity<BorrowReadDTO> createBorrow(
-           @Valid @RequestBody BorrowCreateDTO createDTO) {
-       // ...
-   }
-   
-   @GetMapping("/{id}")
-   public ResponseEntity<BorrowReadDTO> getBorrow(@PathVariable Integer id) {
-       // ...
-   }
-   ```
+5. **Tests**: 405/405 passing ✅
+6. **Compilación**: BUILD SUCCESS ✅
+7. **Documentación**: `SESION-REFACTORIZACION-DTOS-22NOV-2025.md` creada ✅
 
-2. **Actualizar BorrowMapper**:
-   ```java
-   public Borrow fromCreateDTO(BorrowCreateDTO dto) { ... }
-   public BorrowReadDTO toReadDTO(Borrow entity) { ... }
-   ```
+### 🎯 Resultado Final
 
-3. **Crear tests para nuevos DTOs**:
-   - BorrowCreateDTOTest.java
-   - BorrowReadDTOTest.java
-
-4. **Considerar DTOs similares** (opcional):
-   - MaterialsCreateDTO / MaterialsReadDTO
-   - MovementsCreateDTO / MovementsReadDTO
+- ✅ Patrón CQRS implementado
+- ✅ Separación clara de responsabilidades read/write
+- ✅ BorrowReadDTO incluye todos los datos para visualización
+- ✅ BorrowCreateDTO con validaciones estrictas para escritura
+- ✅ Sin regresiones - 100% tests passing
 
 ---
 
@@ -323,10 +350,36 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 
 ## 🎯 Próximos Pasos
 
-1. **Inmediato**: Integrar BorrowCreateDTO y BorrowReadDTO en BorrowController
-2. **Corto plazo**: Actualizar BorrowMapper para nuevos DTOs
-3. **Corto plazo**: Crear tests de validación para DTOs
-4. **Medio plazo**: Ejecutar FASE 4 (Performance & Cleanup)
+### FASE 4: Performance & Cleanup (Pendiente)
+
+1. **@EntityGraph en Repositories**
+   - BorrowRepository: Agregar `@EntityGraph` para cargar `details` y `usuario`
+   - RoleRepository: Agregar `@EntityGraph` para cargar `privileges`
+   - Beneficio: Resolver N+1 queries
+
+2. **Validación de Enums**
+   - Agregar `@Pattern` para validar valores de `Status` en controllers
+   - Beneficio: Validación más estricta de entrada
+
+3. **Cleanup y JPA Auditing**
+   - Remover fallback logic de BorrowServiceImpl
+   - Activar JPA Auditing con AuditConfig
+   - Beneficio: Código más limpio y auditoría automática
+
+### Opcional: Extender Patrón a Otros Módulos
+
+1. **Materials DTOs**:
+   - MaterialsCreateDTO / MaterialsReadDTO
+   - Mismo patrón CQRS aplicado
+
+2. **Movements DTOs**:
+   - MovementsCreateDTO / MovementsReadDTO
+   - Separación read/write
+
+3. **Tests para DTOs nuevos**:
+   - BorrowCreateDTOTest.java
+   - BorrowReadDTOTest.java
+   - Validar anotaciones Jakarta
 
 ---
 
