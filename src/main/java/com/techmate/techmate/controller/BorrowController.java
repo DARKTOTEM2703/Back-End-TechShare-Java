@@ -12,9 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.*;
 
 import com.techmate.techmate.dto.BorrowDTO;
-import com.techmate.techmate.dto.BorrowResponse;
+import com.techmate.techmate.dto.BorrowReadDTO;
 import com.techmate.techmate.entity.Status;
-import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
 import com.techmate.techmate.service.BorrowService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,11 +24,9 @@ import jakarta.servlet.http.HttpServletRequest;
 @PreAuthorize("hasRole('ADMIN')")
 public class BorrowController {
     private final BorrowService borrowService;
-    private final BorrowMapper borrowMapper;
 
-    public BorrowController(BorrowService borrowService, BorrowMapper borrowMapper) {
+    public BorrowController(BorrowService borrowService) {
         this.borrowService = borrowService;
-        this.borrowMapper = borrowMapper;
     }
 
     // Actualizar el estado de un préstamo
@@ -58,7 +55,7 @@ public class BorrowController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<BorrowResponse>> getAllBorrow() {
+    public ResponseEntity<List<BorrowReadDTO>> getAllBorrow() {
 
         List<BorrowDTO> borrowsList = borrowService.getAllBorrowDTO();
 
@@ -66,8 +63,24 @@ public class BorrowController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
-        List<BorrowResponse> response = borrowsList.stream()
-                .map(b -> borrowMapper.toResponse(b))
+        // Convertir BorrowDTO a BorrowReadDTO para operaciones de lectura
+        List<BorrowReadDTO> response = borrowsList.stream()
+                .map(borrowDTO -> {
+                    BorrowReadDTO readDTO = new BorrowReadDTO();
+                    readDTO.setId(borrowDTO.getId());
+                    readDTO.setDate(borrowDTO.getDate());
+                    readDTO.setStartDate(borrowDTO.getStartDate());
+                    readDTO.setEndDate(borrowDTO.getEndDate());
+                    readDTO.setReturnDate(borrowDTO.getReturnDate());
+                    readDTO.setStatus(borrowDTO.getStatus());
+                    readDTO.setAmount(borrowDTO.getAmount());
+                    readDTO.setUsuarioId(borrowDTO.getUsuarioId());
+                    readDTO.setUsuarioName(borrowDTO.getUsuarioName());
+                    readDTO.setAdminId(borrowDTO.getAdminId());
+                    readDTO.setAdminName(borrowDTO.getAdminName());
+                    readDTO.setDetails(borrowDTO.getDetails());
+                    return readDTO;
+                })
                 .toList();
 
         return ResponseEntity.ok(response);

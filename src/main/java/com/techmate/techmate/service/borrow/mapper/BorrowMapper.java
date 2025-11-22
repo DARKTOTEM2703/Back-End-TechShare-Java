@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.techmate.techmate.dto.BorrowDTO;
+import com.techmate.techmate.dto.BorrowCreateDTO;
+import com.techmate.techmate.dto.BorrowReadDTO;
 import com.techmate.techmate.dto.BorrowResponse;
 import com.techmate.techmate.dto.DetailsBorrowResponse;
 import com.techmate.techmate.dto.DetailsBorrowDTO;
@@ -70,6 +72,55 @@ public class BorrowMapper {
         return borrow;
     }
 
+    // BorrowCreateDTO -> Entity (for create/update operations)
+    public Borrow fromCreateDTO(BorrowCreateDTO createDTO) {
+        if (createDTO == null) return null;
+        Borrow borrow = new Borrow();
+        borrow.setId(createDTO.getId());
+        borrow.setEndDate(createDTO.getEndDate());
+        // Note: relationships (usuario, admin) should be set by services
+        // Note: details should be converted and set by services
+        return borrow;
+    }
+
+    // Entity -> BorrowReadDTO (for read operations)
+    public BorrowReadDTO toReadDTO(Borrow borrow) {
+        if (borrow == null) return null;
+        BorrowReadDTO dto = new BorrowReadDTO();
+        dto.setId(borrow.getId());
+        dto.setDate(borrow.getDate());
+        dto.setEndDate(borrow.getEndDate());
+        dto.setReturnDate(borrow.getReturnDate());
+        dto.setStatus(borrow.getStatus());
+        dto.setAmount(borrow.getAmount());
+        
+        // Campos calculados/transient
+        if (borrow.getStartDate() != null) {
+            dto.setStartDate(borrow.getStartDate());
+        }
+        
+        // Datos del usuario
+        if (borrow.getUsuario() != null) {
+            dto.setUsuarioId(borrow.getUsuario().getId());
+            dto.setUsuarioName(borrow.getUsuario().getUser_name());
+        }
+        
+        // Datos del admin (campo transient)
+        if (borrow.getAdmin() != null) {
+            dto.setAdminId(borrow.getAdmin().getId());
+            dto.setAdminName(borrow.getAdmin().getUser_name());
+        }
+        
+        // Detalles
+        if (borrow.getDetails() != null) {
+            dto.setDetails(borrow.getDetails().stream()
+                    .map(this::detailsToDTO)
+                    .collect(Collectors.toList()));
+        }
+        
+        return dto;
+    }
+
     // Details mapping
     public DetailsBorrowDTO detailsToDTO(DetailsBorrow detailsBorrow) {
         if (detailsBorrow == null) return null;
@@ -78,8 +129,12 @@ public class BorrowMapper {
         dto.setQuantity(detailsBorrow.getQuantity());
         dto.setUnitPrice(detailsBorrow.getUnitPrice());
         dto.setTotalPrice(detailsBorrow.getTotalPrice());
-        if (detailsBorrow.getMaterials() != null) dto.setId(detailsBorrow.getMaterials().getId());
-        if (detailsBorrow.getBorrow() != null) dto.setId(detailsBorrow.getBorrow().getId());
+        if (detailsBorrow.getMaterials() != null) {
+            dto.setMaterialsId(detailsBorrow.getMaterials().getId());
+        }
+        if (detailsBorrow.getBorrow() != null) {
+            dto.setBorrowId(detailsBorrow.getBorrow().getId());
+        }
         return dto;
     }
 
