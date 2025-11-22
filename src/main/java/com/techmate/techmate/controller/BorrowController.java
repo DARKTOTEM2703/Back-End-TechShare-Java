@@ -2,6 +2,7 @@ package com.techmate.techmate.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import java.util.*;
 
 import com.techmate.techmate.dto.BorrowDTO;
@@ -84,6 +86,36 @@ public class BorrowController {
                 .toList();
 
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Maneja errores de conversión de enum Status.
+     * Retorna mensaje claro cuando se envía un valor de status inválido.
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, String>> handleEnumConversionException(
+            MethodArgumentTypeMismatchException ex) {
+        
+        Class<?> requiredType = ex.getRequiredType();
+        if (requiredType != null && requiredType.equals(Status.class)) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Valor de status inválido");
+            errorResponse.put("message", 
+                "El valor '" + ex.getValue() + "' no es un status válido. " +
+                "Valores permitidos: PENDING, APPROVED, REJECTED, RETURNED");
+            errorResponse.put("parameter", ex.getName());
+            errorResponse.put("invalidValue", String.valueOf(ex.getValue()));
+            
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(errorResponse);
+        }
+        
+        // Para otros tipos de errores, re-lanzar
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Error de validación");
+        errorResponse.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
 }
