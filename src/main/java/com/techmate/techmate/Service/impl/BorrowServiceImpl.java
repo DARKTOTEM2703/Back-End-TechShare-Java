@@ -16,7 +16,6 @@ import com.techmate.techmate.entity.Status;
 import com.techmate.techmate.entity.Usuario;
 import com.techmate.techmate.event.BorrowCreatedEvent;
 import com.techmate.techmate.event.BorrowReturnedEvent;
-import com.techmate.techmate.exception.BorrowBusinessException;
 import com.techmate.techmate.exception.BusinessException;
 import com.techmate.techmate.repository.BorrowRepository;
 import com.techmate.techmate.repository.MaterialsRepository;
@@ -42,56 +41,6 @@ public class BorrowServiceImpl implements BorrowService {
         this.usuarioRepository = usuarioRepository;
         this.borrowStockManager = borrowStockManager;
         this.eventPublisher = eventPublisher;
-    }
-
-    // ==================== FALLBACK HELPERS (compatibilidad con tests)
-    // ====================
-    /**
-     * Valida disponibilidad de stock usando IBorrowStockManager si existe;
-     * en caso contrario aplica la lógica directa con el repositorio (fallback para
-     * tests).
-     */
-    private void validateStockAvailabilityOrFallback(Integer materialId, int requestedQuantity) {
-        if (borrowStockManager != null) {
-            borrowStockManager.validateStockAvailability(materialId, requestedQuantity);
-            return;
-        }
-
-        Materials material = materialsRepository.findById(materialId)
-                .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
-        if (material.getBorrowable_stock() < requestedQuantity) {
-            throw BorrowBusinessException.insufficientStock(materialId, requestedQuantity,
-                    material.getBorrowable_stock());
-        }
-    }
-
-    private void reduceStockOrFallback(Integer materialId, int quantity) {
-        if (borrowStockManager != null) {
-            borrowStockManager.reduceStock(materialId, quantity);
-            return;
-        }
-
-        Materials material = materialsRepository.findById(materialId)
-                .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
-
-        if (material.getBorrowable_stock() < quantity) {
-            throw BorrowBusinessException.insufficientStock(materialId, quantity, material.getBorrowable_stock());
-        }
-
-        material.setBorrowable_stock(material.getBorrowable_stock() - quantity);
-        materialsRepository.save(material);
-    }
-
-    private void restoreStockOrFallback(Integer materialId, int quantity) {
-        if (borrowStockManager != null) {
-            borrowStockManager.restoreStock(materialId, quantity);
-            return;
-        }
-
-        Materials material = materialsRepository.findById(materialId)
-                .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
-        material.setBorrowable_stock(material.getBorrowable_stock() + quantity);
-        materialsRepository.save(material);
     }
 
     private BorrowDTO convertToDTO(Borrow borrow) {
@@ -275,13 +224,7 @@ public class BorrowServiceImpl implements BorrowService {
             int quantity = detail.getQuantity();
             
             // Una sola llamada: reserva stock + crea movimiento (atómico)
-            if (borrowStockManager != null) {
-                borrowStockManager.reserveStockAndLogMovement(material, quantity, borrow, usuario);
-            } else {
-                // Fallback para tests sin manager
-                validateStockAvailabilityOrFallback(material.getId(), quantity);
-                reduceStockOrFallback(material.getId(), quantity);
-            }
+            borrowStockManager.reserveStockAndLogMovement(material, quantity, borrow, usuario);
         }
 
         borrow.setStartDate(new Date());
@@ -308,12 +251,7 @@ public class BorrowServiceImpl implements BorrowService {
             int quantity = detail.getQuantity();
             
             // Una sola llamada: libera stock + crea movimiento (atómico)
-            if (borrowStockManager != null) {
-                borrowStockManager.releaseStockAndLogMovement(material, quantity, borrow, usuario);
-            } else {
-                // Fallback para tests sin manager
-                restoreStockOrFallback(material.getId(), quantity);
-            }
+            borrowStockManager.releaseStockAndLogMovement(material, quantity, borrow, usuario);
         }
 
         borrow.setStatus(Status.RETURNED);
