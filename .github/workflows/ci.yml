@@ -10,6 +10,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  JAVA_VERSION: '17'
+  JAVA_DISTRIBUTION: 'temurin'
 
 jobs:
   # ========================================
@@ -25,12 +27,15 @@ jobs:
       with:
         fetch-depth: 0 # Full history for better analysis
     
-    - name: ☕ Set up JDK 17
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
-        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRIBUTION }}
         cache: 'maven'
+    
+    - name: 🔧 Make mvnw executable
+      run: chmod +x ./mvnw
     
     - name: 🔎 Run Dependency Check
       run: |
@@ -73,16 +78,28 @@ jobs:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
 
-    - name: ☕ Set up JDK 17
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
-        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRIBUTION }}
         cache: 'maven'
+    
+    - name: 🔧 Make mvnw executable
+      run: chmod +x ./mvnw
 
     - name: 🔍 Verify MySQL connection
       run: |
+        sudo apt-get update
         sudo apt-get install -y mysql-client
+        for i in {1..30}; do
+          if mysql --host 127.0.0.1 --port 3306 -uroot -padmin1 -e "SHOW DATABASES" 2>/dev/null; then
+            echo "✅ MySQL is ready!"
+            break
+          fi
+          echo "⏳ Waiting for MySQL... ($i/30)"
+          sleep 2
+        done
         mysql --host 127.0.0.1 --port 3306 -uroot -padmin1 -e "SHOW DATABASES"
 
     - name: 🧪 Run tests
@@ -90,8 +107,9 @@ jobs:
         SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/techmate_inventory_test
         SPRING_DATASOURCE_USERNAME: root
         SPRING_DATASOURCE_PASSWORD: admin1
-        JWT_SECRET: test-secret-key-for-ci-pipeline-do-not-use-in-production
+        JWT_SECRET: test-secret-key-for-ci-pipeline-minimum-32-characters-required
         SWAGGER_ENABLED: false
+        SPRING_PROFILES_ACTIVE: test
       run: ./mvnw clean test -B
 
     - name: 🏗️ Build JAR
@@ -99,12 +117,12 @@ jobs:
 
     - name: 📊 Test Report
       uses: dorny/test-reporter@v1
-      if: always()
+      if: success() || failure() # Run even if tests fail
       with:
         name: Maven Tests
         path: target/surefire-reports/*.xml
         reporter: java-junit
-        fail-on-error: true
+        fail-on-error: false # Don't fail the workflow, just report
 
     - name: 📦 Upload JAR artifact
       uses: actions/upload-artifact@v4
@@ -114,6 +132,14 @@ jobs:
         path: target/*.jar
         retention-days: 5
 
+    - name: 📊 Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: target/surefire-reports/
+        retention-days: 30
+
     - name: ✅ Build Summary
       if: always()
       run: |
@@ -121,8 +147,12 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "- **Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
         echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- **Java Version:** 17" >> $GITHUB_STEP_SUMMARY
+        echo "- **Java Version:** ${{ env.JAVA_VERSION }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Build Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        if [ -f target/surefire-reports/*.xml ]; then
+          TEST_COUNT=$(grep -c "testcase" target/surefire-reports/*.xml || echo "0")
+          echo "- **Tests Run:** $TEST_COUNT" >> $GITHUB_STEP_SUMMARY
+        fi
 
   # ========================================
   # JOB 3: DOCKER BUILD & PUSH
@@ -156,15 +186,20 @@ jobs:
           type=ref,event=branch
           type=sha,prefix={{branch}}-
           type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+          type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
     
     - name: 🐳 Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: ./Back-End-TechShare-Java
-        file: ./Back-End-TechShare-Java/Dockerfile
+        context: . # CORREGIDO: Contexto es el root del repo
+        file: ./Dockerfile # CORREGIDO: Dockerfile está en el root
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          BUILD_DATE=${{ github.event.head_commit.timestamp }}
+          VCS_REF=${{ github.sha }}
+          VERSION=${{ github.ref_name }}
         cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
         cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
     
