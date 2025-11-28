@@ -18,7 +18,6 @@ import com.techmate.techmate.event.BorrowCreatedEvent;
 import com.techmate.techmate.event.BorrowReturnedEvent;
 import com.techmate.techmate.exception.BusinessException;
 import com.techmate.techmate.repository.BorrowRepository;
-import com.techmate.techmate.repository.MaterialsRepository;
 import com.techmate.techmate.repository.UsuarioRepository;
 import com.techmate.techmate.security.TokenUtils;
 import com.techmate.techmate.service.BorrowService;
@@ -27,17 +26,15 @@ import com.techmate.techmate.service.borrow.manager.IBorrowStockManager;
 @Service
 public class BorrowServiceImpl implements BorrowService {
     private final BorrowRepository borrowRepository;
-    private final MaterialsRepository materialsRepository;
     private final UsuarioRepository usuarioRepository;
     private final IBorrowStockManager borrowStockManager;
     private final ApplicationEventPublisher eventPublisher;
 
-    public BorrowServiceImpl(BorrowRepository borrowRepository, MaterialsRepository materialsRepository,
+    public BorrowServiceImpl(BorrowRepository borrowRepository,
             UsuarioRepository usuarioRepository,
             IBorrowStockManager borrowStockManager,
             ApplicationEventPublisher eventPublisher) {
         this.borrowRepository = borrowRepository;
-        this.materialsRepository = materialsRepository;
         this.usuarioRepository = usuarioRepository;
         this.borrowStockManager = borrowStockManager;
         this.eventPublisher = eventPublisher;
