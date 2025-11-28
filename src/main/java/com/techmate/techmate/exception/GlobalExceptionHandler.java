@@ -10,6 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.techmate.techmate.dto.ApiErrorResponse;
 
@@ -18,6 +19,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -121,6 +123,76 @@ public class GlobalExceptionHandler {
                 .build();
         
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
+    /**
+     * Maneja errores de conversión de enums de forma genérica.
+     * Se dispara cuando se envía un valor inválido para cualquier enum en la aplicación.
+     * 
+     * @param ex excepción de tipo mismatch con información del enum y valor inválido
+     * @param request información del request HTTP
+     * @return ResponseEntity con mensaje de error describiendo valores permitidos
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiErrorResponse> handleEnumConversionException(
+            MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        
+        Class<?> requiredType = ex.getRequiredType();
+        
+        // Verificar si el tipo requerido es un enum
+        if (requiredType != null && requiredType.isEnum()) {
+            String enumName = requiredType.getSimpleName();
+            Object[] enumConstants = requiredType.getEnumConstants();
+            
+            String allowedValues = Arrays.stream(enumConstants)
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "));
+            
+            String message = String.format(
+                "El valor '%s' no es válido para %s. Valores permitidos: %s",
+                ex.getValue(),
+                enumName,
+                allowedValues
+            );
+            
+            log.warn("Valor de enum inválido - Parámetro: {}, Valor: {}, Enum: {}", 
+                    ex.getName(), ex.getValue(), enumName);
+            
+            ApiErrorResponse body = ApiErrorResponse.builder()
+                    .timestamp(java.time.LocalDateTime.now())
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .error("Valor inválido")
+                    .message(message)
+                    .path(request.getRequestURI())
+                    .code("INVALID_ENUM_VALUE")
+                    .validationErrors(Collections.emptyList())
+                    .build();
+            
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+        
+        // Si no es enum, retornar error genérico de tipo
+        String message = String.format(
+            "El parámetro '%s' debe ser de tipo %s, pero se recibió: '%s'",
+            ex.getName(),
+            requiredType != null ? requiredType.getSimpleName() : "desconocido",
+            ex.getValue()
+        );
+        
+        log.warn("Error de tipo de argumento - Parámetro: {}, Valor: {}, Tipo esperado: {}", 
+                ex.getName(), ex.getValue(), requiredType);
+        
+        ApiErrorResponse body = ApiErrorResponse.builder()
+                .timestamp(java.time.LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Tipo de dato inválido")
+                .message(message)
+                .path(request.getRequestURI())
+                .code("INVALID_ARGUMENT_TYPE")
+                .validationErrors(Collections.emptyList())
+                .build();
+        
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
     @ExceptionHandler(BusinessException.class)
