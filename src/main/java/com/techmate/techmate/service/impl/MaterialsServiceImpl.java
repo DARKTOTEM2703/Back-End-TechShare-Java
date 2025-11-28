@@ -126,9 +126,6 @@ public class MaterialsServiceImpl implements MaterialsService {
      * @param materials Entidad JPA a convertir
      * @return MaterialsDTO listo para serializar a JSON
      */
-    private MaterialsDTO convertToDTO(Materials materials) {
-    return materialsMapper.toDTO(materials);
-    }
 
     /**
      * Convierte un MaterialsDTO (desde el frontend) a entidad Materials (JPA).
@@ -197,7 +194,7 @@ public class MaterialsServiceImpl implements MaterialsService {
         Materials savedMaterial = persistMaterial(materialsDTO);
         
         // 4. Retornar DTO (SRP: Conversión)
-        return convertToDTO(savedMaterial);
+        return materialsMapper.toDTO(savedMaterial);
     }
 
     // ==================== HELPERS: createMaterials() ====================
@@ -370,7 +367,7 @@ public class MaterialsServiceImpl implements MaterialsService {
         Materials updatedMaterial = persistAndPublishEvents(existingMaterial);
         
         // 7. Retornar DTO
-        return convertToDTO(updatedMaterial);
+        return materialsMapper.toDTO(updatedMaterial);
     }
 
     @Override
@@ -413,7 +410,7 @@ public class MaterialsServiceImpl implements MaterialsService {
     @Override
     public Page<MaterialsDTO> getAllMaterialsPaginated(Pageable pageable) {
         Page<Materials> materialsPage = materialsRepository.findAll(pageable);
-        return materialsPage.map(this::convertToDTO);
+        return materialsPage.map(materialsMapper::toDTO);
     }
 
     @Override

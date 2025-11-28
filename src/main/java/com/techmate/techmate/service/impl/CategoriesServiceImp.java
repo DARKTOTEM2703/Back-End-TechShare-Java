@@ -61,16 +61,6 @@ public class CategoriesServiceImp implements CategoriesService {
     }
 
     /**
-     * Convierte una entidad {@code Categories} a un objeto {@code CategoriesDTO}.
-     * 
-     * @param category La entidad de categoría a convertir.
-     * @return Un objeto {@code CategoriesDTO} que representa la categoría.
-     */
-    private CategoriesDTO convertToDTO(Categories category) {
-        return categoriesMapper.toDTO(category);
-    }
-
-    /**
      * Convierte un objeto {@code CategoriesDTO} a una entidad {@code Categories}.
      * 
      * @param categoriesDTO El objeto DTO a convertir.
@@ -98,7 +88,7 @@ public class CategoriesServiceImp implements CategoriesService {
         // Convertir el DTO a entidad y guardarlo en la base de datos
     Categories categories = convertToEntity(categoriesDTO);
     categories = categoriesRepository.save(categories);
-    return convertToDTO(categories);
+    return categoriesMapper.toDTO(categories);
     }
 
     @Override
@@ -142,7 +132,7 @@ public class CategoriesServiceImp implements CategoriesService {
 
         // Guardar la entidad actualizada en la base de datos
         categories = categoriesRepository.save(categories);
-        return convertToDTO(categories); // Devolver la categoría actualizada
+        return categoriesMapper.toDTO(categories); // Devolver la categoría actualizada
     }
 
     @Override

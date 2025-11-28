@@ -42,10 +42,6 @@ public class UserServiceImpl implements UserService {
         this.userQueryService = userQueryService;
     }
 
-    private UsuarioDTO convertToDTO(Usuario usuario, Set<String> roles) {
-        return userMapper.toDTO(usuario, roles);
-    }
-
     @Override
     public List<UsuarioDTO> getAllUser() {
         return userQueryService.getAllUsers();
@@ -101,7 +97,7 @@ public class UserServiceImpl implements UserService {
         .map(Role::getNombre)
         .collect(Collectors.toSet());
 
-    return Optional.of(convertToDTO(usuarioActualizado, rolesActualizados));
+    return Optional.of(userMapper.toDTO(usuarioActualizado, rolesActualizados));
     }
 
 }

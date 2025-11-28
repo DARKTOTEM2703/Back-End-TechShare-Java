@@ -31,11 +31,6 @@ public class RoleServiceImpl implements RoleService {
         this.roleAssociationManager = roleAssociationManager;
     }
 
-    // this Method is used to convert entity DTO
-    private RoleDTO convertToDTO(Role rol) {
-        return roleMapper.toDTO(rol);
-    }
-
     private Role convertToEntity(RoleDTO roleDTO) {
         return roleMapper.toEntity(roleDTO);
     }
@@ -46,7 +41,7 @@ public class RoleServiceImpl implements RoleService {
         roleValidator.validateUniqueName(roleDTO.getName());
         Role rol = convertToEntity(roleDTO);
         rol = roleRepository.save(rol);
-        return convertToDTO(rol);
+        return roleMapper.toDTO(rol);
     }
 
     @Override
@@ -61,7 +56,7 @@ public class RoleServiceImpl implements RoleService {
         roleValidator.validateUniqueName(roleDTO.getName());
         rol.setNombre(roleDTO.getName());
         Role updatedRole = roleRepository.save(rol);
-        return convertToDTO(updatedRole);
+        return roleMapper.toDTO(updatedRole);
     }
 
     @Override

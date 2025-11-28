@@ -88,15 +88,6 @@ public class MovementsServiceImpl implements MovementsService {
         return movementMapper.toEntity(dto, usuario, materials);
     }
 
-    /**
-     * Convertir Entity a DTO (con nombres de usuario y material)
-     */
-    private MovementsDTO convertToDTO(Movements movements) {
-        String adminName = userService.getUsuarioUsernamById(movements.getUsuario().getId());
-        String materialName = materialsService.getMaterialsNameById(movements.getMaterials().getId());
-        return movementMapper.toDTO(movements, adminName, materialName);
-    }
-
     // ─── PREPARACIÓN ───
     /**
      * Preparar el DTO con valores por defecto
@@ -141,7 +132,9 @@ public class MovementsServiceImpl implements MovementsService {
         updateMaterialStock(movements);
 
         // 6️⃣ RETORNAR DTO
-        return convertToDTO(movements);
+        String adminName = userService.getUsuarioUsernamById(movements.getUsuario().getId());
+        String materialName = materialsService.getMaterialsNameById(movements.getMaterials().getId());
+        return movementMapper.toDTO(movements, adminName, materialName);
     }
 
     // Ajustar stock de material
@@ -156,7 +149,9 @@ public class MovementsServiceImpl implements MovementsService {
                         String.format("Movimiento con ID %d no encontrado", movementsId)));
 
         // 2️⃣ CONVERTIR a DTO
-        return convertToDTO(movements);
+        String adminName = userService.getUsuarioUsernamById(movements.getUsuario().getId());
+        String materialName = materialsService.getMaterialsNameById(movements.getMaterials().getId());
+        return movementMapper.toDTO(movements, adminName, materialName);
     }
 
     @Override
@@ -184,7 +179,9 @@ public class MovementsServiceImpl implements MovementsService {
         movement = movementsRepository.save(movement);
 
         // 5️⃣ RETORNAR DTO
-        return convertToDTO(movement);
+        String adminName = userService.getUsuarioUsernamById(movement.getUsuario().getId());
+        String materialName = materialsService.getMaterialsNameById(movement.getMaterials().getId());
+        return movementMapper.toDTO(movement, adminName, materialName);
     }
 
     @Override
