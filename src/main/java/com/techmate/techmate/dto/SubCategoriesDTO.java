@@ -31,7 +31,7 @@ public class SubCategoriesDTO {
     @NotNull(message = "El ID de categoría no puede ser nulo")
     @Positive(message = "El ID de categoría debe ser positivo")
     private int categoryId;
-    
+
     private String categoryName;
 
     // ✅ COMPATIBILITY METHOD

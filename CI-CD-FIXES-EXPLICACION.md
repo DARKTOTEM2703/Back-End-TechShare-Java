@@ -9,6 +9,7 @@
 ## 🚨 Problemas Identificados
 
 ### 1. **Error de Contexto de Docker** ❌
+
 ```yaml
 # ❌ ANTES (INCORRECTO)
 context: ./Back-End-TechShare-Java
@@ -16,6 +17,7 @@ file: ./Back-End-TechShare-Java/Dockerfile
 ```
 
 **Por qué fallaba:**
+
 - El workflow de GitHub Actions **YA está ejecutándose dentro del repositorio** `Back-End-TechShare-Java`
 - Al poner `context: ./Back-End-TechShare-Java`, intentaba buscar `Back-End-TechShare-Java/Back-End-TechShare-Java/`
 - Esto causaba: `Error: Cannot find path './Back-End-TechShare-Java' because it does not exist`
@@ -32,12 +34,14 @@ Cuando GitHub Actions hace `checkout`, ya está en el directorio del repositorio
 ---
 
 ### 2. **JWT_SECRET muy corto** ❌
+
 ```yaml
 # ❌ ANTES
 JWT_SECRET: test-secret-key-for-ci-pipeline-do-not-use-in-production
 ```
 
 **Por qué fallaba:**
+
 - Spring Security con JWT requiere mínimo **256 bits (32 caracteres)** para algoritmos HMAC
 - Tu secret tenía menos caracteres
 - Error: `The specified key byte array is X bits which is not secure enough`
@@ -50,6 +54,7 @@ JWT_SECRET: test-secret-key-for-ci-pipeline-minimum-32-characters-required
 ---
 
 ### 3. **Maven Wrapper sin permisos** ❌
+
 ```yaml
 # ❌ ANTES
 run: ./mvnw clean test -B
@@ -57,6 +62,7 @@ run: ./mvnw clean test -B
 ```
 
 **Por qué fallaba:**
+
 - En sistemas Unix/Linux, `mvnw` necesita permisos de ejecución
 - Windows no requiere esto, pero GitHub Actions corre en Linux
 
@@ -72,6 +78,7 @@ run: ./mvnw clean test -B
 ---
 
 ### 4. **MySQL no esperaba estar listo** ❌
+
 ```yaml
 # ❌ ANTES
 - name: 🧪 Run tests
@@ -80,6 +87,7 @@ run: ./mvnw clean test -B
 ```
 
 **Por qué fallaba:**
+
 - Los services de GitHub Actions se inician en paralelo
 - Aunque tiene `--health-cmd`, no siempre está listo cuando empiezan los steps
 - Los tests intentaban conectar antes de que MySQL aceptara conexiones
@@ -106,6 +114,7 @@ Esperamos activamente hasta 60 segundos (30 intentos × 2s) para que MySQL esté
 ---
 
 ### 5. **Test Reporter fallaba todo el pipeline** ❌
+
 ```yaml
 # ❌ ANTES
 - name: 📊 Test Report
@@ -116,6 +125,7 @@ Esperamos activamente hasta 60 segundos (30 intentos × 2s) para que MySQL esté
 ```
 
 **Por qué era problemático:**
+
 - Si un test fallaba, el reporter fallaba todo el workflow
 - No podías ver los resultados del build
 - Perdías información valiosa
@@ -132,6 +142,7 @@ Esperamos activamente hasta 60 segundos (30 intentos × 2s) para que MySQL esté
 ---
 
 ### 6. **Variables de entorno faltantes** ❌
+
 ```yaml
 # ❌ ANTES
 env:
@@ -140,6 +151,7 @@ env:
 ```
 
 **Por qué causaba problemas:**
+
 - Spring Boot cargaba configuración de producción en tests
 - Causaba errores de configuración inesperados
 
@@ -178,12 +190,13 @@ Necesitas ver los reportes de tests aunque el pipeline falle, para saber qué sa
 ### Archivo: `.github/workflows/ci.yml`
 
 #### 1. **Variables de entorno globales**
+
 ```yaml
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  JAVA_VERSION: '17'           # ✅ Centralizado
-  JAVA_DISTRIBUTION: 'temurin' # ✅ Centralizado
+  JAVA_VERSION: "17" # ✅ Centralizado
+  JAVA_DISTRIBUTION: "temurin" # ✅ Centralizado
 ```
 
 **Beneficio:** Cambias la versión de Java en un solo lugar.
@@ -191,6 +204,7 @@ env:
 ---
 
 #### 2. **Job: Code Quality**
+
 ```yaml
 code-quality:
   steps:
@@ -201,6 +215,7 @@ code-quality:
 ---
 
 #### 3. **Job: Build and Test**
+
 ```yaml
 build-and-test:
   services:
@@ -250,14 +265,15 @@ build-and-test:
 ---
 
 #### 4. **Job: Docker Build & Push**
+
 ```yaml
 docker-build-push:
   steps:
     - name: 🐳 Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .              # ✅ CORREGIDO: Root del repo
-        file: ./Dockerfile      # ✅ CORREGIDO: Path correcto
+        context: . # ✅ CORREGIDO: Root del repo
+        file: ./Dockerfile # ✅ CORREGIDO: Path correcto
         build-args: |
           BUILD_DATE=${{ github.event.head_commit.timestamp }}
           VCS_REF=${{ github.sha }}
@@ -268,21 +284,22 @@ docker-build-push:
 
 ## 📊 Comparación Antes/Después
 
-| Aspecto | Antes | Después | Estado |
-|---------|-------|---------|--------|
-| **Contexto Docker** | `./Back-End-TechShare-Java` ❌ | `.` ✅ | CORREGIDO |
-| **JWT Secret** | 45 caracteres | 64 caracteres ✅ | CORREGIDO |
-| **Maven permisos** | Sin chmod ❌ | Con chmod ✅ | CORREGIDO |
-| **MySQL ready check** | No esperaba ❌ | Espera activa ✅ | CORREGIDO |
-| **Test reporter** | Falla pipeline ❌ | Solo reporta ✅ | MEJORADO |
-| **Spring Profile** | No definido ❌ | `test` ✅ | CORREGIDO |
-| **Artifacts** | Solo JAR ❌ | JAR + Tests ✅ | MEJORADO |
+| Aspecto               | Antes                          | Después          | Estado    |
+| --------------------- | ------------------------------ | ---------------- | --------- |
+| **Contexto Docker**   | `./Back-End-TechShare-Java` ❌ | `.` ✅           | CORREGIDO |
+| **JWT Secret**        | 45 caracteres                  | 64 caracteres ✅ | CORREGIDO |
+| **Maven permisos**    | Sin chmod ❌                   | Con chmod ✅     | CORREGIDO |
+| **MySQL ready check** | No esperaba ❌                 | Espera activa ✅ | CORREGIDO |
+| **Test reporter**     | Falla pipeline ❌              | Solo reporta ✅  | MEJORADO  |
+| **Spring Profile**    | No definido ❌                 | `test` ✅        | CORREGIDO |
+| **Artifacts**         | Solo JAR ❌                    | JAR + Tests ✅   | MEJORADO  |
 
 ---
 
 ## 🚀 Cómo Probar los Cambios
 
 ### 1. **Commit y Push**
+
 ```bash
 cd G:\TechShare\Back-End-TechShare-Java
 git add .github/workflows/ci.yml
@@ -302,6 +319,7 @@ git push origin dev
 ```
 
 ### 2. **Verificar en GitHub Actions**
+
 1. Ve a: `https://github.com/DARKTOTEM2703/Back-End-TechShare-Java/actions`
 2. Busca el workflow que se ejecutó automáticamente
 3. Verifica que:
@@ -318,17 +336,20 @@ git push origin dev
 Si el CI/CD falla en el futuro:
 
 ### 1. **Revisar logs**
+
 ```bash
 # En GitHub Actions > Tu workflow > Click en el job que falló
 ```
 
 ### 2. **Descargar artifacts**
+
 ```bash
 # En la página del workflow > Artifacts section
 # Descarga "test-results" para ver qué tests fallaron
 ```
 
 ### 3. **Ejecutar localmente**
+
 ```bash
 # Simula el entorno de CI localmente
 cd G:\TechShare\Back-End-TechShare-Java
@@ -354,6 +375,7 @@ $env:SPRING_DATASOURCE_PASSWORD="admin1"
 - ✅ Artifacts: Disponibles para download
 
 **Próximos pasos:**
+
 1. Habilitar deploy a staging (comentado en línea 195)
 2. Agregar OWASP dependency check (opcional, comentado)
 3. Configurar environments en GitHub (staging, production)

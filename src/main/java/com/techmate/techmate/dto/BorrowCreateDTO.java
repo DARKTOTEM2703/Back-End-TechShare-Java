@@ -8,14 +8,20 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 /**
  * DTO para CREAR préstamos (write operations).
  * Solo contiene IDs de entidades relacionadas, no objetos completos.
  * Usado en endpoints POST/PUT.
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BorrowCreateDTO {
 
     /**

@@ -53,7 +53,7 @@ public class AuthService {
 
     @Transactional
     public String registerUser(RegisterRequest registerRequest) {
-        if (usuarioRepository.findOneByEmail(registerRequest.getEmail()).isPresent()) {
+        if (usuarioRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw new IllegalArgumentException("El usuario ya existe");
         }
 
@@ -113,7 +113,7 @@ public class AuthService {
             throw new IllegalArgumentException("Email inválido");
         }
         String normalized = email.toLowerCase().trim();
-        Optional<Usuario> opt = usuarioRepository.findOneByEmail(normalized);
+        Optional<Usuario> opt = usuarioRepository.findByEmail(normalized);
         if (opt.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado");
         }

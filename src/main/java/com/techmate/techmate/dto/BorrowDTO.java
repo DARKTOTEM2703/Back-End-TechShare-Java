@@ -6,13 +6,19 @@ import java.util.List;
 import com.techmate.techmate.entity.Status;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 /**
  * DTO para transferencia de datos de préstamos (Borrow).
  * Incluye validaciones Jakarta para seguridad de datos.
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BorrowDTO {
 
     @NotNull(message = "El ID del préstamo no puede ser nulo")

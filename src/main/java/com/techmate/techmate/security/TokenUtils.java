@@ -15,6 +15,7 @@ import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
 
+import com.techmate.techmate.dto.AuthUserDTO;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -83,15 +84,11 @@ public class TokenUtils {
             Integer userId = ((Number) claims.get("id")).intValue();
             String userName = (String) claims.get("user_name");
             
-            // Crear un objeto Usuario básico desde los claims
-            com.techmate.techmate.entity.Usuario usuario = new com.techmate.techmate.entity.Usuario();
-            usuario.setId(userId);
-            usuario.setEmail(email);
-            usuario.setUser_name(userName);
-            usuario.setEnabled(true); // Asumimos que si el token es válido, el usuario está habilitado
-            
-            // Crear UserDetailsImpl con los datos del token
-            UserDetailsImpl userDetails = new UserDetailsImpl(usuario, roles);
+            // Crear UserDetailsImpl con datos primitivos para evitar ConcurrentModificationException
+            // NO crear entidades Usuario que pueden activar persistence context de Hibernate
+            AuthUserDTO authUser = new AuthUserDTO(userId, userName, email, null, 
+                                                  null, null, true, roles);
+            UserDetailsImpl userDetails = new UserDetailsImpl(authUser);
             
             // Convertir roles a authorities
             var authorities = roles.stream()
@@ -161,6 +158,36 @@ public class TokenUtils {
             if (userNameClaim != null) return userNameClaim.toString();
         }
         throw new RuntimeException("Token no válido o nombre de usuario no encontrado");
+    }
+    
+    /**
+     * Extrae el email (username) del token JWT
+     */
+    public static String getUsernameFromToken(String token) {
+        Claims claims = decodeToken(token);
+        if (claims != null) {
+            return claims.getSubject(); // El email se guarda en el subject
+        }
+        throw new RuntimeException("Token no válido o email no encontrado");
+    }
+    
+    /**
+     * Valida si el token es válido y no ha expirado
+     */
+    public static boolean validateToken(String token, UserDetails userDetails) {
+        try {
+            Claims claims = decodeToken(token);
+            if (claims == null) return false;
+            
+            String emailFromToken = claims.getSubject();
+            Date expirationDate = claims.getExpiration();
+            
+            // Verificar que el email coincida y el token no haya expirado
+            return emailFromToken.equals(userDetails.getUsername()) && 
+                   !expirationDate.before(new Date());
+        } catch (Exception e) {
+            return false;
+        }
     }
     
     

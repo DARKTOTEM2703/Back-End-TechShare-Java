@@ -47,18 +47,18 @@ public class Borrow {
     // Legacy compatibility fields (not persisted in DB - @Transient)
     @Transient
     private Date startDate;
-    
+
     @Transient
     private Usuario admin;
-    
+
     @OneToMany(mappedBy = "borrow", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude  // ✅ Evita ciclo infinito con DetailsBorrow.toString()
+    @ToString.Exclude // ✅ Evita ciclo infinito con DetailsBorrow.toString()
     private List<DetailsBorrow> details;
 
     // ══════════════════════════════════════════════════════════════
     // ✅ COMPATIBLE METHODS (Legacy code support - borrowId)
     // ══════════════════════════════════════════════════════════════
-    
+
     /**
      * Método compatible para código legacy que usa 'borrowId'.
      * Internamente mapea a 'id'.
@@ -78,7 +78,7 @@ public class Borrow {
     // ══════════════════════════════════════════════════════════════
     // BUSINESS METHODS
     // ══════════════════════════════════════════════════════════════
-    
+
     /**
      * Calcula el monto total del préstamo sumando los detalles.
      * 
@@ -93,5 +93,3 @@ public class Borrow {
         return 0;
     }
 }
-
-

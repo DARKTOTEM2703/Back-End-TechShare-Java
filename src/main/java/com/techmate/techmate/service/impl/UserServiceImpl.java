@@ -29,11 +29,11 @@ public class UserServiceImpl implements UserService {
     private final UserQueryService userQueryService;
 
     public UserServiceImpl(UsuarioRepository userRepository,
-                           RoleRepository roleRepository,
-                           UsuarioRoleRepository usuarioRoleRepository,
-                           UserMapper userMapper,
-                           UserValidator userValidator,
-                           UserQueryService userQueryService) {
+            RoleRepository roleRepository,
+            UsuarioRoleRepository usuarioRoleRepository,
+            UserMapper userMapper,
+            UserValidator userValidator,
+            UserQueryService userQueryService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.usuarioRoleRepository = usuarioRoleRepository;
@@ -49,8 +49,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UsuarioDTO> findUserById(Integer id) {
-    return userRepository.findById(id).map(u -> Optional.of(userMapper.toDTO(u, usuarioRoleRepository.findByUsuarioIds(List.of(id)).stream()
-        .map(usuarioRole -> usuarioRole.getRole().getNombre()).collect(Collectors.toSet())))).orElse(Optional.empty());
+        return userRepository.findById(id)
+                .map(u -> Optional.of(userMapper.toDTO(u, usuarioRoleRepository.findByUsuarioIds(List.of(id)).stream()
+                        .map(usuarioRole -> usuarioRole.getRole().getNombre()).collect(Collectors.toSet()))))
+                .orElse(Optional.empty());
     }
 
     @Override
@@ -58,47 +60,46 @@ public class UserServiceImpl implements UserService {
         Optional<Usuario> usuarioOpt = userRepository.findById(id);
 
         if (usuarioOpt.isEmpty()) {
-            throw new com.techmate.techmate.exception.NotFoundException("El usuario con ID " + id + " no fue encontrado.");
+            throw new com.techmate.techmate.exception.NotFoundException(
+                    "El usuario con ID " + id + " no fue encontrado.");
         }
 
         userRepository.deleteById(id);
     }
 
-    
-
     @Override
     public Optional<UsuarioDTO> updateUser(Integer id, UsuarioDTO usuarioDTO) {
         // Buscar al usuario por ID
-    Usuario usuario = userRepository.findById(id)
-        .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException("Usuario no encontrado con ID: " + id));
+        Usuario usuario = userRepository.findById(id)
+                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                        "Usuario no encontrado con ID: " + id));
 
-    // Actualizar los campos básicos del usuario
-    usuario.setUser_name(usuarioDTO.getUserName());
-    usuario.setFirst_name(usuarioDTO.getFirstName());
-    usuario.setLast_name(usuarioDTO.getLastName());
-    usuario.setEmail(usuarioDTO.getEmail());
+        // Actualizar los campos básicos del usuario
+        usuario.setUser_name(usuarioDTO.getUserName());
+        usuario.setFirst_name(usuarioDTO.getFirstName());
+        usuario.setLast_name(usuarioDTO.getLastName());
+        usuario.setEmail(usuarioDTO.getEmail());
 
-    // Validar roles
-    userValidator.validateRolesExist(usuarioDTO.getRoles());
+        // Validar roles
+        userValidator.validateRolesExist(usuarioDTO.getRoles());
 
-    // Manejar la actualización de roles
-    Set<Role> updatedRoles = usuarioDTO.getRoles().stream()
-        .map(roleName -> roleRepository.findByName(roleName)
-            .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado: " + roleName)))
-        .collect(Collectors.toSet());
+        // Manejar la actualización de roles
+        Set<Role> updatedRoles = usuarioDTO.getRoles().stream()
+                .map(roleName -> roleRepository.findByName(roleName)
+                        .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado: " + roleName)))
+                .collect(Collectors.toSet());
 
-    // Limpiar los roles antiguos y asignar los nuevos
-    usuario.getRoles().clear();
-    usuario.getRoles().addAll(updatedRoles);
+        // Limpiar los roles antiguos y asignar los nuevos
+        usuario.getRoles().clear();
+        usuario.getRoles().addAll(updatedRoles);
 
-    Usuario usuarioActualizado = userRepository.save(usuario);
+        Usuario usuarioActualizado = userRepository.save(usuario);
 
-    Set<String> rolesActualizados = usuarioActualizado.getRoles().stream()
-        .map(Role::getNombre)
-        .collect(Collectors.toSet());
+        Set<String> rolesActualizados = usuarioActualizado.getRoles().stream()
+                .map(Role::getNombre)
+                .collect(Collectors.toSet());
 
-    return Optional.of(userMapper.toDTO(usuarioActualizado, rolesActualizados));
+        return Optional.of(userMapper.toDTO(usuarioActualizado, rolesActualizados));
     }
 
 }
-

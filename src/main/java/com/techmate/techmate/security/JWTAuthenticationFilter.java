@@ -119,12 +119,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // Obtenemos los detalles del usuario autenticado (implementación propia)
         UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
-        Integer userId = userDetails.getUsuario().getId();
+        Integer userId = userDetails.getId(); // FIXED: Usar método directo sin crear entidad Usuario
 
         // Seguridad adicional: si el usuario existe pero no está habilitado se
         // devuelve 401 con un mensaje claro. Esto evita que usuarios no
         // verificados obtengan tokens.
-        if (!userDetails.getUsuario().isEnabled()) {
+        if (!userDetails.isEnabled()) { // FIXED: Usar método directo sin crear entidad Usuario
             log.info("Usuario {} inició sesión pero no está verificado", userDetails.getUsername());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");

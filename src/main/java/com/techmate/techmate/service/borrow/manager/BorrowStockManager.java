@@ -35,10 +35,10 @@ import com.techmate.techmate.repository.MovementsRepository;
  */
 @Component
 public class BorrowStockManager implements IBorrowStockManager {
-    
+
     private final MaterialsRepository materialsRepository;
     private final MovementsRepository movementsRepository;
-    
+
     /**
      * Constructor injection para cumplir con DIP.
      * 
@@ -49,11 +49,11 @@ public class BorrowStockManager implements IBorrowStockManager {
         this.materialsRepository = materialsRepository;
         this.movementsRepository = movementsRepository;
     }
-    
+
     /**
      * Valida si hay suficiente stock disponible para préstamo.
      * 
-     * @param materialId ID del material
+     * @param materialId        ID del material
      * @param requestedQuantity Cantidad solicitada
      * @return true si hay suficiente stock
      * @throws RuntimeException si no hay stock suficiente o material no encontrado
@@ -71,18 +71,18 @@ public class BorrowStockManager implements IBorrowStockManager {
 
         return true;
     }
-    
+
     /**
      * Reduce el stock disponible cuando se aprueba un préstamo.
      * Operación transaccional para mantener consistencia.
      * 
      * @param materialId ID del material
-     * @param quantity Cantidad a reducir
+     * @param quantity   Cantidad a reducir
      * @throws RuntimeException si no se puede reducir el stock
      */
     @Transactional
     public void reduceStock(Integer materialId, int quantity) {
-        
+
         Materials material = materialsRepository.findById(materialId)
                 .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
@@ -97,28 +97,28 @@ public class BorrowStockManager implements IBorrowStockManager {
         // Guardar cambios
         materialsRepository.save(material);
     }
-    
+
     /**
      * Restaura el stock cuando se devuelve un préstamo.
      * Operación transaccional para mantener consistencia.
      * 
      * @param materialId ID del material
-     * @param quantity Cantidad a restaurar
+     * @param quantity   Cantidad a restaurar
      * @throws RuntimeException si no se puede restaurar el stock
      */
     @Transactional
     public void restoreStock(Integer materialId, int quantity) {
-        
-    Materials material = materialsRepository.findById(materialId)
-        .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
-    // Restaurar stock
-    material.setBorrowable_stock(material.getBorrowable_stock() + quantity);
+        Materials material = materialsRepository.findById(materialId)
+                .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
-    // Guardar cambios
-    materialsRepository.save(material);
+        // Restaurar stock
+        material.setBorrowable_stock(material.getBorrowable_stock() + quantity);
+
+        // Guardar cambios
+        materialsRepository.save(material);
     }
-    
+
     /**
      * Obtiene el stock disponible actual para un material.
      * 
@@ -126,13 +126,13 @@ public class BorrowStockManager implements IBorrowStockManager {
      * @return Cantidad de stock disponible
      */
     public int getAvailableStock(Integer materialId) {
-        
-    Materials material = materialsRepository.findById(materialId)
-        .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
-    return material.getBorrowable_stock();
+        Materials material = materialsRepository.findById(materialId)
+                .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
+
+        return material.getBorrowable_stock();
     }
-    
+
     /**
      * Verifica si un material está disponible para préstamos.
      * 
@@ -140,18 +140,20 @@ public class BorrowStockManager implements IBorrowStockManager {
      * @return true si el material está disponible para préstamos
      */
     public boolean isMaterialBorrowable(Integer materialId) {
-        
-    Materials material = materialsRepository.findById(materialId)
-        .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
-    // Un material es prestable si tiene stock > 0
-    return material.getBorrowable_stock() > 0;
+        Materials material = materialsRepository.findById(materialId)
+                .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
+
+        // Un material es prestable si tiene stock > 0
+        return material.getBorrowable_stock() > 0;
     }
-    
+
     /**
-     * MÉTODO SRP: Reserva stock y registra movimiento de salida (BORROW) de forma atómica.
+     * MÉTODO SRP: Reserva stock y registra movimiento de salida (BORROW) de forma
+     * atómica.
      * 
-     * RESPONSABILIDAD ÚNICA: Gestionar stock + auditoría de movimiento en una sola transacción.
+     * RESPONSABILIDAD ÚNICA: Gestionar stock + auditoría de movimiento en una sola
+     * transacción.
      * 
      * BENEFICIOS:
      * - Testeable: Se puede probar aisladamente con mocks
@@ -161,8 +163,8 @@ public class BorrowStockManager implements IBorrowStockManager {
      * 
      * @param material Material a reservar
      * @param quantity Cantidad a reservar
-     * @param borrow Préstamo asociado
-     * @param usuario Usuario que realiza el préstamo
+     * @param borrow   Préstamo asociado
+     * @param usuario  Usuario que realiza el préstamo
      * @throws BorrowBusinessException si no hay stock suficiente
      */
     @Override
@@ -175,23 +177,22 @@ public class BorrowStockManager implements IBorrowStockManager {
         if (quantity <= 0) {
             throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
         }
-        
+
         // 1. Validar stock disponible
         if (material.getBorrowable_stock() < quantity) {
             throw BorrowBusinessException.insufficientStock(
-                material.getId(), 
-                quantity, 
-                material.getBorrowable_stock()
-            );
+                    material.getId(),
+                    quantity,
+                    material.getBorrowable_stock());
         }
-        
+
         // 2. Decrementar stock disponible
         int newStock = material.getBorrowable_stock() - quantity;
         material.setBorrowable_stock(newStock);
-        
+
         // 3. Persistir cambios en material
         materialsRepository.save(material);
-        
+
         // 4. Crear registro de movimiento (SALIDA/BORROW)
         Movements movement = new Movements();
         movement.setMoveType(MoveType.BORROW);
@@ -200,20 +201,21 @@ public class BorrowStockManager implements IBorrowStockManager {
         movement.setUsuario(usuario);
         movement.setMovementDate(new Date());
         movement.setNotes(String.format(
-            "Préstamo #%d - Cantidad: %d - Stock restante: %d",
-            borrow.getId(),
-            quantity,
-            newStock
-        ));
-        
+                "Préstamo #%d - Cantidad: %d - Stock restante: %d",
+                borrow.getId(),
+                quantity,
+                newStock));
+
         // 5. Persistir movimiento
         movementsRepository.save(movement);
     }
-    
+
     /**
-     * MÉTODO SRP: Libera stock y registra movimiento de entrada (RETURN) de forma atómica.
+     * MÉTODO SRP: Libera stock y registra movimiento de entrada (RETURN) de forma
+     * atómica.
      * 
-     * RESPONSABILIDAD ÚNICA: Restaurar stock + auditoría de movimiento en una sola transacción.
+     * RESPONSABILIDAD ÚNICA: Restaurar stock + auditoría de movimiento en una sola
+     * transacción.
      * 
      * BENEFICIOS:
      * - Simetría con reserveStockAndLogMovement() (patrón consistente)
@@ -223,8 +225,8 @@ public class BorrowStockManager implements IBorrowStockManager {
      * 
      * @param material Material a liberar
      * @param quantity Cantidad a liberar
-     * @param borrow Préstamo asociado
-     * @param usuario Usuario que devuelve
+     * @param borrow   Préstamo asociado
+     * @param usuario  Usuario que devuelve
      */
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
@@ -236,14 +238,14 @@ public class BorrowStockManager implements IBorrowStockManager {
         if (quantity <= 0) {
             throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
         }
-        
+
         // 1. Incrementar stock disponible
         int newStock = material.getBorrowable_stock() + quantity;
         material.setBorrowable_stock(newStock);
-        
+
         // 2. Persistir cambios en material
         materialsRepository.save(material);
-        
+
         // 3. Crear registro de movimiento (ENTRADA/RETURN)
         Movements movement = new Movements();
         movement.setMoveType(MoveType.RETURN);
@@ -252,14 +254,12 @@ public class BorrowStockManager implements IBorrowStockManager {
         movement.setUsuario(usuario);
         movement.setMovementDate(new Date());
         movement.setNotes(String.format(
-            "Devolución préstamo #%d - Cantidad: %d - Stock disponible: %d",
-            borrow.getId(),
-            quantity,
-            newStock
-        ));
-        
+                "Devolución préstamo #%d - Cantidad: %d - Stock disponible: %d",
+                borrow.getId(),
+                quantity,
+                newStock));
+
         // 4. Persistir movimiento
         movementsRepository.save(movement);
     }
 }
-

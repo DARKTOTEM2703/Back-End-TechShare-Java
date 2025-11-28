@@ -5,9 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -24,11 +22,16 @@ public class Role {
     @Column(name = "name", unique = true, nullable = false)
     private String name; // mapeado a columna 'name'
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<Usuario> usuarios = new HashSet<>();
+    // DESHABILITADO: Relación bidireccional causa ConcurrentModificationException
+    // @ManyToMany(mappedBy = "roles")
+    // private Set<Usuario> usuarios = new HashSet<>();
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RoleMaterials> roleMaterials;
+    // DESHABILITADO: Esta relación OneToMany puede estar causando ConcurrentModificationException
+    // @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<RoleMaterials> roleMaterials;
+    
+    @Transient
+    private List<RoleMaterials> roleMaterials; // Temporal: sin persistencia JPA
 
 
     // Compatibility methods for legacy code/tests

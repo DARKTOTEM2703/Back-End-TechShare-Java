@@ -6,10 +6,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.techmate.techmate.entity.Usuario;
+import com.techmate.techmate.dto.AuthUserDTO;
 import com.techmate.techmate.repository.UsuarioRepository;
 import com.techmate.techmate.repository.UsuarioRoleRepository;
+import com.techmate.techmate.repository.AuthenticationRepository;
 
 /**
  * Implementación del servicio de autenticación de usuarios para Spring
@@ -33,13 +37,19 @@ import com.techmate.techmate.repository.UsuarioRoleRepository;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+
     // Inyecta el repositorio de usuarios para acceder a la base de datos.
     private final UsuarioRepository usuarioRepository;
     private final UsuarioRoleRepository usuarioRoleRepository; // Inyecta el repositorio de roles
+    private final AuthenticationRepository authenticationRepository; // Repository sin JPA
 
-    public UserDetailsServiceImpl(UsuarioRepository usuarioRepository, UsuarioRoleRepository usuarioRoleRepository) {
+    public UserDetailsServiceImpl(UsuarioRepository usuarioRepository, 
+                                UsuarioRoleRepository usuarioRoleRepository,
+                                AuthenticationRepository authenticationRepository) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioRoleRepository = usuarioRoleRepository;
+        this.authenticationRepository = authenticationRepository;
     }
 
     /**
@@ -55,19 +65,27 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        // Busca al usuario en la base de datos usando el email proporcionado.
-        Usuario usuario = usuarioRepository.findOneByEmail(email)
-                // Si no se encuentra el usuario, lanza una excepción indicando que el usuario
-                // no existe.
-                .orElseThrow(() -> new UsernameNotFoundException("El usuario con email " + email + " no existe"));
+        log.info("🔍 [DEBUG] UserDetailsService.loadUserByUsername llamado con email: {}", email);
+        
+        // ENFOQUE SIN JPA: Usar JdbcTemplate directo para evitar ConcurrentModificationException
+        log.info("📞 [DEBUG] Llamando a authenticationRepository.findUserByEmailForAuth...");
+        AuthUserDTO authUser = authenticationRepository.findUserByEmailForAuth(email);
+        log.info("📋 [DEBUG] authenticationRepository retornó: {}", authUser != null ? "usuario encontrado" : "null");
+        
+        if (authUser == null) {
+            log.warn("🚫 [DEBUG] Usuario no encontrado: {}", email);
+            throw new UsernameNotFoundException("El usuario con email " + email + " no existe");
+        }
 
-        // Obtenemos los nombres de roles directamente con query optimizada (evita
-        // ConcurrentModificationException)
-        List<String> roleNames = usuarioRoleRepository.findRoleNamesByUsuarioId(usuario.getId());
+        log.info("👤 [DEBUG] Usuario encontrado: {} (ID: {})", email, authUser.getId());
 
-        // Retorna una instancia de UserDetailsImpl que contiene datos primitivos y
-        // lista de nombres de roles
-        return new UserDetailsImpl(usuario, roleNames);
+        // Obtener roles usando JdbcTemplate directo
+        List<String> roleNames = authenticationRepository.findRoleNamesByUserId(authUser.getId());
+        authUser.setRoleNames(roleNames);
+
+        log.info("🎭 [DEBUG] Usuario {} cargado con roles: {}", email, roleNames);
+        
+        return new UserDetailsImpl(authUser);
     }
 
     public String getUsuarioUsernamById(int usernameId) {

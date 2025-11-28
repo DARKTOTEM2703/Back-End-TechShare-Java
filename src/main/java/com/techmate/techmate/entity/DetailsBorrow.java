@@ -12,7 +12,7 @@ public class DetailsBorrow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;  // PK
+    private Integer id; // PK
 
     @Column(name = "quantity")
     private Integer quantity;
@@ -29,8 +29,8 @@ public class DetailsBorrow {
 
     @ManyToOne
     @JoinColumn(name = "borrow_id")
-    @ToString.Exclude  // ✅ Evita ciclo infinito con Borrow.toString()
-    private Borrow borrow;     // Préstamo asociado a este detalle
+    @ToString.Exclude // ✅ Evita ciclo infinito con Borrow.toString()
+    private Borrow borrow; // Préstamo asociado a este detalle
 
     // Compatibility getters/setters
     public Integer getDetailsBorrowId() {
@@ -49,5 +49,3 @@ public class DetailsBorrow {
         return this.borrow != null ? this.borrow.getId() : null;
     }
 }
-
-

@@ -47,11 +47,11 @@ public class CategoriesServiceImp implements CategoriesService {
     private String serverUrl; // URL base del servidor
 
     public CategoriesServiceImp(CategoriesRepository categoriesRepository,
-                                ImageStorageStrategy imageStorageStrategy,
-                                ImageValidationStrategy imageValidationStrategy,
-                                CategoriesMapper categoriesMapper,
-                                CategoriesValidator categoriesValidator,
-                                CategoriesQueryService categoriesQueryService) {
+            ImageStorageStrategy imageStorageStrategy,
+            ImageValidationStrategy imageValidationStrategy,
+            CategoriesMapper categoriesMapper,
+            CategoriesValidator categoriesValidator,
+            CategoriesQueryService categoriesQueryService) {
         this.categoriesRepository = categoriesRepository;
         this.imageStorageStrategy = imageStorageStrategy;
         this.imageValidationStrategy = imageValidationStrategy;
@@ -74,8 +74,8 @@ public class CategoriesServiceImp implements CategoriesService {
     public CategoriesDTO createCategory(CategoriesDTO categoriesDTO, MultipartFile image) {
         // Verificar si ya existe una categoría con el mismo nombre
         categoriesValidator.validateUniqueName(categoriesDTO.getName());
-    // Validar la imagen completa usando la estrategia (ahora acepta MultipartFile)
-    imageValidationStrategy.validate(image);
+        // Validar la imagen completa usando la estrategia (ahora acepta MultipartFile)
+        imageValidationStrategy.validate(image);
 
         // Guardar la imagen y obtener la ruta
         String savedImagePath = imageStorageStrategy.saveImage(image); // Asegúrate de que este método acepte
@@ -86,9 +86,9 @@ public class CategoriesServiceImp implements CategoriesService {
         categoriesDTO.setImagePath(savedImagePath);
 
         // Convertir el DTO a entidad y guardarlo en la base de datos
-    Categories categories = convertToEntity(categoriesDTO);
-    categories = categoriesRepository.save(categories);
-    return categoriesMapper.toDTO(categories);
+        Categories categories = convertToEntity(categoriesDTO);
+        categories = categoriesRepository.save(categories);
+        return categoriesMapper.toDTO(categories);
     }
 
     @Override
@@ -162,5 +162,3 @@ public class CategoriesServiceImp implements CategoriesService {
         return category != null ? category.getName() : null;
     }
 }
-
-

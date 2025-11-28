@@ -154,10 +154,13 @@ public class BorrowServiceImpl implements BorrowService {
 
     /**
      * Maneja la transición de aprobación (PENDING → BORROWED).
-     * REFACTORIZADO CON SRP: Delega gestión de stock + auditoría al BorrowStockManager.
+     * REFACTORIZADO CON SRP: Delega gestión de stock + auditoría al
+     * BorrowStockManager.
      * 
-     * ANTES: El servicio manejaba stock directamente (3 responsabilidades: validar, reducir, auditar)
-     * AHORA: El servicio solo coordina, BorrowStockManager gestiona stock + movimientos
+     * ANTES: El servicio manejaba stock directamente (3 responsabilidades: validar,
+     * reducir, auditar)
+     * AHORA: El servicio solo coordina, BorrowStockManager gestiona stock +
+     * movimientos
      * 
      * @param borrow Préstamo a aprobar
      * @throws Exception si no hay stock disponible
@@ -165,12 +168,12 @@ public class BorrowServiceImpl implements BorrowService {
     private void handleBorrowApproved(Borrow borrow) throws Exception {
         // Obtener usuario del préstamo para auditoría
         Usuario usuario = borrow.getUsuario();
-        
+
         // SRP: Delegar gestión de stock + movimientos al manager especializado
         for (DetailsBorrow detail : borrow.getDetails()) {
             Materials material = detail.getMaterials();
             int quantity = detail.getQuantity();
-            
+
             // Una sola llamada: reserva stock + crea movimiento (atómico)
             borrowStockManager.reserveStockAndLogMovement(material, quantity, borrow, usuario);
         }
@@ -182,22 +185,25 @@ public class BorrowServiceImpl implements BorrowService {
 
     /**
      * Maneja la transición de devolución (BORROWED → RETURNED).
-     * REFACTORIZADO CON SRP: Delega gestión de stock + auditoría al BorrowStockManager.
+     * REFACTORIZADO CON SRP: Delega gestión de stock + auditoría al
+     * BorrowStockManager.
      * 
-     * ANTES: El servicio restauraba stock directamente (sin auditoría de movimientos)
-     * AHORA: El servicio delega, BorrowStockManager restaura stock + registra movimiento RETURN
+     * ANTES: El servicio restauraba stock directamente (sin auditoría de
+     * movimientos)
+     * AHORA: El servicio delega, BorrowStockManager restaura stock + registra
+     * movimiento RETURN
      * 
      * @param borrow Préstamo a devolver
      */
     private void handleBorrowReturned(Borrow borrow) {
         // Obtener usuario del préstamo para auditoría
         Usuario usuario = borrow.getUsuario();
-        
+
         // SRP: Delegar restauración de stock + movimientos al manager especializado
         for (DetailsBorrow detail : borrow.getDetails()) {
             Materials material = detail.getMaterials();
             int quantity = detail.getQuantity();
-            
+
             // Una sola llamada: libera stock + crea movimiento (atómico)
             borrowStockManager.releaseStockAndLogMovement(material, quantity, borrow, usuario);
         }

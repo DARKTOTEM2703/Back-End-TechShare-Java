@@ -1,11 +1,13 @@
 package com.techmate.techmate.config;
 
 import com.techmate.techmate.security.JWTAuthenticationFilter;
+import com.techmate.techmate.security.JwtRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -42,11 +45,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:80", "http://localhost"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Permitir orígenes específicos y patterns
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "https://localhost:*", "http://127.0.0.1:*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type", "Access-Control-Allow-Origin"));
+        configuration.setMaxAge(3600L);
+        log.info("🌐 CORS configurado para: localhost:3000, localhost:3001, patrones localhost:*");
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -64,17 +71,30 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
+        // Forzar uso de nuestro DaoAuthenticationProvider personalizado
+        ProviderManager providerManager = new ProviderManager(authenticationProvider());
+        log.info("✅ AuthenticationManager configured with custom DaoAuthenticationProvider");
+        return providerManager;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
-        log.info("� Configuring SecurityFilterChain with JWT and CORS");
+    public JwtRequestFilter jwtRequestFilter() {
+        return new JwtRequestFilter(userDetailsService);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authManager, JwtRequestFilter jwtRequestFilter) throws Exception {
+        log.info("🔒 Configuring SecurityFilterChain with JWT and CORS");
         
-        // Crear filtro JWT para /login
+        // Crear filtro JWT para /login (autenticación)
         JWTAuthenticationFilter jwtAuthFilter = new JWTAuthenticationFilter();
         jwtAuthFilter.setAuthenticationManager(authManager);
         jwtAuthFilter.setFilterProcessesUrl("/login");
+        
+        // El filtro JWT se inyecta automáticamente como Bean
+        // NO necesitamos crearlo manualmente aquí
+        
+        log.info("🔧 Adding JWT Request Filter to the security chain");
         
         http
             .csrf(csrf -> csrf.disable())
@@ -84,6 +104,8 @@ public class SecurityConfig {
                 // Rutas públicas (login, register, verify, auth)
                 .requestMatchers("/login", "/verify", "/api/auth/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
+                // Endpoint temporal para generar hash
+                .requestMatchers("/temp/**").permitAll()
                 // Health checks para monitoring
                 .requestMatchers("/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
                 // Recursos estáticos e imágenes
@@ -99,7 +121,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())
-            .addFilter(jwtAuthFilter);
+            .addFilter(jwtAuthFilter)
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         log.info("✅ SecurityFilterChain configured: CSRF disabled, CORS enabled, JWT active, ROLES enforced");
         return http.build();

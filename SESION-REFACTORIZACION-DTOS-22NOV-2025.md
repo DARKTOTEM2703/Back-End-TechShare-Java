@@ -31,9 +31,11 @@ feat: add Jakarta validation annotations to DetailsBorrowDTO
 ```
 
 **Archivos modificados**:
+
 - `DetailsBorrowDTO.java` (1 archivo, 19 inserciones)
 
 **Validación**:
+
 - ✅ Compilación: BUILD SUCCESS
 - ✅ Tests: 405/405 passing
 - ✅ Push: Exitoso a origin/dev
@@ -49,7 +51,7 @@ feat: separate read/write DTOs for Borrow operations
   * Only IDs for relations (usuarioId)
   * Strict validations (@Future, @NotEmpty, @Valid)
   * Focused on write requirements
-  
+
 - Created BorrowReadDTO for GET operations
   * Complete fields for display
   * Denormalized data (usuarioName, adminName)
@@ -60,12 +62,14 @@ Part of FASE 3: Read/Write DTOs separation (CQRS pattern)
 ```
 
 **Archivos creados**:
+
 - `BorrowCreateDTO.java` (57 líneas)
 - `BorrowReadDTO.java` (93 líneas)
 
 **Total**: 2 archivos, 143 inserciones
 
 **Validación**:
+
 - ✅ Compilación: BUILD SUCCESS (182 archivos)
 - ✅ Tests: 405/405 passing
 - ✅ Push: Exitoso a origin/dev
@@ -99,6 +103,7 @@ Tests: 405/405 passing (100%)
 ```
 
 **Archivos modificados**:
+
 - `BorrowController.java` - Ahora usa `BorrowReadDTO`
 - `BorrowMapper.java` - Agregados métodos `fromCreateDTO()` y `toReadDTO()`
 - `SESION-REFACTORIZACION-DTOS-22NOV-2025.md` - Documentación completa
@@ -106,6 +111,7 @@ Tests: 405/405 passing (100%)
 **Total**: 3 archivos, 464 inserciones, 10 eliminaciones
 
 **Validación**:
+
 - ✅ Compilación: BUILD SUCCESS
 - ✅ Tests: 405/405 passing
 - ✅ Push: Exitoso a origin/dev
@@ -119,24 +125,26 @@ Tests: 405/405 passing (100%)
 **Propósito**: Crear/actualizar préstamos (POST/PUT)
 
 **Características**:
+
 ```java
 public class BorrowCreateDTO {
     private Integer id;              // Nullable para create
-    
+
     @NotNull @Future
     private Date endDate;            // Fecha futura obligatoria
-    
+
     @NotNull @Min(1)
     private Integer usuarioId;       // Solo ID, no objeto completo
-    
+
     private Integer adminId;         // Opcional
-    
+
     @NotNull @NotEmpty @Valid
     private List<DetailsBorrowDTO> details;  // Mínimo 1 material
 }
 ```
 
 **Validaciones**:
+
 - `endDate` debe ser fecha futura
 - `usuarioId` obligatorio y mayor a 0
 - `details` no puede estar vacío
@@ -149,6 +157,7 @@ public class BorrowCreateDTO {
 **Propósito**: Mostrar préstamos (GET)
 
 **Características**:
+
 ```java
 public class BorrowReadDTO {
     // Campos básicos
@@ -157,26 +166,27 @@ public class BorrowReadDTO {
     private Date endDate;
     private Status status;
     private double amount;
-    
+
     // Datos calculados
     private Date startDate;          // Calculado cuando se aprueba
     private Date returnDate;         // Calculado en retorno
-    
+
     // Datos desnormalizados (evita joins)
     private Integer usuarioId;
     private String usuarioName;      // Nombre del usuario
     private Integer adminId;
     private String adminName;        // Nombre del admin
-    
+
     // Detalles completos
     private List<DetailsBorrowDTO> details;
-    
+
     // Compatibilidad legacy
     public Integer getBorrowId() { return this.id; }
 }
 ```
 
 **Ventajas**:
+
 - Incluye todos los datos para visualización
 - Evita queries adicionales (usuarioName, adminName)
 - Incluye campos calculados (startDate, returnDate)
@@ -189,6 +199,7 @@ public class BorrowReadDTO {
 ### Tareas Ejecutadas
 
 1. **Verificación @PreAuthorize en Controllers** ✅
+
    - UserController: `@PreAuthorize("hasRole('ADMIN')")`
    - RoleController: `@PreAuthorize("hasRole('ADMIN')")`
    - BorrowController: `@PreAuthorize("hasRole('ADMIN')")`
@@ -198,6 +209,7 @@ public class BorrowReadDTO {
    - **Resultado**: Todos los controllers ya tienen seguridad declarativa
 
 2. **Verificación Validaciones Jakarta en DTOs** ✅
+
    - MaterialsDTO: Ya tiene validaciones completas
    - BorrowDTO: Ya tiene validaciones completas
    - UsuarioDTO: Ya tiene validaciones completas
@@ -205,15 +217,16 @@ public class BorrowReadDTO {
    - **DetailsBorrowDTO**: ❌ Faltaban validaciones
 
 3. **Agregadas Validaciones a DetailsBorrowDTO** ✅
+
    ```java
    @NotNull(message = "La cantidad no puede ser nula")
    @Positive(message = "La cantidad debe ser mayor a 0")
    private Integer quantity;
-   
+
    @NotNull(message = "El precio unitario no puede ser nulo")
    @Min(value = 0, message = "El precio unitario debe ser mayor o igual a 0")
    private double unitPrice;
-   
+
    @NotNull(message = "El ID del material no puede ser nulo")
    @Positive(message = "El ID del material debe ser mayor a 0")
    private Integer materialsId;
@@ -231,6 +244,7 @@ public class BorrowReadDTO {
 El plan sugería que había inconsistencias entre `borrowId` vs `id`, `materialsId` vs `id`.
 
 **Resultados de la Investigación**:
+
 - ✅ MaterialsDTO.id - CORRECTO (campo principal)
 - ✅ BorrowDTO.id - CORRECTO (campo principal)
 - ✅ UsuarioDTO.id - CORRECTO (campo principal)
@@ -238,11 +252,13 @@ El plan sugería que había inconsistencias entre `borrowId` vs `id`, `materials
 - ✅ DetailsBorrowDTO.id - CORRECTO (campo principal)
 
 **Campos con "Id" son Foreign Keys**:
+
 - `materialsId` en DetailsBorrowDTO - ✅ CORRECTO (FK)
 - `borrowId` en DetailsBorrowDTO - ✅ CORRECTO (FK)
 - `usuarioId` en BorrowDTO - ✅ CORRECTO (FK)
 
-**Conclusión**: 
+**Conclusión**:
+
 - No hay inconsistencias en naming
 - Naming ya está normalizado correctamente
 - Campos principales usan `id`, campos FK usan `<entidad>Id`
@@ -260,28 +276,33 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 **Investigación**:
 
 1. **Campo `startDate` (@Transient)**:
+
    ```bash
    grep_search: "setStartDate" - 5 matches encontrados
    ```
+
    - BorrowServiceImpl.java: 2 usos (líneas 103, 287)
    - BorrowController.java: 1 uso (línea 44)
    - BorrowStateProcessor.java: 1 uso (línea 147)
    - BorrowServiceImplTest.java: 1 uso (línea 250)
-   
+
    **Razón**: startDate se calcula cuando préstamo es aprobado, no se persiste en tabla
 
 2. **Campo `admin` (@Transient)**:
+
    ```bash
    grep_search: ".setAdmin" - 12 matches encontrados
    ```
+
    - BorrowServiceImpl.java: 3 usos
    - BorrowStateProcessor.java: 1 uso
    - Mappers: 4 usos (setAdminId, setAdminName)
    - Tests: 4 usos
-   
+
    **Razón**: No existe columna `admin_id` en tabla Borrow, solo se usa para lógica temporal
 
 **Conclusión**:
+
 - ✅ Campos @Transient son APROPIADOS
 - ✅ Diseño correcto para datos temporales no persistidos
 - ❌ NO deben removerse
@@ -295,22 +316,26 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 ### ✅ Completado
 
 1. **BorrowCreateDTO.java creado** (57 líneas) - Commit `79a1295`
+
    - Solo IDs para relaciones
    - Validaciones estrictas
    - Enfocado en operaciones de escritura
 
 2. **BorrowReadDTO.java creado** (93 líneas) - Commit `79a1295`
+
    - Todos los campos para visualización
    - Datos desnormalizados
    - Campos calculados
    - Método de compatibilidad legacy
 
 3. **BorrowMapper actualizado** - Commit `7cca98b`
+
    - `fromCreateDTO(BorrowCreateDTO)` - Convierte DTO de escritura a Entity
    - `toReadDTO(Borrow)` - Convierte Entity a DTO de lectura con datos completos
    - `detailsToDTO()` - Corregido para usar `setMaterialsId()` y `setBorrowId()`
 
 4. **BorrowController actualizado** - Commit `7cca98b`
+
    - `getAllBorrow()` ahora retorna `List<BorrowReadDTO>`
    - Removida dependencia `BorrowMapper` del controller (no se necesita)
    - Conversión manual de `BorrowDTO` a `BorrowReadDTO` en el controller
@@ -334,10 +359,12 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 ### Tareas Identificadas
 
 1. **@EntityGraph en Repositories**
+
    - BorrowRepository: Agregar `@EntityGraph` para cargar `details` y `usuario`
    - RoleRepository: Agregar `@EntityGraph` para cargar `privileges`
 
 2. **Validación de Enums**
+
    - Agregar `@Pattern` para validar valores de `Status` en controllers
 
 3. **Cleanup**
@@ -353,11 +380,13 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 ### FASE 4: Performance & Cleanup (Pendiente)
 
 1. **@EntityGraph en Repositories**
+
    - BorrowRepository: Agregar `@EntityGraph` para cargar `details` y `usuario`
    - RoleRepository: Agregar `@EntityGraph` para cargar `privileges`
    - Beneficio: Resolver N+1 queries
 
 2. **Validación de Enums**
+
    - Agregar `@Pattern` para validar valores de `Status` en controllers
    - Beneficio: Validación más estricta de entrada
 
@@ -369,10 +398,12 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 ### Opcional: Extender Patrón a Otros Módulos
 
 1. **Materials DTOs**:
+
    - MaterialsCreateDTO / MaterialsReadDTO
    - Mismo patrón CQRS aplicado
 
 2. **Movements DTOs**:
+
    - MovementsCreateDTO / MovementsReadDTO
    - Separación read/write
 
@@ -386,12 +417,14 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 ## 📊 Métricas de Calidad
 
 ### Antes del Plan de Mejoras
+
 - Calidad: 6.5/10 (según análisis)
 - Validaciones: 80% implementadas
 - Seguridad: @PreAuthorize ya implementado
 - DTOs: Mezclaban read/write
 
 ### Después de FASE 1-3 (50%)
+
 - ✅ Validaciones: 100% implementadas
 - ✅ Seguridad: 100% implementada
 - ✅ DTOs: Separados (creados, pendiente integración)
@@ -399,6 +432,7 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 - ✅ @Transient: Validado como diseño correcto
 
 ### Mejoras Alcanzadas
+
 - Validación automática en capa de entrada
 - Separación de responsabilidades (CQRS)
 - Código más mantenible
@@ -409,9 +443,11 @@ El plan sugería remover campos `@Transient` (startDate, admin) por ser "code sm
 ## 📁 Archivos Modificados/Creados
 
 ### Modificados
+
 - `src/main/java/com/techmate/techmate/dto/DetailsBorrowDTO.java`
 
 ### Creados
+
 - `src/main/java/com/techmate/techmate/dto/BorrowCreateDTO.java`
 - `src/main/java/com/techmate/techmate/dto/BorrowReadDTO.java`
 - `SESION-REFACTORIZACION-DTOS-22NOV-2025.md` (este documento)

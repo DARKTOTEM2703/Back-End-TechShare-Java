@@ -15,19 +15,19 @@ import jakarta.persistence.criteria.*;
  * - Búsqueda flexible: LIKE, IN, comparaciones
  * 
  * USAGE:
+ * 
  * <pre>
  * List<Materials> results = materialsRepository.findAll(
- *     Specification.where(MaterialsSpecification.byAvailability(true))
- *                  .and(MaterialsSpecification.byCategory(categoryId))
- *                  .and(MaterialsSpecification.byNameLike("laptop"))
- * );
+ *         Specification.where(MaterialsSpecification.byAvailability(true))
+ *                 .and(MaterialsSpecification.byCategory(categoryId))
+ *                 .and(MaterialsSpecification.byNameLike("laptop")));
  * </pre>
  * 
  * @author TechMate Team
  * @since ITERACIÓN 3B
  */
 public class MaterialsSpecification {
-    
+
     /**
      * Filtrar por categoría.
      * Null-safe: Si categoryId es null, no aplica filtro.
@@ -37,14 +37,14 @@ public class MaterialsSpecification {
      */
     public static Specification<Materials> byCategory(Integer categoryId) {
         return (root, query, criteriaBuilder) -> {
-            if (categoryId == null) return null;
+            if (categoryId == null)
+                return null;
             return criteriaBuilder.equal(
-                root.get("subCategory").get("category").get("id"), 
-                categoryId
-            );
+                    root.get("subCategory").get("category").get("id"),
+                    categoryId);
         };
     }
-    
+
     /**
      * Filtrar por subcategoría.
      * Null-safe: Si subCategoryId es null, no aplica filtro.
@@ -53,11 +53,10 @@ public class MaterialsSpecification {
      * @return Specification que filtra por subcategoría
      */
     public static Specification<Materials> bySubCategory(Integer subCategoryId) {
-        return (root, query, criteriaBuilder) -> 
-            subCategoryId == null ? null : 
-            criteriaBuilder.equal(root.get("subCategory").get("id"), subCategoryId);
+        return (root, query, criteriaBuilder) -> subCategoryId == null ? null
+                : criteriaBuilder.equal(root.get("subCategory").get("id"), subCategoryId);
     }
-    
+
     /**
      * Filtrar por disponibilidad.
      * 
@@ -65,11 +64,10 @@ public class MaterialsSpecification {
      * @return Specification que filtra por availability
      */
     public static Specification<Materials> byAvailability(Boolean available) {
-        return (root, query, criteriaBuilder) -> 
-            available == null ? null : 
-            criteriaBuilder.equal(root.get("available"), available);
+        return (root, query, criteriaBuilder) -> available == null ? null
+                : criteriaBuilder.equal(root.get("available"), available);
     }
-    
+
     /**
      * Filtrar por si es prestable (borrowable).
      * 
@@ -77,11 +75,10 @@ public class MaterialsSpecification {
      * @return Specification que filtra por borrowable
      */
     public static Specification<Materials> byBorrowable(Boolean borrowable) {
-        return (root, query, criteriaBuilder) -> 
-            borrowable == null ? null : 
-            criteriaBuilder.equal(root.get("borrowable"), borrowable);
+        return (root, query, criteriaBuilder) -> borrowable == null ? null
+                : criteriaBuilder.equal(root.get("borrowable"), borrowable);
     }
-    
+
     /**
      * Búsqueda por nombre (LIKE case-insensitive).
      * Null-safe: Si name es null o empty, no aplica filtro.
@@ -93,16 +90,16 @@ public class MaterialsSpecification {
      */
     public static Specification<Materials> byNameLike(String name) {
         return (root, query, criteriaBuilder) -> {
-            if (name == null || name.trim().isEmpty()) return null;
-            
+            if (name == null || name.trim().isEmpty())
+                return null;
+
             String pattern = "%" + name.toLowerCase() + "%";
             return criteriaBuilder.like(
-                criteriaBuilder.lower(root.get("name")), 
-                pattern
-            );
+                    criteriaBuilder.lower(root.get("name")),
+                    pattern);
         };
     }
-    
+
     /**
      * Búsqueda por descripción (LIKE case-insensitive).
      * Null-safe: Si description es null o empty, no aplica filtro.
@@ -112,16 +109,16 @@ public class MaterialsSpecification {
      */
     public static Specification<Materials> byDescriptionLike(String description) {
         return (root, query, criteriaBuilder) -> {
-            if (description == null || description.trim().isEmpty()) return null;
-            
+            if (description == null || description.trim().isEmpty())
+                return null;
+
             String pattern = "%" + description.toLowerCase() + "%";
             return criteriaBuilder.like(
-                criteriaBuilder.lower(root.get("description")), 
-                pattern
-            );
+                    criteriaBuilder.lower(root.get("description")),
+                    pattern);
         };
     }
-    
+
     /**
      * Fetch join para cargar subcategoría y categoría (EVITA N+1).
      * Carga EAGER las relaciones en 1 sola query.
@@ -133,15 +130,15 @@ public class MaterialsSpecification {
     public static Specification<Materials> withSubCategory() {
         return (root, query, criteriaBuilder) -> {
             query.distinct(true);
-            
+
             // Fetch subCategory -> category (2 niveles)
             Fetch<Object, Object> subCategoryFetch = root.fetch("subCategory", JoinType.LEFT);
             subCategoryFetch.fetch("category", JoinType.LEFT);
-            
+
             return null; // Sin filtro, solo fetch
         };
     }
-    
+
     /**
      * Filtrar materiales disponibles y prestables.
      * Combinación común: available=true AND borrowable=true
@@ -150,45 +147,43 @@ public class MaterialsSpecification {
      */
     public static Specification<Materials> availableAndBorrowable() {
         return Specification
-            .where(byAvailability(true))
-            .and(byBorrowable(true));
+                .where(byAvailability(true))
+                .and(byBorrowable(true));
     }
-    
+
     /**
      * EJEMPLO DE USO: Búsqueda de inventario con filtros múltiples.
      * 
-     * @param categoryId Categoría (optional)
+     * @param categoryId    Categoría (optional)
      * @param subCategoryId Subcategoría (optional)
-     * @param available Disponibilidad (optional)
-     * @param borrowable Prestable (optional)
-     * @param searchText Texto para buscar en nombre/descripción (optional)
+     * @param available     Disponibilidad (optional)
+     * @param borrowable    Prestable (optional)
+     * @param searchText    Texto para buscar en nombre/descripción (optional)
      * @return Specification compuesta con todos los filtros
      */
     public static Specification<Materials> byInventoryFilters(
-        Integer categoryId,
-        Integer subCategoryId,
-        Boolean available,
-        Boolean borrowable,
-        String searchText
-    ) {
+            Integer categoryId,
+            Integer subCategoryId,
+            Boolean available,
+            Boolean borrowable,
+            String searchText) {
         Specification<Materials> spec = Specification
-            .where(byCategory(categoryId))
-            .and(bySubCategory(subCategoryId))
-            .and(byAvailability(available))
-            .and(byBorrowable(borrowable))
-            .and(withSubCategory()); // Incluye fetch join
-        
+                .where(byCategory(categoryId))
+                .and(bySubCategory(subCategoryId))
+                .and(byAvailability(available))
+                .and(byBorrowable(borrowable))
+                .and(withSubCategory()); // Incluye fetch join
+
         // Búsqueda de texto: nombre OR descripción
         if (searchText != null && !searchText.trim().isEmpty()) {
             spec = spec.and(
-                Specification.where(byNameLike(searchText))
-                             .or(byDescriptionLike(searchText))
-            );
+                    Specification.where(byNameLike(searchText))
+                            .or(byDescriptionLike(searchText)));
         }
-        
+
         return spec;
     }
-    
+
     /**
      * Búsqueda de texto completa (nombre OR descripción).
      * 
@@ -197,7 +192,7 @@ public class MaterialsSpecification {
      */
     public static Specification<Materials> byTextSearch(String searchText) {
         return Specification
-            .where(byNameLike(searchText))
-            .or(byDescriptionLike(searchText));
+                .where(byNameLike(searchText))
+                .or(byDescriptionLike(searchText));
     }
 }

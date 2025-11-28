@@ -1,6 +1,5 @@
 package com.techmate.techmate.repository;
 
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.techmate.techmate.entity.Usuario;
+import com.techmate.techmate.dto.AuthUserDTO;
 
 import java.util.Optional;
 
@@ -24,22 +24,46 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     /**
-     * Busca usuario por ID con roles cargados (1 query).
-     * EVITA N+1: Usuario + roles en una sola query
+     * Busca usuario por ID SIN roles cargados (evita ConcurrentModificationException).
+     * CRÍTICO: @EntityGraph deshabilitado temporalmente por problemas de concurrencia.
      */
-    @EntityGraph(attributePaths = {"roles"})
+    // @EntityGraph(attributePaths = { "roles" })  // DESHABILITADO: Causa ConcurrentModificationException
     @NonNull
     Optional<Usuario> findById(@NonNull Integer id);
 
     Optional<Usuario> getUsuarioUsernamById(int usernameId);
 
     /**
-     * Login optimizado: carga usuario + roles + privileges en 1 query.
+     * Login optimizado con query nativa para evitar ConcurrentModificationException.
      * CRÍTICO: Este método se usa en CADA LOGIN.
-     * EVITA: N+1 al verificar permisos durante autenticación.
      */
-    @EntityGraph(attributePaths = {"roles", "roles.privileges"})
-    Optional<Usuario> findOneByEmail(String email);
+    @Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
+    Optional<Usuario> findOneByEmailNative(@Param("email") String email);
+
+    /**
+     * Login con query nativa completa para evitar por completo las entidades JPA.
+     * Retorna directamente los datos necesarios sin tocar las entidades con colecciones.
+     */
+    @Query(value = "SELECT id, username, email, password, first_name, last_name, is_enabled FROM users WHERE email = :email", nativeQuery = true)
+    Object[] findUserDataCompleteByEmail(@Param("email") String email);
+
+    /**
+     * Login con proyección type-safe para evitar entidades JPA con colecciones problemáticas.
+     * FALLBACK: Solo si query nativa falla.
+     */
+    @Query("SELECT new com.techmate.techmate.dto.AuthUserDTO(u.id, u.user_name, u.email, u.password, u.first_name, u.last_name, u.isEnabled, null) FROM Usuario u WHERE u.email = :email")
+    AuthUserDTO findAuthUserByEmail(@Param("email") String email);
+
+    /**
+     * Login con datos primitivos para evitar completamente las entidades JPA.
+     * Retorna: [id, username, password, is_enabled]
+     * FALLBACK: Solo si la proyección JPQL falla
+     */
+    @Query(value = "SELECT id, username, password, is_enabled FROM users WHERE email = :email", nativeQuery = true)
+    Object[] findUserDataByEmailNative(@Param("email") String email);
+
+    // ELIMINADO: findOneByEmail para forzar uso de AuthenticationRepository
+    // Optional<Usuario> findOneByEmail(String email);
 
     Optional<Usuario> findByEmail(String email);
 

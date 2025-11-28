@@ -69,9 +69,9 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
 
         dto.setId(subCategory.getCategory().getId());
         dto.setCategoryName(categoriesService.getCategoryNameById(subCategory.getCategory().getId())); // Llama
-                                                                                                               // al
-                                                                                                               // nuevo
-                                                                                                               // método
+                                                                                                       // al
+                                                                                                       // nuevo
+                                                                                                       // método
         return dto;
     }
 
@@ -92,14 +92,14 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
 
     @Override
     public SubCategoriesDTO createSubCategory(SubCategoriesDTO subCategoryDTO, MultipartFile image) {
-        
+
         if (subCategoriesRepository.findByName(subCategoryDTO.getName()) != null) {
             throw new IllegalArgumentException("Ya existe una subCategoria con el nombre: " + subCategoryDTO.getName());
-            
+
         }
 
-    // Validar la imagen completa usando la estrategia (ahora acepta MultipartFile)
-    imageValidationStrategy.validate(image);
+        // Validar la imagen completa usando la estrategia (ahora acepta MultipartFile)
+        imageValidationStrategy.validate(image);
 
         // Guardar la imagen y obtener la ruta
         String savedImagePath = imageStorageStrategy.saveImage(image); // Asegúrate de que este método acepte
@@ -122,12 +122,12 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
     public SubCategoriesDTO updateSubCategory(int subCategoryID, SubCategoriesDTO subCategoryDTO, MultipartFile image) {
         SubCategories subCategory = subCategoriesRepository.findById(subCategoryID)
                 .orElseThrow(() -> new EntityNotFoundException("Subcategory not found with id: " + subCategoryID));
-        
-                if (subCategoryDTO.getName() != null &&
-                    !subCategoryDTO.getName().equals(subCategory.getName()) &&
-                    subCategoriesRepository.findByName(subCategoryDTO.getName()) != null) {
+
+        if (subCategoryDTO.getName() != null &&
+                !subCategoryDTO.getName().equals(subCategory.getName()) &&
+                subCategoriesRepository.findByName(subCategoryDTO.getName()) != null) {
             throw new IllegalArgumentException("Ya existe una subCategoria con el nombre: " + subCategoryDTO.getName());
-            
+
         }
         if (subCategory != null) {
             subCategory.setName(subCategoryDTO.getName());
@@ -136,7 +136,6 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
             // categoría
             Categories category = categoriesRepository.findById(subCategoryDTO.getId()).orElse(null);
             subCategory.setCategory(category);
-
 
             if (image != null && !image.isEmpty()) {
                 String oldImagePath = subCategory.getImagePath();
@@ -191,5 +190,3 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
         return subCategory != null ? subCategory.getName() : null;
     }
 }
-
-

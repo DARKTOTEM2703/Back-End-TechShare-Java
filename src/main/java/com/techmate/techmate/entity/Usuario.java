@@ -43,15 +43,23 @@ public class Usuario {
     @Column(name = "is_enabled")
     private boolean isEnabled = false;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_role", // Nombre de la tabla intermedia normalizado
-        joinColumns = @JoinColumn(name = "user_id"), // Columna que se refiere a Usuario (users.id)
-        inverseJoinColumns = @JoinColumn(name = "role_id") // Columna que se refiere a Role (roles.id)
-    )
-    private Set<Role> roles = new HashSet<>();
+    // DESHABILITADO: Relación que causaba ConcurrentModificationException
+    // @ManyToMany(fetch = FetchType.LAZY)
+    // @JoinTable(name = "user_role",
+    //     joinColumns = @JoinColumn(name = "user_id"),
+    //     inverseJoinColumns = @JoinColumn(name = "role_id")
+    // )
+    // private Set<Role> roles = new HashSet<>();
+    
+    @Transient
+    private Set<Role> roles = new HashSet<>(); // Temporal: sin persistencia JPA
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Movements> movements;
+    // DESHABILITADO: Relación que podría causar ConcurrentModificationException
+    // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    // private List<Movements> movements;
+    
+    @Transient
+    private List<Movements> movements; // Temporal: sin persistencia JPA
 
     // TRANSIENT: Relación deshabilitada porque la entidad DetailsBorrow no existe en la BD
     // y causa errores al cargar la tabla 'borrow'. Se puede restaurar cuando se normalice el esquema.

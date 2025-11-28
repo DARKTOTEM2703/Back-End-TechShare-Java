@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,8 @@ import com.techmate.techmate.entity.Usuario;
  */
 public class UserDetailsImpl implements UserDetails {
 
+    private static final Logger log = LoggerFactory.getLogger(UserDetailsImpl.class);
+    
     // Datos primitivos extraídos del usuario (evita problemas con lazy loading)
     private final Integer userId;
     private final String email;
@@ -48,6 +52,41 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
+     * Constructor optimizado que usa solo datos primitivos para evitar 
+     * completamente las entidades JPA y sus problemas de colecciones.
+     */
+    public UserDetailsImpl(Integer userId, String userName, String password, 
+                          Boolean isEnabled, String email, List<String> roleNames) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+        this.firstName = null; // No necesario para autenticación
+        this.lastName = null;  // No necesario para autenticación
+        this.enabled = isEnabled != null ? isEnabled : false;
+        this.roleNames = roleNames != null ? roleNames : List.of();
+    }
+
+    /**
+     * Constructor que acepta AuthUserDTO (RECOMENDADO).
+     * Este es el enfoque más limpio y type-safe.
+     */
+    public UserDetailsImpl(com.techmate.techmate.dto.AuthUserDTO authUser) {
+        this.userId = authUser.getId();
+        this.email = authUser.getEmail();
+        this.password = authUser.getPassword();
+        this.userName = authUser.getUsername();
+        this.firstName = authUser.getFirstName();
+        this.lastName = authUser.getLastName();
+        this.enabled = authUser.isEnabled();
+        this.roleNames = authUser.getRoleNames() != null ? authUser.getRoleNames() : List.of();
+        
+        // DEBUG: Verificar que la contraseña llegue correctamente
+        log.info("🔑 [DEBUG] UserDetailsImpl constructor - Password recibida: {}", 
+                 password != null ? password.substring(0, Math.min(30, password.length())) + "..." : "null");
+    }
+
+    /**
      * Método para obtener el objeto Usuario completo.
      * 
      * NOTA: Este método ahora retorna un Usuario básico reconstruido con solo
@@ -55,13 +94,17 @@ public class UserDetailsImpl implements UserDetails {
      *
      * @return un objeto Usuario básico con los datos de autenticación.
      */
+    /**
+     * DEPRECATED: Este método creaba entidades Usuario que pueden activar 
+     * el persistence context de Hibernate y causar ConcurrentModificationException.
+     * Usar getId(), getEmail(), etc. directamente.
+     */
+    @Deprecated
     public Usuario getUsuario() {
-        Usuario u = new Usuario();
-        u.setId(this.userId);
-        u.setEmail(this.email);
-        u.setUser_name(this.userName);
-        u.setEnabled(this.enabled);
-        return u;
+        throw new UnsupportedOperationException(
+            "getUsuario() deshabilitado para evitar ConcurrentModificationException. " +
+            "Usar getId(), getEmail(), isEnabled() directamente."
+        );
     }
 
     /**

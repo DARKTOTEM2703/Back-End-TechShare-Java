@@ -44,15 +44,15 @@ public class BorrowUserServiceImp implements BorrowUserService {
         Borrow borrow = new Borrow();
         borrow.setId(borrowDTO.getId());
         borrow.setDate(borrowDTO.getDate());
-    borrow.setStatus(Status.PENDING);
+        borrow.setStatus(Status.PENDING);
         borrow.setAmount(borrowDTO.getAmount());
         borrow.setDetails(borrowDTO.getDetails().stream()
                 .map(detailDTO -> convertDetailsBorrowToEntity(detailDTO, borrow))
                 .collect(Collectors.toList()));
 
-    Usuario user = usuarioRepository.findById(borrowDTO.getUsuarioId())
-    .orElseThrow(() -> new com.techmate.techmate.exception.BusinessException("USER_NOT_FOUND",
-            "Usuario no encontrado con ID: " + borrowDTO.getUsuarioId()));
+        Usuario user = usuarioRepository.findById(borrowDTO.getUsuarioId())
+                .orElseThrow(() -> new com.techmate.techmate.exception.BusinessException("USER_NOT_FOUND",
+                        "Usuario no encontrado con ID: " + borrowDTO.getUsuarioId()));
         borrow.setUsuario(user);
 
         return borrow;
@@ -63,10 +63,10 @@ public class BorrowUserServiceImp implements BorrowUserService {
         detailsBorrow.setBorrow(borrow);
         detailsBorrow.setQuantity(detailDTO.getQuantity());
 
-    Materials material = materialsRepository.findById(detailDTO.getId())
-        .orElseThrow(
-            () -> new com.techmate.techmate.exception.BusinessException("MATERIAL_NOT_FOUND",
-                "Material no encontrado con ID: " + detailDTO.getId()));
+        Materials material = materialsRepository.findById(detailDTO.getId())
+                .orElseThrow(
+                        () -> new com.techmate.techmate.exception.BusinessException("MATERIAL_NOT_FOUND",
+                                "Material no encontrado con ID: " + detailDTO.getId()));
         detailsBorrow.setMaterials(material);
         detailsBorrow.setUnitPrice(material.getPrice());
         detailsBorrow.setTotalPrice(material.getPrice() * detailDTO.getQuantity());
@@ -86,9 +86,9 @@ public class BorrowUserServiceImp implements BorrowUserService {
         // asignados
         for (DetailsBorrowDTO detailDTO : borrowDTO.getDetails()) {
             // Buscar el material por su ID
-        Materials material = materialsRepository.findById(detailDTO.getId())
-            .orElseThrow(() -> new com.techmate.techmate.exception.BusinessException("MATERIAL_NOT_FOUND",
-                "Material no encontrado con ID: " + detailDTO.getId()));
+            Materials material = materialsRepository.findById(detailDTO.getId())
+                    .orElseThrow(() -> new com.techmate.techmate.exception.BusinessException("MATERIAL_NOT_FOUND",
+                            "Material no encontrado con ID: " + detailDTO.getId()));
 
             // Obtener la lista de roles permitidos para ese material
             List<RoleMaterials> roleMaterialsList = roleMaterialsRepository.findByMaterials(material);
@@ -124,11 +124,11 @@ public class BorrowUserServiceImp implements BorrowUserService {
             List<RoleMaterials> roleMaterialsList = roleMaterialsRepository.findByMaterials(material);
 
             // Verificar si el material tiene roles asignados
-        if (roleMaterialsList.isEmpty()) {
-    throw new com.techmate.techmate.exception.BusinessException("MATERIAL_NO_ROLES",
-            "El material " + material.getName() + " (ID: " + material.getId()
-                + ") no tiene roles permitidos asignados.");
-        }
+            if (roleMaterialsList.isEmpty()) {
+                throw new com.techmate.techmate.exception.BusinessException("MATERIAL_NO_ROLES",
+                        "El material " + material.getName() + " (ID: " + material.getId()
+                                + ") no tiene roles permitidos asignados.");
+            }
 
             // Obtener los IDs de los roles permitidos
             List<Integer> rolesPermitidos = roleMaterialsList.stream()
@@ -137,11 +137,11 @@ public class BorrowUserServiceImp implements BorrowUserService {
 
             // Verificar si el usuario tiene al menos un rol permitido para este material
             boolean tieneRolPermitido = roles.stream().anyMatch(rolesPermitidos::contains);
-        if (!tieneRolPermitido) {
-    throw new com.techmate.techmate.exception.BusinessException("USER_NO_PERMISSION",
-            "El usuario no tiene permisos para acceder al material: " + material.getName() +
-                " (ID: " + material.getId() + ")");
-        }
+            if (!tieneRolPermitido) {
+                throw new com.techmate.techmate.exception.BusinessException("USER_NO_PERMISSION",
+                        "El usuario no tiene permisos para acceder al material: " + material.getName() +
+                                " (ID: " + material.getId() + ")");
+            }
 
             // Crear la entidad DetailsBorrow para el detalle del préstamo
             DetailsBorrow detailsBorrow = convertDetailsBorrowToEntity(detailDTO, borrow);
@@ -188,5 +188,3 @@ public class BorrowUserServiceImp implements BorrowUserService {
         return TokenUtils.getRolesFromToken(token);
     }
 }
-
-

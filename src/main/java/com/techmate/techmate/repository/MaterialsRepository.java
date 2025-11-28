@@ -26,18 +26,18 @@ import com.techmate.techmate.entity.Materials;
  * 
  * SPECIFICATION PATTERN (NUEVO):
  * Usa MaterialsSpecification para búsquedas dinámicas:
+ * 
  * <pre>
  * List<Materials> results = materialsRepository.findAll(
- *     Specification.where(MaterialsSpecification.byAvailability(true))
- *                  .and(MaterialsSpecification.byCategory(categoryId))
- * );
+ *         Specification.where(MaterialsSpecification.byAvailability(true))
+ *                 .and(MaterialsSpecification.byCategory(categoryId)));
  * </pre>
  * 
  * @see com.techmate.techmate.repository.specification.MaterialsSpecification
  */
 @Repository
-public interface MaterialsRepository extends JpaRepository<Materials, Integer>, 
-                                              JpaSpecificationExecutor<Materials> {
+public interface MaterialsRepository extends JpaRepository<Materials, Integer>,
+        JpaSpecificationExecutor<Materials> {
 
     // ============================================
     // QUERIES OPTIMIZADAS CON @EntityGraph

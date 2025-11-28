@@ -79,7 +79,7 @@ class AuthServiceTest {
         req.setEmail("jdoe@example.com");
         req.setPassword("encoded");
 
-        when(usuarioRepository.findOneByEmail(any())).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmail(any())).thenReturn(Optional.empty());
         when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArgument(0));
 
         String res = authService.registerUser(req);
@@ -95,7 +95,7 @@ class AuthServiceTest {
         RegisterRequest req = new RegisterRequest();
         req.setEmail("exists@example.com");
 
-        when(usuarioRepository.findOneByEmail(any())).thenReturn(Optional.of(new Usuario()));
+        when(usuarioRepository.findByEmail(any())).thenReturn(Optional.of(new Usuario()));
 
         assertThrows(IllegalArgumentException.class, () -> authService.registerUser(req));
     }

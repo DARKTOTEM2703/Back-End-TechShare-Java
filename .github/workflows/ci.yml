@@ -2,16 +2,16 @@ name: CI/CD - Build, Test & Deploy
 
 on:
   push:
-    branches: [ dev, main, 'release/**' ]
+    branches: [dev, main, "release/**"]
   pull_request:
-    branches: [ dev, main ]
+    branches: [dev, main]
   workflow_dispatch: # Manual trigger
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  JAVA_VERSION: '17'
-  JAVA_DISTRIBUTION: 'temurin'
+  JAVA_VERSION: "17"
+  JAVA_DISTRIBUTION: "temurin"
 
 jobs:
   # ========================================
@@ -20,37 +20,37 @@ jobs:
   code-quality:
     name: 🔍 Code Quality & Security
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0 # Full history for better analysis
-    
-    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
-      uses: actions/setup-java@v4
-      with:
-        java-version: ${{ env.JAVA_VERSION }}
-        distribution: ${{ env.JAVA_DISTRIBUTION }}
-        cache: 'maven'
-    
-    - name: 🔧 Make mvnw executable
-      run: chmod +x ./mvnw
-    
-    - name: 🔎 Run Dependency Check
-      run: |
-        echo "### 🔎 Dependency Check" >> $GITHUB_STEP_SUMMARY
-        ./mvnw dependency:tree -B | tee dependency-tree.txt
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        head -n 50 dependency-tree.txt >> $GITHUB_STEP_SUMMARY || true
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-    
-    - name: 🛡️ OWASP Dependency Check (Optional)
-      continue-on-error: true
-      run: |
-        echo "Skipping OWASP check for faster CI (enable in production)"
-        # ./mvnw org.owasp:dependency-check-maven:check -B
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for better analysis
+
+      - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: "maven"
+
+      - name: 🔧 Make mvnw executable
+        run: chmod +x ./mvnw
+
+      - name: 🔎 Run Dependency Check
+        run: |
+          echo "### 🔎 Dependency Check" >> $GITHUB_STEP_SUMMARY
+          ./mvnw dependency:tree -B | tee dependency-tree.txt
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          head -n 50 dependency-tree.txt >> $GITHUB_STEP_SUMMARY || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🛡️ OWASP Dependency Check (Optional)
+        continue-on-error: true
+        run: |
+          echo "Skipping OWASP check for faster CI (enable in production)"
+          # ./mvnw org.owasp:dependency-check-maven:check -B
 
   # ========================================
   # JOB 2: BUILD AND TEST
@@ -59,7 +59,7 @@ jobs:
     name: 🏗️ Build and Test Backend
     runs-on: ubuntu-latest
     needs: code-quality
-    
+
     services:
       mysql:
         image: mysql:8.0
@@ -75,84 +75,84 @@ jobs:
           --health-retries=5
 
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
 
-    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
-      uses: actions/setup-java@v4
-      with:
-        java-version: ${{ env.JAVA_VERSION }}
-        distribution: ${{ env.JAVA_DISTRIBUTION }}
-        cache: 'maven'
-    
-    - name: 🔧 Make mvnw executable
-      run: chmod +x ./mvnw
+      - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: "maven"
 
-    - name: 🔍 Verify MySQL connection
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y mysql-client
-        for i in {1..30}; do
-          if mysql --host 127.0.0.1 --port 3306 -uroot -padmin1 -e "SHOW DATABASES" 2>/dev/null; then
-            echo "✅ MySQL is ready!"
-            break
+      - name: 🔧 Make mvnw executable
+        run: chmod +x ./mvnw
+
+      - name: 🔍 Verify MySQL connection
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-client
+          for i in {1..30}; do
+            if mysql --host 127.0.0.1 --port 3306 -uroot -padmin1 -e "SHOW DATABASES" 2>/dev/null; then
+              echo "✅ MySQL is ready!"
+              break
+            fi
+            echo "⏳ Waiting for MySQL... ($i/30)"
+            sleep 2
+          done
+          mysql --host 127.0.0.1 --port 3306 -uroot -padmin1 -e "SHOW DATABASES"
+
+      - name: 🧪 Run tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/techmate_inventory_test
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: admin1
+          JWT_SECRET: test-secret-key-for-ci-pipeline-minimum-32-characters-required
+          SWAGGER_ENABLED: false
+          SPRING_PROFILES_ACTIVE: test
+        run: ./mvnw clean test -B
+
+      - name: 🏗️ Build JAR
+        run: ./mvnw clean package -DskipTests -B
+
+      - name: 📊 Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure() # Run even if tests fail
+        with:
+          name: Maven Tests
+          path: target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: false # Don't fail the workflow, just report
+
+      - name: 📦 Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: techmate-backend-jar
+          path: target/*.jar
+          retention-days: 5
+
+      - name: 📊 Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: target/surefire-reports/
+          retention-days: 30
+
+      - name: ✅ Build Summary
+        if: always()
+        run: |
+          echo "### 🎯 Build Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Java Version:** ${{ env.JAVA_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          if [ -f target/surefire-reports/*.xml ]; then
+            TEST_COUNT=$(grep -c "testcase" target/surefire-reports/*.xml || echo "0")
+            echo "- **Tests Run:** $TEST_COUNT" >> $GITHUB_STEP_SUMMARY
           fi
-          echo "⏳ Waiting for MySQL... ($i/30)"
-          sleep 2
-        done
-        mysql --host 127.0.0.1 --port 3306 -uroot -padmin1 -e "SHOW DATABASES"
-
-    - name: 🧪 Run tests
-      env:
-        SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/techmate_inventory_test
-        SPRING_DATASOURCE_USERNAME: root
-        SPRING_DATASOURCE_PASSWORD: admin1
-        JWT_SECRET: test-secret-key-for-ci-pipeline-minimum-32-characters-required
-        SWAGGER_ENABLED: false
-        SPRING_PROFILES_ACTIVE: test
-      run: ./mvnw clean test -B
-
-    - name: 🏗️ Build JAR
-      run: ./mvnw clean package -DskipTests -B
-
-    - name: 📊 Test Report
-      uses: dorny/test-reporter@v1
-      if: success() || failure() # Run even if tests fail
-      with:
-        name: Maven Tests
-        path: target/surefire-reports/*.xml
-        reporter: java-junit
-        fail-on-error: false # Don't fail the workflow, just report
-
-    - name: 📦 Upload JAR artifact
-      uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: techmate-backend-jar
-        path: target/*.jar
-        retention-days: 5
-
-    - name: 📊 Upload Test Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results
-        path: target/surefire-reports/
-        retention-days: 30
-
-    - name: ✅ Build Summary
-      if: always()
-      run: |
-        echo "### 🎯 Build Results" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- **Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- **Java Version:** ${{ env.JAVA_VERSION }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Build Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-        if [ -f target/surefire-reports/*.xml ]; then
-          TEST_COUNT=$(grep -c "testcase" target/surefire-reports/*.xml || echo "0")
-          echo "- **Tests Run:** $TEST_COUNT" >> $GITHUB_STEP_SUMMARY
-        fi
 
   # ========================================
   # JOB 3: DOCKER BUILD & PUSH
@@ -165,54 +165,54 @@ jobs:
     permissions:
       contents: read
       packages: write
-    
+
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-    
-    - name: 🔐 Log in to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: 🏷️ Extract metadata
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-        tags: |
-          type=ref,event=branch
-          type=sha,prefix={{branch}}-
-          type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-          type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
-    
-    - name: 🐳 Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: . # CORREGIDO: Contexto es el root del repo
-        file: ./Dockerfile # CORREGIDO: Dockerfile está en el root
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        build-args: |
-          BUILD_DATE=${{ github.event.head_commit.timestamp }}
-          VCS_REF=${{ github.sha }}
-          VERSION=${{ github.ref_name }}
-        cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
-        cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
-    
-    - name: 📊 Docker Summary
-      run: |
-        echo "### 🐳 Docker Image Published" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Registry:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+
+      - name: 🐳 Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: . # CORREGIDO: Contexto es el root del repo
+          file: ./Dockerfile # CORREGIDO: Dockerfile está en el root
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+            VERSION=${{ github.ref_name }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+      - name: 📊 Docker Summary
+        run: |
+          echo "### 🐳 Docker Image Published" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
 
   # ========================================
   # JOB 4: DEPLOY TO STAGING (DEV BRANCH)
@@ -225,19 +225,19 @@ jobs:
     # environment:
     #   name: staging
     #   url: https://staging.techshare.example.com
-    
+
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-    
-    - name: 🚀 Deploy notification
-      run: |
-        echo "### 🚀 Deploying to Staging" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- **Environment:** Staging" >> $GITHUB_STEP_SUMMARY
-        echo "- **Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev\`" >> $GITHUB_STEP_SUMMARY
-        echo "- **URL:** https://staging.techshare.example.com" >> $GITHUB_STEP_SUMMARY
-    
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy notification
+        run: |
+          echo "### 🚀 Deploying to Staging" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** Staging" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL:** https://staging.techshare.example.com" >> $GITHUB_STEP_SUMMARY
+
     # Ejemplo de deployment a servidor (ajustar según infraestructura)
     # - name: 🔧 Deploy to staging server
     #   uses: appleboy/ssh-action@master
@@ -262,34 +262,34 @@ jobs:
     # environment:
     #   name: production
     #   url: https://api.techshare.example.com
-    
+
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-    
-    - name: 🌟 Production deployment notification
-      run: |
-        echo "### 🌟 Deploying to Production" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- **Environment:** Production" >> $GITHUB_STEP_SUMMARY
-        echo "- **Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
-        echo "- **URL:** https://api.techshare.example.com" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "⚠️ **Manual approval required for production deployments**" >> $GITHUB_STEP_SUMMARY
-    
-    # Ejemplo de deployment a producción (ajustar según infraestructura)
-    # - name: 🔧 Deploy to production server
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.PROD_HOST }}
-    #     username: ${{ secrets.PROD_USER }}
-    #     key: ${{ secrets.PROD_SSH_KEY }}
-    #     script: |
-    #       cd /opt/techshare
-    #       docker-compose pull backend
-    #       docker-compose up -d backend
-    #       docker-compose logs -f --tail=50 backend
-    
-    - name: 🎉 Deployment complete
-      run: |
-        echo "🎉 Production deployment completed successfully!" >> $GITHUB_STEP_SUMMARY
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🌟 Production deployment notification
+        run: |
+          echo "### 🌟 Deploying to Production" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** Production" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL:** https://api.techshare.example.com" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ **Manual approval required for production deployments**" >> $GITHUB_STEP_SUMMARY
+
+      # Ejemplo de deployment a producción (ajustar según infraestructura)
+      # - name: 🔧 Deploy to production server
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.PROD_HOST }}
+      #     username: ${{ secrets.PROD_USER }}
+      #     key: ${{ secrets.PROD_SSH_KEY }}
+      #     script: |
+      #       cd /opt/techshare
+      #       docker-compose pull backend
+      #       docker-compose up -d backend
+      #       docker-compose logs -f --tail=50 backend
+
+      - name: 🎉 Deployment complete
+        run: |
+          echo "🎉 Production deployment completed successfully!" >> $GITHUB_STEP_SUMMARY
