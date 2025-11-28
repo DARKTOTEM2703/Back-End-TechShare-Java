@@ -42,13 +42,18 @@ public class BorrowMapper {
         dto.setDate(borrow.getDate());
         dto.setStatus(borrow.getStatus());
         dto.setAmount(borrow.getAmount());
-        // Nota: startDate y admin ya no están en la Entity (fueron removidos)
+        dto.setStartDate(borrow.getStartDate());
         dto.setEndDate(borrow.getEndDate());
         dto.setReturnDate(borrow.getReturnDate());
 
         if (borrow.getUsuario() != null) {
             dto.setUsuarioId(borrow.getUsuario().getId());
             dto.setUsuarioName(borrow.getUsuario().getUser_name());
+        }
+
+        if (borrow.getAdmin() != null) {
+            dto.setAdminId(borrow.getAdmin().getId());
+            dto.setAdminName(borrow.getAdmin().getUser_name());
         }
 
         if (borrow.getDetails() != null) {

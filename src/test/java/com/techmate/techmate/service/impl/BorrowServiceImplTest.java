@@ -60,6 +60,9 @@ class BorrowServiceImplTest {
     @Mock
     private org.springframework.context.ApplicationEventPublisher eventPublisher;
 
+    @Mock
+    private com.techmate.techmate.service.borrow.mapper.BorrowMapper borrowMapper;
+
     @InjectMocks
     private BorrowServiceImpl borrowService;
 
@@ -186,6 +189,44 @@ class BorrowServiceImplTest {
             }
             return null;
         }).when(borrowStockManager).releaseStockAndLogMovement(any(), anyInt(), any(), any());
+
+        // ✅ Configurar mapper para conversión Borrow → BorrowDTO
+        when(borrowMapper.toDTO(any(Borrow.class))).thenAnswer(inv -> {
+            Borrow b = inv.getArgument(0);
+            BorrowDTO dto = new BorrowDTO();
+            dto.setId(b.getId());
+            dto.setDate(b.getDate());
+            dto.setStatus(b.getStatus());
+            dto.setAmount(b.getAmount());
+            dto.setStartDate(b.getStartDate());
+            dto.setEndDate(b.getEndDate());
+            dto.setReturnDate(b.getReturnDate());
+            
+            if (b.getUsuario() != null) {
+                dto.setUsuarioId(b.getUsuario().getId());
+                dto.setUsuarioName(b.getUsuario().getUser_name());
+            }
+            
+            if (b.getAdmin() != null) {
+                dto.setAdminId(b.getAdmin().getId());
+                dto.setAdminName(b.getAdmin().getUser_name());
+            }
+            
+            if (b.getDetails() != null) {
+                List<DetailsBorrowDTO> detailDTOs = new ArrayList<>();
+                for (DetailsBorrow detail : b.getDetails()) {
+                    DetailsBorrowDTO detailDTO = new DetailsBorrowDTO();
+                    detailDTO.setId(detail.getId());
+                    detailDTO.setQuantity(detail.getQuantity());
+                    detailDTO.setUnitPrice(detail.getUnitPrice());
+                    detailDTO.setTotalPrice(detail.getTotalPrice());
+                    detailDTOs.add(detailDTO);
+                }
+                dto.setDetails(detailDTOs);
+            }
+            
+            return dto;
+        });
 
         // El processor no necesita un stub específico aquí; las pruebas usan el servicio directamente
     }

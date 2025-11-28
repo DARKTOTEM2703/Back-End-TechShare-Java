@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.techmate.techmate.dto.BorrowDTO;
-import com.techmate.techmate.dto.DetailsBorrowDTO;
 import com.techmate.techmate.entity.Borrow;
 import com.techmate.techmate.entity.DetailsBorrow;
 import com.techmate.techmate.entity.Materials;
@@ -22,6 +21,7 @@ import com.techmate.techmate.repository.UsuarioRepository;
 import com.techmate.techmate.security.TokenUtils;
 import com.techmate.techmate.service.BorrowService;
 import com.techmate.techmate.service.borrow.manager.IBorrowStockManager;
+import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
 
 @Service
 public class BorrowServiceImpl implements BorrowService {
@@ -29,67 +29,18 @@ public class BorrowServiceImpl implements BorrowService {
     private final UsuarioRepository usuarioRepository;
     private final IBorrowStockManager borrowStockManager;
     private final ApplicationEventPublisher eventPublisher;
+    private final BorrowMapper borrowMapper;
 
     public BorrowServiceImpl(BorrowRepository borrowRepository,
             UsuarioRepository usuarioRepository,
             IBorrowStockManager borrowStockManager,
-            ApplicationEventPublisher eventPublisher) {
+            ApplicationEventPublisher eventPublisher,
+            BorrowMapper borrowMapper) {
         this.borrowRepository = borrowRepository;
         this.usuarioRepository = usuarioRepository;
         this.borrowStockManager = borrowStockManager;
         this.eventPublisher = eventPublisher;
-    }
-
-    private BorrowDTO convertToDTO(Borrow borrow) {
-        BorrowDTO dto = new BorrowDTO();
-        dto.setId(borrow.getId());
-        dto.setDate(borrow.getDate());
-        dto.setStatus(borrow.getStatus());
-        dto.setAmount(borrow.getAmount());
-        dto.setStartDate(borrow.getStartDate());
-        dto.setEndDate(borrow.getEndDate());
-        dto.setReturnDate(borrow.getReturnDate());
-        ;
-
-        // Asegúrate de que el usuario y admin se asignen correctamente
-        if (borrow.getUsuario() != null) {
-            dto.setUsuarioId(borrow.getUsuario().getId());
-            dto.setUsuarioName(borrow.getUsuario().getUser_name());
-        }
-
-        if (borrow.getAdmin() != null) {
-            dto.setAdminId(borrow.getAdmin().getId());
-            dto.setAdminName(borrow.getAdmin().getUser_name());
-        }
-
-        // Mapear los detalles del préstamo
-        dto.setDetails(borrow.getDetails().stream()
-                .map(this::convertDetailsBorrowToDTO)
-                .collect(Collectors.toList()));
-
-        return dto;
-    }
-
-    private DetailsBorrowDTO convertDetailsBorrowToDTO(DetailsBorrow detailsBorrow) {
-        DetailsBorrowDTO dto = new DetailsBorrowDTO();
-        dto.setId(detailsBorrow.getId());
-
-        if (detailsBorrow.getMaterials() != null) {
-            dto.setId(detailsBorrow.getMaterials().getId());
-        } else {
-            dto.setId(null); // O lanzar una excepción si es necesario
-        }
-
-        // Establecer el borrowId en el DTO
-        if (detailsBorrow.getBorrow() != null) {
-            dto.setId(detailsBorrow.getBorrow().getId()); // Aquí estableces el borrowId en el DTO
-        }
-
-        dto.setQuantity(detailsBorrow.getQuantity());
-        dto.setUnitPrice(detailsBorrow.getUnitPrice());
-        dto.setTotalPrice(detailsBorrow.getTotalPrice());
-
-        return dto;
+        this.borrowMapper = borrowMapper;
     }
 
     @Override
@@ -260,7 +211,7 @@ public class BorrowServiceImpl implements BorrowService {
     @Override
     public List<BorrowDTO> getAllBorrowDTO() {
         return borrowRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(borrowMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -288,7 +239,7 @@ public class BorrowServiceImpl implements BorrowService {
 
         // Cambiar a List<Borrow> y luego mapear a List<BorrowDTO>
         return borrowRepository.findByStatus(statusBorrow).stream()
-                .map(this::convertToDTO)
+                .map(borrowMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -296,7 +247,7 @@ public class BorrowServiceImpl implements BorrowService {
     public List<BorrowDTO> getBorrowByDate(Date startDate, Date endDate) {
         //
         return borrowRepository.findByDateBetween(startDate, endDate).stream()
-                .map(this::convertToDTO)
+                .map(borrowMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
