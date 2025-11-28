@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,9 +22,22 @@ import com.techmate.techmate.entity.Status;
  * - JOIN FETCH para cargar relaciones en 1 sola query
  * - Métodos optimizados con paginación
  * - Filtros dinámicos eficientes
+ * - JpaSpecificationExecutor para queries type-safe composables (ITERACIÓN 3B)
+ * 
+ * SPECIFICATION PATTERN (NUEVO):
+ * Usa BorrowSpecification para queries dinámicas type-safe:
+ * <pre>
+ * List<Borrow> results = borrowRepository.findAll(
+ *     Specification.where(BorrowSpecification.byStatus(Status.BORROWED))
+ *                  .and(BorrowSpecification.byDateRange(start, end))
+ * );
+ * </pre>
+ * 
+ * @see com.techmate.techmate.repository.specification.BorrowSpecification
  */
 @Repository
-public interface BorrowRepository extends JpaRepository<Borrow, Integer> {
+public interface BorrowRepository extends JpaRepository<Borrow, Integer>, 
+                                          JpaSpecificationExecutor<Borrow> {
     
     // ============================================
     // QUERIES OPTIMIZADAS CON JOIN FETCH

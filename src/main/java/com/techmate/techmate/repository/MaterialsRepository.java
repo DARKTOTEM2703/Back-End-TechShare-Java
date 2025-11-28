@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
@@ -21,9 +22,22 @@ import com.techmate.techmate.entity.Materials;
  * - @EntityGraph para cargar relaciones
  * - Queries con JOIN FETCH
  * - Paginación optimizada
+ * - JpaSpecificationExecutor para queries type-safe composables (ITERACIÓN 3B)
+ * 
+ * SPECIFICATION PATTERN (NUEVO):
+ * Usa MaterialsSpecification para búsquedas dinámicas:
+ * <pre>
+ * List<Materials> results = materialsRepository.findAll(
+ *     Specification.where(MaterialsSpecification.byAvailability(true))
+ *                  .and(MaterialsSpecification.byCategory(categoryId))
+ * );
+ * </pre>
+ * 
+ * @see com.techmate.techmate.repository.specification.MaterialsSpecification
  */
 @Repository
-public interface MaterialsRepository extends JpaRepository<Materials, Integer> {
+public interface MaterialsRepository extends JpaRepository<Materials, Integer>, 
+                                              JpaSpecificationExecutor<Materials> {
 
     // ============================================
     // QUERIES OPTIMIZADAS CON @EntityGraph
