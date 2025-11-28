@@ -51,7 +51,16 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
         this.serverUrl = serverUrl;
     }
 
-    // Método para convertir de entidad a DTO
+    /**
+     * Método para convertir de entidad a DTO.
+     * 
+     * NOTA: Este método NO puede ser reemplazado por SubCategoriesMapper porque
+     * tiene lógica de negocio adicional:
+     * - Resuelve categoryName llamando a categoriesService.getCategoryNameById()
+     * 
+     * SubCategoriesMapper.toResponse espera que categoryName ya esté en el DTO,
+     * por lo que esta lógica debe permanecer en el service layer.
+     */
     private SubCategoriesDTO convertToDTO(SubCategories subCategory) {
         SubCategoriesDTO dto = new SubCategoriesDTO();
         dto.setId(subCategory.getSubCategoryId());
@@ -170,10 +179,9 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
 
     @Override
     public List<SubCategoriesDTO> getAllSubCategories() {
-        return subCategoriesRepository.findAll().stream() // Obtiene una lista de SubCategories y la convierte en un
-                                                          // stream.
-                .map(this::convertToDTO) // Transforma cada SubCategory en un SubCategoriesDTO usando convertToDTO.
-                .collect(Collectors.toList()); // Reúne todos los SubCategoriesDTO en una nueva lista y la devuelve.
+        return subCategoriesRepository.findAll().stream()
+                .map(this::convertToDTO) // Usa convertToDTO local (tiene lógica de categoryName)
+                .collect(Collectors.toList());
     }
 
     @Override
