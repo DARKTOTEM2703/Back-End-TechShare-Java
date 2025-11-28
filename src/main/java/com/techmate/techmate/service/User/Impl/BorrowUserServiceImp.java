@@ -17,6 +17,7 @@ import com.techmate.techmate.entity.Usuario;
 import com.techmate.techmate.repository.*;
 import com.techmate.techmate.security.TokenUtils;
 import com.techmate.techmate.service.User.BorrowUserService;
+import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
 
 @Service
 public class BorrowUserServiceImp implements BorrowUserService {
@@ -26,15 +27,17 @@ public class BorrowUserServiceImp implements BorrowUserService {
     private final DetailsBorrowRepository detailsBorrowRepository;
     private final UsuarioRepository usuarioRepository;
     private final RoleMaterialsRepository roleMaterialsRepository;
+    private final BorrowMapper borrowMapper;
 
     public BorrowUserServiceImp(BorrowRepository borrowRepository, MaterialsRepository materialsRepository,
             DetailsBorrowRepository detailsBorrowRepository, UsuarioRepository usuarioRepository,
-            RoleMaterialsRepository roleMaterialsRepository) {
+            RoleMaterialsRepository roleMaterialsRepository, BorrowMapper borrowMapper) {
         this.borrowRepository = borrowRepository;
         this.materialsRepository = materialsRepository;
         this.detailsBorrowRepository = detailsBorrowRepository;
         this.usuarioRepository = usuarioRepository;
         this.roleMaterialsRepository = roleMaterialsRepository;
+        this.borrowMapper = borrowMapper;
     }
 
     private Borrow convertToEntity(BorrowDTO borrowDTO) {
@@ -55,21 +58,6 @@ public class BorrowUserServiceImp implements BorrowUserService {
         return borrow;
     }
 
-    private BorrowDTO convertToDTO(Borrow borrow) {
-        BorrowDTO dto = new BorrowDTO();
-        dto.setId(borrow.getId());
-        dto.setDate(borrow.getDate());
-        dto.setStatus(borrow.getStatus());
-        dto.setAmount(borrow.getAmount());
-        dto.setDetails(borrow.getDetails().stream()
-                .map(this::convertDetailsBorrowToDTO)
-                .collect(Collectors.toList()));
-        dto.setUsuarioId(borrow.getUsuario().getId());
-        dto.setUsuarioName(borrow.getUsuario().getUser_name());
-
-        return dto;
-    }
-
     private DetailsBorrow convertDetailsBorrowToEntity(DetailsBorrowDTO detailDTO, Borrow borrow) {
         DetailsBorrow detailsBorrow = new DetailsBorrow();
         detailsBorrow.setBorrow(borrow);
@@ -84,18 +72,6 @@ public class BorrowUserServiceImp implements BorrowUserService {
         detailsBorrow.setTotalPrice(material.getPrice() * detailDTO.getQuantity());
 
         return detailsBorrow;
-    }
-
-    private DetailsBorrowDTO convertDetailsBorrowToDTO(DetailsBorrow detailsBorrow) {
-        DetailsBorrowDTO dto = new DetailsBorrowDTO();
-        dto.setId(detailsBorrow.getId());
-        dto.setId(detailsBorrow.getMaterials().getId());
-        dto.setId(detailsBorrow.getBorrow().getId());
-        dto.setQuantity(detailsBorrow.getQuantity());
-        dto.setUnitPrice(detailsBorrow.getUnitPrice());
-        dto.setTotalPrice(detailsBorrow.getTotalPrice());
-
-        return dto;
     }
 
     @Override
@@ -191,7 +167,7 @@ public class BorrowUserServiceImp implements BorrowUserService {
         borrow = borrowRepository.save(borrow);
 
         // Convertir la entidad Borrow a DTO y devolverla
-        return convertToDTO(borrow);
+        return borrowMapper.toDTO(borrow);
     }
 
     @Override
@@ -203,7 +179,7 @@ public class BorrowUserServiceImp implements BorrowUserService {
     public List<BorrowDTO> getAllBorrowsByUserId(Integer userId) {
         List<Borrow> borrows = borrowRepository.findByUsuarioId(userId);
         return borrows.stream()
-                .map(this::convertToDTO)
+                .map(borrowMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
