@@ -46,10 +46,10 @@ public class AuthenticatedUserController {
             
             CurrentUserDTO currentUser = new CurrentUserDTO();
             currentUser.setId(userDetails.getId());
-            currentUser.setUser_name(userDetails.getNombre()); // Usar getNombre() para el nombre de usuario, no el email
+            currentUser.setUser_name(userDetails.getNombre()); // username del usuario (jafethgamboabaas)
             currentUser.setFirst_name(userDetails.getFirstName());
             currentUser.setLast_name(userDetails.getLastName());
-            currentUser.setEmail(userDetails.getUsername()); // Email es el username (email del usuario)
+            currentUser.setEmail(userDetails.getUsername()); // Email es el username en Spring Security
             currentUser.setRoles(userDetails.getAuthorities().stream()
                     .map(auth -> auth.getAuthority())
                     .collect(Collectors.toList()));

@@ -1,6 +1,7 @@
 package com.techmate.techmate.service.borrow.query;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,7 @@ public class BorrowQueryService {
      * 
      * @return Lista de préstamos como DTO
      */
+    @Transactional(readOnly = true)
     public List<BorrowDTO> getAllBorrows() {
         return borrowRepository.findAll().stream()
                 .map(borrowMapper::toDTO)
@@ -62,6 +64,7 @@ public class BorrowQueryService {
      * @return Lista de préstamos filtrados
      * @throws IllegalArgumentException si el estado no es válido
      */
+    @Transactional(readOnly = true)
     public List<BorrowDTO> getBorrowsByStatus(String statusString) {
         Status status = parseStatus(statusString);
         
@@ -77,6 +80,7 @@ public class BorrowQueryService {
      * @param endDate Fecha de fin (inclusive)
      * @return Lista de préstamos en el rango de fechas
      */
+    @Transactional(readOnly = true)
     public List<BorrowDTO> getBorrowsByDateRange(Date startDate, Date endDate) {
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Las fechas de inicio y fin son requeridas");
@@ -97,6 +101,7 @@ public class BorrowQueryService {
      * @param userId ID del usuario
      * @return Lista de préstamos del usuario
      */
+    @Transactional(readOnly = true)
     public List<BorrowDTO> getBorrowsByUser(Integer userId) {
         if (userId == null) {
             throw new IllegalArgumentException("El ID del usuario es requerido");
@@ -114,6 +119,7 @@ public class BorrowQueryService {
      * @return DTO del préstamo
      * @throws RuntimeException si el préstamo no existe
      */
+    @Transactional(readOnly = true)
     public BorrowDTO getBorrowById(Integer borrowId) {
         if (borrowId == null) {
             throw new IllegalArgumentException("El ID del préstamo es requerido");

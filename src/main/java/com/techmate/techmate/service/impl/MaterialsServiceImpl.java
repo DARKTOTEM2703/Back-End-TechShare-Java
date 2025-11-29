@@ -418,6 +418,7 @@ public class MaterialsServiceImpl implements MaterialsService {
      * @return Page de MaterialsDTO con metadatos de paginación
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<MaterialsDTO> getAllMaterialsPaginated(Pageable pageable) {
         Page<Materials> materialsPage = materialsRepository.findAll(pageable);
         return materialsPage.map(materialsMapper::toDTO);

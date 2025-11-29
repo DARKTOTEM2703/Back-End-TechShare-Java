@@ -215,6 +215,7 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BorrowDTO> getAllBorrowDTO() {
         return borrowRepository.findAll().stream()
                 .map(borrowMapper::toDTO)

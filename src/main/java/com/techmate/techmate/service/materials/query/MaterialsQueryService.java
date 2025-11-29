@@ -1,6 +1,7 @@
 package com.techmate.techmate.service.materials.query;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,18 +25,21 @@ public class MaterialsQueryService {
         this.materialsMapper = materialsMapper;
     }
 
+    @Transactional(readOnly = true)
     public List<MaterialsDTO> getAllMaterials() {
         return materialsRepository.findAll().stream()
                 .map(materialsMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MaterialsDTO> getAllMaterialsSortedByPrice(boolean ascending) {
         List<Materials> materials = ascending ? materialsRepository.findAllByOrderByPriceAsc()
                 : materialsRepository.findAllByOrderByPriceDesc();
         return materials.stream().map(materialsMapper::toDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public MaterialsDTO getById(int id) {
         Materials m = materialsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Material no encontrado con ID: " + id));
