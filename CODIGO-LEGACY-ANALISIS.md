@@ -1,4 +1,4 @@
-# 📋 Análisis de Código Legacy en TechShare Backend
+![1764364793651](image/CODIGO-LEGACY-ANALISIS/1764364793651.png)![1764364796164](image/CODIGO-LEGACY-ANALISIS/1764364796164.png)# 📋 Análisis de Código Legacy en TechShare Backend
 
 **Fecha:** 28 de noviembre de 2025  
 **Estado del Proyecto:** JWT Authentication implementado ✅  

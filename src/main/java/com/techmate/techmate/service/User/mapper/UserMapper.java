@@ -18,6 +18,12 @@ public class UserMapper {
         dto.setFirstName(usuario.getFirst_name());
         dto.setLastName(usuario.getLast_name());
         dto.setEmail(usuario.getEmail());
+        dto.setProfileImageUrl(usuario.getProfile_image_url());
+        dto.setEnabled(usuario.isEnabled());
+        dto.setBirthDate(usuario.getBirthDate());
+        dto.setGender(usuario.getGender() != null ? usuario.getGender().toString() : null);
+        dto.setCreatedAt(usuario.getCreated_at());
+        dto.setUpdatedAt(usuario.getUpdated_at());
         dto.setRoles(roles);
         return dto;
     }

@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +43,15 @@ public class Usuario {
 
     @Column(name = "is_enabled")
     private boolean isEnabled = false;
+
+    @Column(name = "profile_image_url")
+    private String profile_image_url;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime created_at;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updated_at;
 
     // DESHABILITADO: Relación que causaba ConcurrentModificationException
     // @ManyToMany(fetch = FetchType.LAZY)
