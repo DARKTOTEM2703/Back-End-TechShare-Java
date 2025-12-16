@@ -111,6 +111,8 @@ public class SecurityConfig {
                 // Recursos estáticos e imágenes
                 .requestMatchers("/admin/categories/images/**", "/admin/materials/images/**", 
                                "/admin/subcategories/images/**", "/uploaded-images/**").permitAll()
+                // API pública de materiales (sin autenticación)
+                .requestMatchers("/api/materials/**").permitAll()
                 // Rutas de administración - REQUIEREN ROL ADMIN
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Endpoint de usuario autenticado
