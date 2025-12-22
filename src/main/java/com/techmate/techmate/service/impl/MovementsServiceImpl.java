@@ -6,19 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
-import com.techmate.techmate.service.MaterialsService;
 import com.techmate.techmate.service.MovementsService;
 import com.techmate.techmate.dto.MovementsDTO;
-import com.techmate.techmate.entity.Materials;
 import com.techmate.techmate.entity.MoveType;
-import com.techmate.techmate.entity.Movements;
-import com.techmate.techmate.entity.Usuario;
-import com.techmate.techmate.repository.MaterialsRepository;
-import com.techmate.techmate.repository.MovementsRepository;
-import com.techmate.techmate.repository.UsuarioRepository;
-import com.techmate.techmate.security.UserDetailsServiceImpl;
+import com.techmate.techmate.service.movements.mapper.MovementMapper;
+import com.techmate.techmate.service.movements.manager.MovementManager;
+import com.techmate.techmate.service.movements.query.MovementQueryService;
 
-import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -26,175 +21,22 @@ public class MovementsServiceImpl implements MovementsService {
 
     private static final Logger log = LoggerFactory.getLogger(MovementsServiceImpl.class);
 
-    private final MovementsRepository movementsRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final UserDetailsServiceImpl userService;
-    private final MaterialsRepository materialsRepository;
-    private final MaterialsService materialsService;
-    private final com.techmate.techmate.service.movements.mapper.MovementMapper movementMapper;
-    private final com.techmate.techmate.service.movements.validator.MovementValidator movementValidator;
-    private final com.techmate.techmate.service.movements.manager.MovementStockManager movementStockManager;
-    private final com.techmate.techmate.service.movements.query.MovementQueryService movementQueryService;
+    private final MovementManager movementManager;
+    private final MovementQueryService movementQueryService;
+    private final MovementMapper movementMapper;
 
-    public MovementsServiceImpl(MovementsRepository movementsRepository,
-            UsuarioRepository usuarioRepository,
-            UserDetailsServiceImpl userService,
-            MaterialsRepository materialsRepository,
-            MaterialsService materialsService,
-            com.techmate.techmate.service.movements.mapper.MovementMapper movementMapper,
-            com.techmate.techmate.service.movements.validator.MovementValidator movementValidator,
-            com.techmate.techmate.service.movements.manager.MovementStockManager movementStockManager,
-            com.techmate.techmate.service.movements.query.MovementQueryService movementQueryService) {
-        this.movementsRepository = movementsRepository;
-        this.usuarioRepository = usuarioRepository;
-        this.userService = userService;
-        this.materialsRepository = materialsRepository;
-        this.materialsService = materialsService;
-        this.movementMapper = movementMapper;
-        this.movementValidator = movementValidator;
-        this.movementStockManager = movementStockManager;
+    public MovementsServiceImpl(
+            MovementManager movementManager,
+            MovementQueryService movementQueryService,
+            MovementMapper movementMapper) {
+        this.movementManager = movementManager;
         this.movementQueryService = movementQueryService;
-    }
-
-    /**
-     * ✅ SRP REFACTORING: Métodos helper para cada responsabilidad
-     */
-
-    // ─── VALIDACIÓN ───
-    /**
-     * Cargar y validar que el usuario exista
-     */
-    private Usuario loadAndValidateUser(Integer userId) {
-        return usuarioRepository.findById(userId)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
-                        String.format("Usuario con ID %d no encontrado", userId)));
-    }
-
-    /**
-     * Cargar y validar que el material exista
-     */
-    private Materials loadAndValidateMaterial(Integer materialId) {
-        return materialsRepository.findById(materialId)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
-                        String.format("Material con ID %d no encontrado", materialId)));
-    }
-
-    // ─── MAPEO (DTO ↔ Entity) ───
-    /**
-     * Convertir DTO a Entity (con usuarios y materiales precargados)
-     */
-    private Movements createMovement(MovementsDTO dto, Usuario usuario, Materials materials) {
-        // Delegación completa al mapper
-        return movementMapper.toEntity(dto, usuario, materials);
-    }
-
-    // ─── PREPARACIÓN ───
-    /**
-     * Preparar el DTO con valores por defecto
-     */
-    private void prepareMovementDTO(MovementsDTO dto) {
-        if (dto.getDate() == null) {
-            dto.setDate(new Date());
-        }
-        if (dto.getComment() == null) {
-            dto.setComment("");
-        }
-    }
-
-    // ─── STOCK ───
-    /**
-     * Actualizar stock del material después de persistir el movimiento
-     */
-    private void updateMaterialStock(Movements movement) {
-        Materials materials = movement.getMaterials();
-        movementStockManager.adjustMaterialStock(materials, movement);
-        materialsRepository.save(materials);
-    }
-
-    @Override
-    @Transactional
-    public MovementsDTO createMovementsDTO(MovementsDTO movementsDTO, Integer userId) {
-        // 1️⃣ VALIDAR
-        movementValidator.validateQuantity(movementsDTO);
-        Usuario usuario = loadAndValidateUser(userId);
-        Materials materials = loadAndValidateMaterial(movementsDTO.getId());
-
-        // 2️⃣ PREPARAR DTO
-        prepareMovementDTO(movementsDTO);
-
-        // 3️⃣ CREAR ENTIDAD
-        Movements movements = createMovement(movementsDTO, usuario, materials);
-
-        // 4️⃣ PERSISTIR
-        movements = movementsRepository.save(movements);
-
-        // 5️⃣ AJUSTAR STOCK
-        updateMaterialStock(movements);
-
-        // 6️⃣ RETORNAR DTO
-        String adminName = userService.getUsuarioUsernamById(movements.getUsuario().getId());
-        String materialName = materialsService.getMaterialsNameById(movements.getMaterials().getId());
-        return movementMapper.toDTO(movements, adminName, materialName);
-    }
-
-    // Ajustar stock de material
-    // Stock adjustments now delegated to MovementStockManager
-
-    @Override
-    @Transactional
-    public MovementsDTO getMovementsByID(Integer movementsId) {
-        // 1️⃣ CARGAR movimiento
-        Movements movements = movementsRepository.findById(movementsId)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
-                        String.format("Movimiento con ID %d no encontrado", movementsId)));
-
-        // 2️⃣ CONVERTIR a DTO
-        String adminName = userService.getUsuarioUsernamById(movements.getUsuario().getId());
-        String materialName = materialsService.getMaterialsNameById(movements.getMaterials().getId());
-        return movementMapper.toDTO(movements, adminName, materialName);
-    }
-
-    @Override
-    public List<MovementsDTO> getAllMovementsDTO() {
-        return movementQueryService.getAll();
-    }
-
-    @Override
-    @Transactional
-    public MovementsDTO updateMovement(Integer movementsId, MovementsDTO movementsDTO) {
-        // 1️⃣ CARGAR movimiento existente
-        Movements movement = movementsRepository.findById(movementsId)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
-                        String.format("Movimiento con ID %d no encontrado", movementsId)));
-
-        // 2️⃣ VALIDAR nuevos datos
-        movementValidator.validateQuantity(movementsDTO);
-
-        // 3️⃣ ACTUALIZAR campos
-        if (movementsDTO.getComment() != null) {
-            movement.setComment(movementsDTO.getComment());
-        }
-
-        // 4️⃣ PERSISTIR
-        movement = movementsRepository.save(movement);
-
-        // 5️⃣ RETORNAR DTO
-        String adminName = userService.getUsuarioUsernamById(movement.getUsuario().getId());
-        String materialName = materialsService.getMaterialsNameById(movement.getMaterials().getId());
-        return movementMapper.toDTO(movement, adminName, materialName);
-    }
-
-    @Override
-    public List<MovementsDTO> getMovementsByType(String type) {
-        // ✅ TAREA 3 (OCP) será: Centralizar en MoveTypeConverter
-        // Por ahora, mejorar legibilidad
-        MoveType moveType = parseMoveType(type);
-        return movementQueryService.getByMoveType(moveType);
+        this.movementMapper = movementMapper;
     }
 
     /**
      * Convertir string a MoveType enum
-     * (Este método será reemplazado por MoveTypeConverter en TAREA 3)
+     * TODO: En futuras refactorizaciones, extraer a MoveTypeConverter (OCP)
      */
     private MoveType parseMoveType(String type) {
         if (type == null || type.isBlank()) {
@@ -222,6 +64,35 @@ public class MovementsServiceImpl implements MovementsService {
     }
 
     @Override
+    @Transactional
+    public MovementsDTO createMovementsDTO(MovementsDTO movementsDTO, Integer userId) {
+        return movementManager.createMovement(movementsDTO, userId);
+    }
+
+    @Override
+    @Transactional
+    public MovementsDTO getMovementsByID(Integer movementsId) {
+        return movementQueryService.getById(movementsId);
+    }
+
+    @Override
+    public List<MovementsDTO> getAllMovementsDTO() {
+        return movementQueryService.getAll();
+    }
+
+    @Override
+    @Transactional
+    public MovementsDTO updateMovement(Integer movementsId, MovementsDTO movementsDTO) {
+        return movementManager.updateMovement(movementsId, movementsDTO);
+    }
+
+    @Override
+    public List<MovementsDTO> getMovementsByType(String type) {
+        MoveType moveType = parseMoveType(type);
+        return movementQueryService.getByMoveType(moveType);
+    }
+
+    @Override
     public List<MovementsDTO> getMovementsByDate(Date startDate, Date endDate) {
         // 1️⃣ VALIDAR fechas
         if (startDate == null || endDate == null) {
@@ -246,31 +117,16 @@ public class MovementsServiceImpl implements MovementsService {
         }
 
         // 2️⃣ CREAR Pageable para paginación a nivel de BD
-        org.springframework.data.domain.PageRequest pageRequest = org.springframework.data.domain.PageRequest
-                .of(pageNumber, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
 
-        // 3️⃣ OBTENER página desde BD (NO carga toda la BD en memoria)
-        org.springframework.data.domain.Page<Movements> movementsPage = movementsRepository
-                .findAllOptimizedPaginated(pageRequest);
-
-        // 4️⃣ MAPEAR a DTOs y retornar
-        return movementsPage.getContent().stream()
-                .map(m -> movementMapper.toDTO(m, null, null))
-                .toList();
+        // 3️⃣ DELEGAR a query service (obtiene página desde BD, NO carga toda en memoria)
+        return movementQueryService.getPaged(pageRequest);
     }
 
     @Override
     @Transactional
     public void deleteMovementById(Integer movementsId) {
-        // 1️⃣ VERIFICAR que existe
-        movementsRepository.findById(movementsId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Movimiento con ID %d no encontrado", movementsId)));
-
-        // 2️⃣ ELIMINAR
-        movementsRepository.deleteById(movementsId);
-
-        log.info("Movimiento con ID {} eliminado correctamente", movementsId);
+        movementManager.deleteMovement(movementsId);
     }
 
 }
