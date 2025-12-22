@@ -28,26 +28,13 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * Mapea nombres de campo en snake_case a etiquetas amigables en español
-     */
-    private static final java.util.Map<String, String> FIELD_LABELS = new java.util.HashMap<String, String>() {
-        {
-            put("user_name", "Nombre de usuario");
-            put("first_name", "Nombre");
-            put("last_name", "Apellido");
-            put("email", "Correo electrónico");
-            put("password", "Contraseña");
-            put("birthDate", "Fecha de nacimiento");
-            put("gender", "Género");
-            put("roles", "Roles");
-        }
-    };
-
-    /**
      * Traduce un nombre de campo a una etiqueta amigable
+     * TODO: Implementar i18n (internationalización) para soportar múltiples idiomas
+     * Por ahora, retorna el nombre del campo tal cual
      */
     private String translateFieldName(String fieldName) {
-        return FIELD_LABELS.getOrDefault(fieldName, fieldName);
+        // Convertir snake_case a un formato más legible
+        return fieldName.replace("_", " ");
     }
 
     @ExceptionHandler(NotFoundException.class)
