@@ -2,163 +2,124 @@ package com.techmate.techmate.service.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.techmate.techmate.validation.ImageValidationStrategy;
 import com.techmate.techmate.dto.CategoriesDTO;
-import com.techmate.techmate.entity.Categories;
-import com.techmate.techmate.imageStorage.ImageStorageStrategy;
 import com.techmate.techmate.repository.CategoriesRepository;
 import com.techmate.techmate.service.CategoriesService;
-import com.techmate.techmate.service.categories.mapper.CategoriesMapper;
+import com.techmate.techmate.service.categories.manager.CategoriesManager;
 import com.techmate.techmate.service.categories.query.CategoriesQueryService;
-import com.techmate.techmate.service.categories.validator.CategoriesValidator;
 
-import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * La clase {@code CategoriesServiceImp} es la implementación de la interfaz
- * {@code CategoriesService}. Proporciona métodos para manejar operaciones
- * relacionadas con las categorías en el sistema, incluyendo la creación,
- * recuperación, actualización y eliminación de categorías.
+ * 🎯 Implementación del servicio de categorías (Facade).
  * 
- * <p>
- * Esta clase utiliza {@code CategoriesRepository} para acceder a los
- * datos de las categorías en la base de datos y realiza la conversión entre
- * entidades y objetos de transferencia de datos (DTO).
- * </p>
+ * Esta clase actúa como un COORDINADOR (Facade Pattern).
+ * No contiene lógica de negocio compleja, solo delega responsabilidades a:
+ * 1. CategoriesQueryService → Para lecturas y búsquedas
+ * 2. CategoriesManager      → Para CRUD y lógica de negocio
+ * 3. CategoriesRepository   → Para acceso directo a persistencia
+ * 
+ * PRINCIPIOS SOLID APLICADOS:
+ * - SRP: Solo coordina operaciones, no contiene lógica de negocio
+ * - OCP: Extensible mediante inyección de nuevos componentes
+ * - LSP: Implementa correctamente la interfaz CategoriesService
+ * - ISP: Delega a interfaces específicas (Manager, QueryService)
+ * - DIP: Depende de abstracciones, no de implementaciones concretas
+ * 
+ * PATRÓN ARQUITECTÓNICO:
+ * Controller → CategoriesServiceImp (Facade)
+ *           ├→ CategoriesQueryService (Consultas: GET, FIND, SEARCH)
+ *           ├→ CategoriesManager (CRUD: CREATE, UPDATE, DELETE + lógica)
+ *           └→ CategoriesRepository (Acceso a datos)
+ * 
+ * @author TechShare Team - SOLID Implementation
  */
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class CategoriesServiceImp implements CategoriesService {
 
-    private final CategoriesRepository categoriesRepository;
-    private final ImageStorageStrategy imageStorageStrategy;
-    private final ImageValidationStrategy imageValidationStrategy; // Inyección de la estrategia de validación
-    private final CategoriesMapper categoriesMapper;
-    private final CategoriesValidator categoriesValidator;
+    /**
+     * Servicio de consultas especializado para categorías.
+     * Responsable de lecturas: findAll, findById, búsquedas.
+     */
     private final CategoriesQueryService categoriesQueryService;
 
-    @Value("${storage.location}")
-    private String storageLocation; // Directorio para almacenar imágenes
-
-    @Value("${server.url}")
-    private String serverUrl; // URL base del servidor
-
-    public CategoriesServiceImp(CategoriesRepository categoriesRepository,
-            ImageStorageStrategy imageStorageStrategy,
-            ImageValidationStrategy imageValidationStrategy,
-            CategoriesMapper categoriesMapper,
-            CategoriesValidator categoriesValidator,
-            CategoriesQueryService categoriesQueryService) {
-        this.categoriesRepository = categoriesRepository;
-        this.imageStorageStrategy = imageStorageStrategy;
-        this.imageValidationStrategy = imageValidationStrategy;
-        this.categoriesMapper = categoriesMapper;
-        this.categoriesValidator = categoriesValidator;
-        this.categoriesQueryService = categoriesQueryService;
-    }
+    /**
+     * Gestor de operaciones CRUD y lógica de negocio.
+     * Responsable de escrituras: create, update, delete.
+     */
+    private final CategoriesManager categoriesManager;
 
     /**
-     * Convierte un objeto {@code CategoriesDTO} a una entidad {@code Categories}.
-     * 
-     * @param categoriesDTO El objeto DTO a convertir.
-     * @return La entidad {@code Categories} correspondiente.
+     * Repository directo para acceso a persistencia de bajo nivel.
+     * Usado para operaciones específicas.
      */
-    private Categories convertToEntity(CategoriesDTO categoriesDTO) {
-        return categoriesMapper.toEntity(categoriesDTO);
-    }
+    private final CategoriesRepository categoriesRepository;
 
-    @Override
-    public CategoriesDTO createCategory(CategoriesDTO categoriesDTO, MultipartFile image) {
-        // Verificar si ya existe una categoría con el mismo nombre
-        categoriesValidator.validateUniqueName(categoriesDTO.getName());
-        // Validar la imagen completa usando la estrategia (ahora acepta MultipartFile)
-        imageValidationStrategy.validate(image);
 
-        // Guardar la imagen y obtener la ruta
-        String savedImagePath = imageStorageStrategy.saveImage(image); // Asegúrate de que este método acepte
 
-        categoriesDTO.setImagePath(savedImagePath);
+    // ==================== OPERACIONES DE CONSULTA ====================
 
-        // Establecer la ruta de la imagen en el DTO
-        categoriesDTO.setImagePath(savedImagePath);
-
-        // Convertir el DTO a entidad y guardarlo en la base de datos
-        Categories categories = convertToEntity(categoriesDTO);
-        categories = categoriesRepository.save(categories);
-        return categoriesMapper.toDTO(categories);
-    }
-
-    @Override
-    public CategoriesDTO getCategoryById(int categoryID) {
-        // Buscar la categoría por ID y lanzar excepción si no se encuentra
-        return categoriesQueryService.getById(categoryID);
-    }
-
-    @Override
-    public CategoriesDTO updateCategory(int categoryID, CategoriesDTO categoriesDTO, MultipartFile image) {
-        // Buscar la categoría por ID y lanzar excepción si no se encuentra
-        Categories categories = categoriesRepository.findById(categoryID)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryID));
-
-        // Verificar nombre único si cambió
-        if (categoriesDTO.getName() != null && !categoriesDTO.getName().equals(categories.getName())) {
-            categoriesValidator.validateUniqueName(categoriesDTO.getName());
-        }
-
-        // Actualizar el nombre solo si es diferente y no es nulo
-        if (categoriesDTO.getName() != null && !categoriesDTO.getName().isEmpty()) {
-            categories.setName(categoriesDTO.getName());
-        }
-
-        // Si se proporciona una imagen, validar y guardar la nueva imagen
-        if (image != null && !image.isEmpty()) {
-            String oldImagePath = categories.getImagePath();
-
-            // Eliminar la imagen antigua si existe
-            if (oldImagePath != null && !oldImagePath.isEmpty()) {
-                imageStorageStrategy.deleteImage(oldImagePath);
-            }
-
-            // Validar la nueva imagen usando la estrategia de validación
-            imageValidationStrategy.validate(image);
-
-            // Guardar la nueva imagen y establecer su ruta en la entidad
-            String newImagePath = imageStorageStrategy.saveImage(image);
-            categories.setImagePath(newImagePath); // Actualizar la ruta de la imagen
-        }
-
-        // Guardar la entidad actualizada en la base de datos
-        categories = categoriesRepository.save(categories);
-        return categoriesMapper.toDTO(categories); // Devolver la categoría actualizada
-    }
-
-    @Override
-    public void deleteCategory(int categoryID) {
-        // Buscar la categoría por ID
-        Categories category = categoriesRepository.findById(categoryID)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryID));
-
-        // Si se encuentra la categoría, eliminar la imagen si existe
-        String imagePath = category.getImagePath();
-        if (imagePath != null && !imagePath.isEmpty()) {
-            imageStorageStrategy.deleteImage(imagePath); // Utilizar la estrategia para eliminar la imagen
-        }
-
-        // Eliminar la categoría de la base de datos
-        categoriesRepository.deleteById(categoryID);
-    }
-
+    /**
+     * 📋 Obtiene todas las categorías.
+     * Delega a CategoriesQueryService.
+     */
     @Override
     public List<CategoriesDTO> getAllCategories() {
         return categoriesQueryService.getAll();
     }
 
+    /**
+     * 🔍 Obtiene una categoría por su ID.
+     * Delega a CategoriesQueryService.
+     */
+    @Override
+    public CategoriesDTO getCategoryById(int categoryID) {
+        return categoriesQueryService.getById(categoryID);
+    }
+
+    /**
+     * 🔤 Obtiene el nombre de una categoría por su ID.
+     * Delega a CategoriesRepository.
+     */
     @Override
     public String getCategoryNameById(int categoryId) {
-        Categories category = categoriesRepository.findById(categoryId).orElse(null);
-        return category != null ? category.getName() : null;
+        return categoriesRepository.findById(categoryId)
+                .map(com.techmate.techmate.entity.Categories::getName)
+                .orElse(null);
+    }
+
+    // ==================== OPERACIONES DE ESCRITURA ====================
+
+    /**
+     * ✨ Crea una nueva categoría.
+     * Delega a CategoriesManager.
+     */
+    @Override
+    public CategoriesDTO createCategory(CategoriesDTO categoriesDTO, MultipartFile image) {
+        return categoriesManager.createCategory(categoriesDTO, image);
+    }
+
+    /**
+     * 🔄 Actualiza una categoría existente.
+     * Delega a CategoriesManager.
+     */
+    @Override
+    public CategoriesDTO updateCategory(int categoryID, CategoriesDTO categoriesDTO, MultipartFile image) {
+        return categoriesManager.updateCategory(categoryID, categoriesDTO, image);
+    }
+
+    /**
+     * 🗑️ Elimina una categoría.
+     * Delega a CategoriesManager.
+     */
+    @Override
+    public void deleteCategory(int categoryID) {
+        categoriesManager.deleteCategory(categoryID);
     }
 }
