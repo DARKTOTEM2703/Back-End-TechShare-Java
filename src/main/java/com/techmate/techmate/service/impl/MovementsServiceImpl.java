@@ -245,19 +245,18 @@ public class MovementsServiceImpl implements MovementsService {
             throw new IllegalArgumentException("El tamaño de página debe ser > 0");
         }
 
-        // 2️⃣ OBTENER todos y aplicar paginación manual
-        List<MovementsDTO> allMovements = movementQueryService.getAll();
+        // 2️⃣ CREAR Pageable para paginación a nivel de BD
+        org.springframework.data.domain.PageRequest pageRequest = org.springframework.data.domain.PageRequest
+                .of(pageNumber, pageSize);
 
-        // 3️⃣ CALCULAR índices de paginación
-        int startIndex = pageNumber * pageSize;
-        int endIndex = Math.min(startIndex + pageSize, allMovements.size());
+        // 3️⃣ OBTENER página desde BD (NO carga toda la BD en memoria)
+        org.springframework.data.domain.Page<Movements> movementsPage = movementsRepository
+                .findAllOptimizedPaginated(pageRequest);
 
-        // 4️⃣ RETORNAR sublist paginada
-        if (startIndex >= allMovements.size()) {
-            return Collections.emptyList();
-        }
-
-        return allMovements.subList(startIndex, endIndex);
+        // 4️⃣ MAPEAR a DTOs y retornar
+        return movementsPage.getContent().stream()
+                .map(m -> movementMapper.toDTO(m, null, null))
+                .toList();
     }
 
     @Override

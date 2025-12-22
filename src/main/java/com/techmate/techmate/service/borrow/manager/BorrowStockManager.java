@@ -63,7 +63,7 @@ public class BorrowStockManager implements IBorrowStockManager {
         Materials material = materialsRepository.findById(materialId)
                 .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
-        int availableStock = material.getBorrowable_stock();
+        int availableStock = material.getBorrowableStock();
 
         if (availableStock < requestedQuantity) {
             throw BorrowBusinessException.insufficientStock(materialId, requestedQuantity, availableStock);
@@ -87,12 +87,12 @@ public class BorrowStockManager implements IBorrowStockManager {
                 .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
         // Validar stock disponible
-        if (material.getBorrowable_stock() < quantity) {
-            throw BorrowBusinessException.insufficientStock(materialId, quantity, material.getBorrowable_stock());
+        if (material.getBorrowableStock() < quantity) {
+            throw BorrowBusinessException.insufficientStock(materialId, quantity, material.getBorrowableStock());
         }
 
         // Reducir stock
-        material.setBorrowable_stock(material.getBorrowable_stock() - quantity);
+        material.setBorrowableStock(material.getBorrowableStock() - quantity);
 
         // Guardar cambios
         materialsRepository.save(material);
@@ -113,7 +113,7 @@ public class BorrowStockManager implements IBorrowStockManager {
                 .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
         // Restaurar stock
-        material.setBorrowable_stock(material.getBorrowable_stock() + quantity);
+        material.setBorrowableStock(material.getBorrowableStock() + quantity);
 
         // Guardar cambios
         materialsRepository.save(material);
@@ -130,7 +130,7 @@ public class BorrowStockManager implements IBorrowStockManager {
         Materials material = materialsRepository.findById(materialId)
                 .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
-        return material.getBorrowable_stock();
+        return material.getBorrowableStock();
     }
 
     /**
@@ -145,7 +145,7 @@ public class BorrowStockManager implements IBorrowStockManager {
                 .orElseThrow(() -> BorrowBusinessException.materialNotFound(materialId));
 
         // Un material es prestable si tiene stock > 0
-        return material.getBorrowable_stock() > 0;
+        return material.getBorrowableStock() > 0;
     }
 
     /**
@@ -179,16 +179,16 @@ public class BorrowStockManager implements IBorrowStockManager {
         }
 
         // 1. Validar stock disponible
-        if (material.getBorrowable_stock() < quantity) {
+        if (material.getBorrowableStock() < quantity) {
             throw BorrowBusinessException.insufficientStock(
                     material.getId(),
                     quantity,
-                    material.getBorrowable_stock());
+                    material.getBorrowableStock());
         }
 
         // 2. Decrementar stock disponible
-        int newStock = material.getBorrowable_stock() - quantity;
-        material.setBorrowable_stock(newStock);
+        int newStock = material.getBorrowableStock() - quantity;
+        material.setBorrowableStock(newStock);
 
         // 3. Persistir cambios en material
         materialsRepository.save(material);
@@ -240,8 +240,8 @@ public class BorrowStockManager implements IBorrowStockManager {
         }
 
         // 1. Incrementar stock disponible
-        int newStock = material.getBorrowable_stock() + quantity;
-        material.setBorrowable_stock(newStock);
+        int newStock = material.getBorrowableStock() + quantity;
+        material.setBorrowableStock(newStock);
 
         // 2. Persistir cambios en material
         materialsRepository.save(material);

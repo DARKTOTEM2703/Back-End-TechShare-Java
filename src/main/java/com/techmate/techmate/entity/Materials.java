@@ -58,7 +58,7 @@ public class Materials {
     @NotNull(message = "El stock prestable no puede ser nulo")
     @Min(value = 0, message = "El stock prestable debe ser mayor o igual a 0") // Permite que el stock prestable sea 0
     @Column(name = "borrowable_stock")
-    private int borrowable_stock;  // Ya está en snake_case, auto-mapea directo
+    private int borrowableStock;  // Renombrado a camelCase para seguir convenciones Java
 
     @ManyToOne
     @JoinColumn(name = "sub_category_id")

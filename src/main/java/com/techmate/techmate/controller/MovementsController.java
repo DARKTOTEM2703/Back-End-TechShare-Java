@@ -149,39 +149,51 @@ public class MovementsController {
 
     /**
      * Método helper para extraer userId del Authentication.
+     * 
+     * @throws AccessDeniedException si no se puede extraer el userId
      */
     private Integer extractUserIdFromAuthentication(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Usuario no autenticado. No se puede procesar el movimiento.");
+        }
+
         try {
-            if (authentication != null) {
-                // Intentar extraer de diferentes formas según el tipo de Authentication
-                if (authentication.getPrincipal() instanceof String) {
-                    // El username/email está en principal
-                    String userEmail = (String) authentication.getPrincipal();
-                    // Aquí podrías buscar el usuario por email en la BD
-                    // Por ahora usamos el token si está disponible
-                    log.info("Usuario autenticado por email: {}", userEmail);
-                }
+            // Intentar extraer de diferentes formas según el tipo de Authentication
+            if (authentication.getPrincipal() instanceof String) {
+                // El username/email está en principal
+                String userEmail = (String) authentication.getPrincipal();
+                log.info("Usuario autenticado por email: {}", userEmail);
+            }
 
-                // Intentar obtener el ID desde los detalles del token JWT
-                if (authentication.getDetails() instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
-                    if (details.containsKey("id")) {
-                        return ((Number) details.get("id")).intValue();
-                    }
-                }
-
-                // Último recurso: usar credentials si es un token
-                if (authentication.getCredentials() != null) {
-                    String token = authentication.getCredentials().toString();
-                    return TokenUtils.getUserIdFromToken(token);
+            // Intentar obtener el ID desde los detalles del token JWT
+            if (authentication.getDetails() instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
+                if (details.containsKey("id")) {
+                    return ((Number) details.get("id")).intValue();
                 }
             }
-            log.warn("No se pudo extraer userId del Authentication, usando fallback");
-            return 1; // Fallback temporal para desarrollo
+
+            // Intentar extraer del token JWT en credentials
+            if (authentication.getCredentials() != null) {
+                String token = authentication.getCredentials().toString();
+                Integer userId = TokenUtils.getUserIdFromToken(token);
+                if (userId != null && userId > 0) {
+                    return userId;
+                }
+            }
+
+            // Si no se puede extraer de ninguna forma, lanzar excepción
+            log.error("No se pudo extraer userId del Authentication");
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "No se pudo extraer el userId del token de autenticación.");
+        } catch (org.springframework.security.access.AccessDeniedException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error al extraer userId: {}", e.getMessage());
-            return 1; // Fallback en caso de error
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Error al procesar la autenticación: " + e.getMessage());
         }
     }
 

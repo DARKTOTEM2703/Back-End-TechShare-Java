@@ -115,7 +115,7 @@ public class BorrowUserServiceImp implements BorrowUserService {
                     .orElseThrow(() -> new Exception("Material no encontrado con ID: " + detailDTO.getId()));
 
             // Verificar si hay suficiente stock del material
-            if (material.getBorrowable_stock() < detailDTO.getQuantity()) {
+            if (material.getBorrowableStock() < detailDTO.getQuantity()) {
                 throw new com.techmate.techmate.exception.BorrowBusinessException("BORROW_INSUFFICIENT_STOCK",
                         "Stock insuficiente para el material con ID: " + material.getId());
             }

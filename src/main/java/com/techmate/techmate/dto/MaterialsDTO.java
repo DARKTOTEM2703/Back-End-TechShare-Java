@@ -1,5 +1,6 @@
 package com.techmate.techmate.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.validation.constraints.Min;
@@ -46,7 +47,7 @@ public class MaterialsDTO {
 
     @NotNull(message = "El stock prestable no puede ser nulo")
     @Min(value = 0, message = "El stock prestable debe ser mayor o igual a 0")
-    private int borrowable_stock;
+    private int borrowableStock;
 
     @NotNull(message = "El ID de la subcategoría no puede ser nulo")
     @Min(value = 1, message = "El ID de la subcategoría debe ser mayor a 0")
@@ -98,12 +99,12 @@ public class MaterialsDTO {
         this.stock = stock;
     }
 
-    public int getBorrowable_stock() {
-        return borrowable_stock;
+    public int getBorrowableStock() {
+        return borrowableStock;
     }
 
-    public void setBorrowable_stock(int borrowable_stock) {
-        this.borrowable_stock = borrowable_stock;
+    public void setBorrowableStock(int borrowableStock) {
+        this.borrowableStock = borrowableStock;
     }
 
     public int getSubCategoryId() {

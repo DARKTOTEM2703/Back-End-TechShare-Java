@@ -66,7 +66,7 @@ public class MaterialsMapper {
         }
 
         return new MaterialResponse(dto.getId(), imagePath, dto.getName(), dto.getDescription(),
-                dto.getPrice(), dto.getStock(), dto.getBorrowable_stock(), dto.getSubCategoryId(),
+                dto.getPrice(), dto.getStock(), dto.getBorrowableStock(), dto.getSubCategoryId(),
                 dto.getSubCategoryName(), dto.getRoleNames());
     }
 
@@ -80,7 +80,7 @@ public class MaterialsMapper {
         dto.setDescription(materials.getDescription());
         dto.setPrice(materials.getPrice());
         dto.setStock(materials.getStock());
-        dto.setBorrowable_stock(materials.getBorrowable_stock());
+        dto.setBorrowableStock(materials.getBorrowableStock());
 
         if (materials.getSubCategory() != null) {
             dto.setSubCategoryId(materials.getSubCategory().getSubCategoryId());
@@ -116,10 +116,10 @@ public class MaterialsMapper {
         Integer dtoStock = materialsDTO.getStock();
         if (dtoStock == null || dtoStock.intValue() == 0) {
             materials.setStock(0);
-            materials.setBorrowable_stock(0);
+            materials.setBorrowableStock(0);
         } else {
             materials.setStock(dtoStock);
-            materials.setBorrowable_stock(dtoStock);
+            materials.setBorrowableStock(dtoStock);
         }
 
         // SubCategory
