@@ -1,42 +1,12 @@
+// Deprecated placeholder: implementation consolidated into BorrowServiceImpl.java
+// This file was retained temporarily during refactor. Use `BorrowServiceImpl.java` instead.
+// TODO: remove this file in a future cleanup once all consumers are verified.
+
 package com.techmate.techmate.service.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.context.annotation.Primary;
+public class BorrowServiceImplSOLID {
 
-import java.util.*;
-
-import com.techmate.techmate.service.BorrowService;
-import com.techmate.techmate.service.borrow.processor.BorrowStateProcessor;
-import com.techmate.techmate.service.borrow.query.BorrowQueryService;
-import com.techmate.techmate.dto.BorrowDTO;
-import com.techmate.techmate.entity.Status;
-import com.techmate.techmate.security.TokenUtils;
-
-/**
- * 🎯 Implementación del servicio de préstamos refactorizada con principios
- * SOLID.
- * 
- * PRINCIPIOS SOLID APLICADOS:
- * - SRP: Solo coordina operaciones, delega responsabilidades específicas
- * - OCP: Extensible sin modificar código existente
- * - LSP: Implementa correctamente la interfaz BorrowService
- * - ISP: Depende solo de interfaces necesarias
- * - DIP: Depende de abstracciones, no de implementaciones concretas
- * 
- * ARQUITECTURA:
- * - BorrowQueryService: Consultas y filtros
- * - BorrowStateProcessor: Transiciones de estado
- * 
- * @author TechShare Team - Refactorizado con SOLID
- */
-@Service
-@Primary
-public class BorrowServiceImplSOLID implements BorrowService {
-
-    private final BorrowQueryService queryService;
-    private final BorrowStateProcessor stateProcessor;
-
-    // ==================== CONSTRUCTOR INJECTION (DIP) ====================
+}
 
     /**
      * Constructor injection para cumplir con DIP.

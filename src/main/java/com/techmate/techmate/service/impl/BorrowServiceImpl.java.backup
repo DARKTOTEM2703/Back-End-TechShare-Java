@@ -1,83 +1,14 @@
-package com.techmate.techmate.Service.impl;
-
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import com.techmate.techmate.DTO.BorrowDTO;
-import com.techmate.techmate.Entity.Status;
-import com.techmate.techmate.Security.TokenUtils;
-import com.techmate.techmate.Service.BorrowService;
-import com.techmate.techmate.Service.borrow.mapper.BorrowMapper;
-import com.techmate.techmate.Service.borrow.processor.BorrowStateProcessor;
-import com.techmate.techmate.Service.borrow.query.BorrowQueryService;
-
-
-/**
- * 🎯 Implementación del servicio de préstamos refactorizada con principios SOLID.
- * 
- * PRINCIPIOS SOLID APLICADOS:
- * - SRP: Solo coordina operaciones, delega responsabilidades específicas
- * - OCP: Extensible sin modificar código existente
- * - LSP: Implementa correctamente la interfaz BorrowService
- * - ISP: Depende solo de interfaces necesarias
- * - DIP: Depende de abstracciones, no de implementaciones concretas
- * 
- * ARQUITECTURA:
- * - BorrowQueryService: Consultas y filtros
- * - BorrowStateProcessor: Transiciones de estado
- * - BorrowMapper: Conversiones DTO ↔ Entity
- * 
- * @author TechShare Team - Refactorizado con SOLID
+/*
+ * Deprecated backup file retained for historical purposes.
+ * The canonical implementation is now in BorrowServiceImpl.java.
+ * Please avoid using this file. It will be removed in a future cleanup.
  */
-@Service
-public class BorrowServiceImpl implements BorrowService {
 
-    private final BorrowQueryService queryService;
-    private final BorrowStateProcessor stateProcessor;
-    private final BorrowMapper mapper;
+package com.techmate.techmate.service.impl;
 
-    // ==================== CONSTRUCTOR INJECTION (DIP) ====================
-    
-    /**
-     * Constructor injection para cumplir con DIP.
-     * Facilita testing y reduce acoplamiento.
-     */
-    public BorrowServiceImpl(
-            BorrowQueryService queryService,
-            BorrowStateProcessor stateProcessor,
-            BorrowMapper mapper) {
-        this.queryService = queryService;
-        this.stateProcessor = stateProcessor;
-        this.mapper = mapper;
+public class BorrowServiceImplBackup {
 
-    private BorrowDTO convertToDTO(Borrow borrow) {
-        BorrowDTO dto = new BorrowDTO();
-        dto.setBorrowId(borrow.getBorrowId());
-        dto.setDate(borrow.getDate());
-        dto.setStatus(borrow.getStatus());
-        dto.setAmount(borrow.getAmount());
-        dto.setStartDate(borrow.getStartDate());
-        dto.setEndDate(borrow.getEndDate());
-        dto.setReturnDate(borrow.getReturnDate());;
-
-        // Asegúrate de que el usuario y admin se asignen correctamente
-        if (borrow.getUsuario() != null) {
-            dto.setUsuarioId(borrow.getUsuario().getId());
-            dto.setUsuarioName(borrow.getUsuario().getUser_name());
-        }
-
-        if (borrow.getAdmin() != null) {
-            dto.setAdminId(borrow.getAdmin().getId());
-            dto.setAdminName(borrow.getAdmin().getUser_name());
-        }
-
-        // Mapear los detalles del préstamo
-        dto.setDetails(borrow.getDetails().stream()
-                .map(this::convertDetailsBorrowToDTO)
-                .collect(Collectors.toList()));
-
-        return dto;
-    }
+}
 
     private Borrow convertToEntity(BorrowDTO borrowDTO) {
         Borrow borrow = new Borrow();
