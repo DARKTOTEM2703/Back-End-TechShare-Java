@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.techmate.techmate.dto.BorrowDTO;
@@ -27,11 +28,13 @@ import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
  * - Filtrar préstamos por estado
  * - Filtrar préstamos por rango de fechas
  * - Buscar préstamos por usuario
+ * - Buscar préstamo por ID (Optional para Facade)
  * - Convertir entidades a DTOs usando el mapper
  * 
  * @author TechShare Team - SOLID Implementation
  */
 @Component
+@Transactional(readOnly = true)
 public class BorrowQueryService {
     
     private final BorrowRepository borrowRepository;
@@ -44,17 +47,49 @@ public class BorrowQueryService {
         this.borrowRepository = borrowRepository;
         this.borrowMapper = borrowMapper;
     }
-    
+
     /**
      * Obtiene todos los préstamos convertidos a DTO.
      * 
      * @return Lista de préstamos como DTO
      */
-    @Transactional(readOnly = true)
     public List<BorrowDTO> getAllBorrows() {
         return borrowRepository.findAll().stream()
                 .map(borrowMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtiene un préstamo específico por ID como Optional.
+     * Útil para el patrón Facade sin excepciones.
+     * 
+     * @param borrowId ID del préstamo
+     * @return Optional de DTO del préstamo
+     */
+    public Optional<BorrowDTO> findBorrowById(Integer borrowId) {
+        if (borrowId == null) {
+            return Optional.empty();
+        }
+        return borrowRepository.findById(borrowId)
+                .map(borrowMapper::toDTO);
+    }
+
+    /**
+     * Obtiene un préstamo específico por ID.
+     * 
+     * @param borrowId ID del préstamo
+     * @return DTO del préstamo
+     * @throws RuntimeException si el préstamo no existe
+     */
+    public BorrowDTO getBorrowById(Integer borrowId) {
+        if (borrowId == null) {
+            throw new IllegalArgumentException("El ID del préstamo es requerido");
+        }
+        
+        return borrowRepository.findById(borrowId)
+                .map(borrowMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException(
+                    String.format("Préstamo no encontrado con ID: %d", borrowId)));
     }
     
     /**
@@ -64,7 +99,6 @@ public class BorrowQueryService {
      * @return Lista de préstamos filtrados
      * @throws IllegalArgumentException si el estado no es válido
      */
-    @Transactional(readOnly = true)
     public List<BorrowDTO> getBorrowsByStatus(String statusString) {
         Status status = parseStatus(statusString);
         
@@ -80,7 +114,6 @@ public class BorrowQueryService {
      * @param endDate Fecha de fin (inclusive)
      * @return Lista de préstamos en el rango de fechas
      */
-    @Transactional(readOnly = true)
     public List<BorrowDTO> getBorrowsByDateRange(Date startDate, Date endDate) {
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Las fechas de inicio y fin son requeridas");
@@ -101,7 +134,6 @@ public class BorrowQueryService {
      * @param userId ID del usuario
      * @return Lista de préstamos del usuario
      */
-    @Transactional(readOnly = true)
     public List<BorrowDTO> getBorrowsByUser(Integer userId) {
         if (userId == null) {
             throw new IllegalArgumentException("El ID del usuario es requerido");
@@ -113,35 +145,16 @@ public class BorrowQueryService {
     }
     
     /**
-     * Obtiene un préstamo específico por ID.
-     * 
-     * @param borrowId ID del préstamo
-     * @return DTO del préstamo
-     * @throws RuntimeException si el préstamo no existe
-     */
-    @Transactional(readOnly = true)
-    public BorrowDTO getBorrowById(Integer borrowId) {
-        if (borrowId == null) {
-            throw new IllegalArgumentException("El ID del préstamo es requerido");
-        }
-        
-        return borrowRepository.findById(borrowId)
-                .map(borrowMapper::toDTO)
-                .orElseThrow(() -> new RuntimeException(
-                    String.format("Préstamo no encontrado con ID: %d", borrowId)));
-    }
-    
-    /**
-     * Obtiene préstamos activos (PROCESS y BORROWED).
+     * Obtiene préstamos activos (PENDING y BORROWED).
      * 
      * @return Lista de préstamos activos
      */
     public List<BorrowDTO> getActiveBorrows() {
-    List<BorrowDTO> pendingBorrows = getBorrowsByStatus("PENDING");
-    List<BorrowDTO> borrowedBorrows = getBorrowsByStatus("BORROWED");
-
-    pendingBorrows.addAll(borrowedBorrows);
-    return pendingBorrows;
+        List<BorrowDTO> pendingBorrows = getBorrowsByStatus("PENDING");
+        List<BorrowDTO> borrowedBorrows = getBorrowsByStatus("BORROWED");
+        
+        pendingBorrows.addAll(borrowedBorrows);
+        return pendingBorrows;
     }
     
     // ==================== MÉTODOS PRIVADOS ====================
