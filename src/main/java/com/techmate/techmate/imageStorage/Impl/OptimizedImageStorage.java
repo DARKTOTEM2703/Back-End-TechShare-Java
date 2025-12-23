@@ -66,7 +66,7 @@ public class OptimizedImageStorage implements ImageStorageStrategy {
     }
 
     @Override
-    public byte[] loadImage(String filename) {
+    public byte[] getImage(String filename) {
         try {
             String storageLocation = appProperties.getStorage().getLocation();
             Path file = Paths.get(storageLocation).resolve(filename);

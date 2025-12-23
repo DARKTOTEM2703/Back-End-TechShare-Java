@@ -68,7 +68,7 @@ public class FileSystemImageStorage implements ImageStorageStrategy {
     }
 
     @Override
-    public byte[] loadImage(String filename) {
+    public byte[] getImage(String filename) {
         try {
             String storageLocation = appProperties.getStorage().getLocation();
             Path path = Paths.get(storageLocation).resolve(filename);
