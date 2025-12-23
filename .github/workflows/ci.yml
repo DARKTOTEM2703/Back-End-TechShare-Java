@@ -10,6 +10,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME_LC: darktotem2703/back-end-techshare-java
   JAVA_VERSION: "17"
   JAVA_DISTRIBUTION: "temurin"
 
@@ -236,8 +237,9 @@ jobs:
             VERSION=${{ github.ref_name }}
           # REAL SOLUTION: Registry-based cache with docker-container driver
           # The docker-container driver ENABLES cache export to registries
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+          # Must use lowercase repository name for registry cache export
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:buildcache,mode=max
 
       - name: 📊 Docker Summary
         run: |
