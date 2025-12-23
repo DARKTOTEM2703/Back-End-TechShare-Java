@@ -115,13 +115,22 @@ jobs:
       - name: 🏗️ Build JAR
         run: ./mvnw clean package -DskipTests -B
 
+      - name: 🔎 List test report files (debug)
+        if: always()
+        run: |
+          echo "Listing any XML under target directories (for test reports)"
+          find . -type f -path "*/target/*surefire-reports/*.xml" -print || true
+          find . -type f -path "*/target/**/surefire-reports/*.xml" -print || true
+          echo "Listing target/ tree (first 200 lines)"
+          ls -R target 2>/dev/null | sed -n '1,200p' || true
+
       - name: 📊 Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure() # Run even if tests fail
         with:
           name: Maven Tests
-          # Match surefire and failsafe reports anywhere under target
-          path: '**/target/*surefire-reports/*.xml'
+          # More tolerant pattern to match surefire reports in nested modules
+          path: '**/target/**/surefire-reports/*.xml'
           reporter: java-junit
           fail-on-error: false # Don't fail the workflow on reporter errors
           fail-on-empty: false # Don't error if no report files are found
@@ -140,7 +149,7 @@ jobs:
         with:
           name: test-results
           # Upload any surefire/failsafe report directories
-          path: '**/target/*surefire-reports/'
+          path: '**/target/**/surefire-reports/'
           retention-days: 30
 
       - name: ✅ Build Summary
@@ -152,8 +161,8 @@ jobs:
           echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Java Version:** ${{ env.JAVA_VERSION }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Build Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          if ls target/surefire-reports/*.xml 1> /dev/null 2>&1; then
-            TEST_COUNT=$(grep -c "testcase" target/surefire-reports/*.xml || echo "0")
+          if ls **/target/**/surefire-reports/*.xml 1> /dev/null 2>&1; then
+            TEST_COUNT=$(grep -c "testcase" **/target/**/surefire-reports/*.xml || echo "0")
             echo "- **Tests Run:** $TEST_COUNT" >> $GITHUB_STEP_SUMMARY
           fi
 
