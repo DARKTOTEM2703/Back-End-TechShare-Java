@@ -127,7 +127,7 @@ jobs:
           JWT_SECRET: test-secret-key-for-ci-pipeline-minimum-32-characters-required
           SWAGGER_ENABLED: false
           SPRING_PROFILES_ACTIVE: test
-        run: ./mvnw clean test -B
+        run: ./mvnw clean test -B -X 2>&1 | tee maven-test.log
 
       - name: 🏗️ Build JAR
         run: ./mvnw clean package -DskipTests -B
@@ -135,15 +135,14 @@ jobs:
       - name: 🔎 List test report files (debug)
         if: always()
         run: |
-          echo "=== Searching for test reports ===" 
-          echo "Looking for surefire-reports directory..."
-          find . -type d -name "surefire-reports" -print 2>/dev/null || echo "No surefire-reports directories found"
+          echo "=== DEBUG: Full target structure ===" 
+          find target -type d -name "*report*" -o -name "*surefire*" -o -name "*test*" 2>/dev/null
           echo ""
-          echo "Looking for TEST-*.xml files..."
-          find . -type f -name "TEST-*.xml" -print 2>/dev/null || echo "No TEST-*.xml files found"
+          echo "=== Looking for ANY XML files in target ===" 
+          find target -name "*.xml" -type f 2>/dev/null | head -20
           echo ""
-          echo "Target directory structure (first 50 lines):"
-          ls -R target 2>/dev/null | head -50 || echo "Target directory not accessible"
+          echo "=== target directory listing (first 100 lines) ===" 
+          find target -type f -name "*.xml" -o -name "TEST-*" 2>/dev/null | head -100
 
       - name: 📊 Test Report
         uses: dorny/test-reporter@v1
