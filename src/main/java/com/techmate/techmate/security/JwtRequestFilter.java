@@ -29,28 +29,29 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JwtRequestFilter.class);
-    
+
     private final UserDetailsService userDetailsService;
-    
+
     public JwtRequestFilter(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, 
-                                  @NonNull HttpServletResponse response, 
-                                  @NonNull FilterChain filterChain) throws ServletException, IOException {
-        
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
+
         final String requestTokenHeader = request.getHeader("Authorization");
         final String requestURI = request.getRequestURI();
-        
+
         log.debug("🔍 JWT Request Filter - {} {}", request.getMethod(), requestURI);
         log.debug("Authorization header: {}", requestTokenHeader != null ? "Bearer [PRESENTE]" : "null");
 
         String username = null;
         String jwtToken = null;
 
-        // JWT Token está en la forma "Bearer token". Remover Bearer word y obtener solo el Token
+        // JWT Token está en la forma "Bearer token". Remover Bearer word y obtener solo
+        // el Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
@@ -67,30 +68,32 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // Una vez obtenemos el token validamos
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            
+
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // Si el token es válido configuramos Spring Security para establecer autenticación manualmente
+            // Si el token es válido configuramos Spring Security para establecer
+            // autenticación manualmente
             if (TokenUtils.validateToken(jwtToken, userDetails)) {
-                
+
                 log.info("✅ Token válido para usuario: {}", username);
-                
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = 
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                
+
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, jwtToken, userDetails.getAuthorities());
+
                 usernamePasswordAuthenticationToken
-                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                
+                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
                 // Después de establecer Authentication en el contexto, especificamos
-                // que el usuario actual está autenticado. Así pasa las configuraciones de Spring Security exitosamente.
+                // que el usuario actual está autenticado. Así pasa las configuraciones de
+                // Spring Security exitosamente.
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                
+
                 log.info("🔒 Autenticación establecida en SecurityContext para: {}", username);
             } else {
                 log.warn("❌ Token inválido para usuario: {}", username);
             }
         }
-        
+
         filterChain.doFilter(request, response);
     }
 }

@@ -21,7 +21,7 @@ public class BorrowCreatedEvent extends DomainEvent {
     private final Date borrowDate;
     private final Date startDate;
     private final Date endDate;
-    private final double amount;
+    private final java.math.BigDecimal amount;
 
     public BorrowCreatedEvent(Borrow borrow) {
         super(borrow);
@@ -46,7 +46,7 @@ public class BorrowCreatedEvent extends DomainEvent {
     @Override
     public String toString() {
         return String.format(
-                "BorrowCreatedEvent[borrowId=%d, userId=%d, amount=%.2f, eventId=%s]",
-                borrowId, userId, amount, getEventId());
+                "BorrowCreatedEvent[borrowId=%d, userId=%d, amount=%s, eventId=%s]",
+                borrowId, userId, amount != null ? amount.toPlainString() : "0.00", getEventId());
     }
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import com.techmate.techmate.dto.MaterialsDTO;
@@ -88,7 +89,7 @@ public class MaterialsMapperTest {
         MaterialsDTO dto = new MaterialsDTO();
         dto.setImagePath("img.jpg");
         dto.setName("Capacitor");
-        dto.setPrice(1.5);
+        dto.setPrice(BigDecimal.valueOf(1.5));
         dto.setStock(10);
         dto.setSubCategoryId(5);
         dto.setRoleIds(Arrays.asList(7));
@@ -106,7 +107,7 @@ public class MaterialsMapperTest {
         assertThat(m).isNotNull();
         assertThat(m.getName()).isEqualTo("Capacitor");
         assertThat(m.getStock()).isEqualTo(10);
-        assertThat(m.getBorrowable_stock()).isEqualTo(10);
+        assertThat(m.getBorrowableStock()).isEqualTo(10);
         assertThat(m.getSubCategory()).isNotNull();
         assertThat(m.getRoleMaterials()).hasSize(1);
         assertThat(m.getRoleMaterials().get(0).getRole().getId()).isEqualTo(7);

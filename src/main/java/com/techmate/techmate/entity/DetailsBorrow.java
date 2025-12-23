@@ -3,6 +3,7 @@ package com.techmate.techmate.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "details_borrow")
@@ -17,11 +18,11 @@ public class DetailsBorrow {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @Column(name = "unit_price")
-    private double unitPrice;
+    @Column(name = "unit_price", precision = 10, scale = 2)
+    private BigDecimal unitPrice;
 
-    @Column(name = "total_price")
-    private double totalPrice;
+    @Column(name = "total_price", precision = 10, scale = 2)
+    private BigDecimal totalPrice;
 
     @ManyToOne
     @JoinColumn(name = "material_id")

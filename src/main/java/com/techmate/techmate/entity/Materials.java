@@ -1,6 +1,7 @@
 package com.techmate.techmate.entity;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -33,10 +34,10 @@ public class Materials {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;  // Auto-mapea a id
+    private int id; // Auto-mapea a id
 
     @Column(name = "image_path")
-    private String imagePath;  // Auto-mapea a image_path
+    private String imagePath; // Auto-mapea a image_path
 
     @NotBlank(message = "El nombre no puede estar vacío")
     @Column(name = "name")
@@ -47,8 +48,8 @@ public class Materials {
     private String description;
 
     @NotNull(message = "El precio no puede ser nulo")
-    @Column(name = "price")
-    private double price; // Permite que el precio sea 0
+    @Column(name = "price", precision = 10, scale = 2)
+    private BigDecimal price; // Usar BigDecimal para precisión monetaria
 
     @NotNull(message = "El stock no puede ser nulo")
     @Min(value = 0, message = "El stock debe ser mayor o igual a 0") // Permite que el stock sea 0
@@ -58,7 +59,7 @@ public class Materials {
     @NotNull(message = "El stock prestable no puede ser nulo")
     @Min(value = 0, message = "El stock prestable debe ser mayor o igual a 0") // Permite que el stock prestable sea 0
     @Column(name = "borrowable_stock")
-    private int borrowableStock;  // Renombrado a camelCase para seguir convenciones Java
+    private int borrowableStock; // Renombrado a camelCase para seguir convenciones Java
 
     @ManyToOne
     @JoinColumn(name = "sub_category_id")
@@ -66,7 +67,6 @@ public class Materials {
 
     @OneToMany(mappedBy = "materials", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoleMaterials> roleMaterials;
-
 
     @OneToMany(mappedBy = "materials", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Movements> movements;
@@ -88,6 +88,3 @@ public class Materials {
         this.id = materialsId;
     }
 }
-
-
-

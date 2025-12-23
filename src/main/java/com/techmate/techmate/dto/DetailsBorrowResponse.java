@@ -3,6 +3,7 @@ package com.techmate.techmate.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -10,8 +11,7 @@ import lombok.NoArgsConstructor;
 public class DetailsBorrowResponse {
     private Integer detailsBorrowId;
     private Integer quantity;
-    private double unitPrice;
-    private double totalPrice;
+    private BigDecimal unitPrice;
+    private BigDecimal totalPrice;
     private Integer materialsId;
 }
-

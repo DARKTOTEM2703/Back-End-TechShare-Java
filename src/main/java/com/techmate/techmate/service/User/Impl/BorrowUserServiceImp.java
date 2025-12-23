@@ -68,8 +68,15 @@ public class BorrowUserServiceImp implements BorrowUserService {
                         () -> new com.techmate.techmate.exception.BusinessException("MATERIAL_NOT_FOUND",
                                 "Material no encontrado con ID: " + detailDTO.getId()));
         detailsBorrow.setMaterials(material);
+        // Usar BigDecimal para cálculos monetarios
         detailsBorrow.setUnitPrice(material.getPrice());
-        detailsBorrow.setTotalPrice(material.getPrice() * detailDTO.getQuantity());
+        if (material.getPrice() != null && detailDTO.getQuantity() != null) {
+            detailsBorrow.setTotalPrice(material.getPrice()
+                    .multiply(java.math.BigDecimal.valueOf(detailDTO.getQuantity()))
+                    .setScale(2, java.math.RoundingMode.HALF_UP));
+        } else {
+            detailsBorrow.setTotalPrice(java.math.BigDecimal.ZERO);
+        }
 
         return detailsBorrow;
     }
@@ -102,11 +109,11 @@ public class BorrowUserServiceImp implements BorrowUserService {
 
         // Convertir el DTO a entidad Borrow
         Borrow borrow = convertToEntity(borrowDTO);
-        borrow.setAmount(0); // Inicializar el monto total en 0
+        borrow.setAmount(java.math.BigDecimal.ZERO); // Inicializar el monto total en 0
 
         // Guardar el préstamo en la base de datos
         borrow = borrowRepository.save(borrow);
-        double totalAmount = 0; // Inicializar el monto total
+        java.math.BigDecimal totalAmount = java.math.BigDecimal.ZERO; // Inicializar el monto total
 
         // Iterar sobre los detalles del préstamo
         for (DetailsBorrowDTO detailDTO : borrowDTO.getDetails()) {
@@ -147,11 +154,17 @@ public class BorrowUserServiceImp implements BorrowUserService {
             DetailsBorrow detailsBorrow = convertDetailsBorrowToEntity(detailDTO, borrow);
 
             // Calcular el monto total para este material (precio unitario * cantidad)
-            double detalleTotalPrice = material.getPrice() * detailDTO.getQuantity();
-            detailsBorrow.setTotalPrice(detalleTotalPrice); // Asegúrate de que este campo exista en la entidad
+            // usando BigDecimal
+            java.math.BigDecimal detalleTotalPrice = java.math.BigDecimal.ZERO;
+            if (material.getPrice() != null) {
+                detalleTotalPrice = material.getPrice()
+                        .multiply(java.math.BigDecimal.valueOf(detailDTO.getQuantity()))
+                        .setScale(2, java.math.RoundingMode.HALF_UP);
+            }
+            detailsBorrow.setTotalPrice(detalleTotalPrice);
 
             // Acumular el monto total en la variable totalAmount
-            totalAmount += detalleTotalPrice;
+            totalAmount = totalAmount.add(detalleTotalPrice);
 
             // Guardar el detalle del préstamo en la base de datos
             detailsBorrowRepository.save(detailsBorrow);

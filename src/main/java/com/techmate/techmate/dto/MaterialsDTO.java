@@ -38,8 +38,8 @@ public class MaterialsDTO {
     private String description;
 
     @NotNull(message = "El precio no puede ser nulo")
-    @Min(value = 0, message = "El precio debe ser mayor o igual a 0")
-    private double price;
+    @jakarta.validation.constraints.DecimalMin(value = "0.00", inclusive = true, message = "El precio debe ser mayor o igual a 0")
+    private BigDecimal price;
 
     @NotNull(message = "El stock no puede ser nulo")
     @Min(value = 0, message = "El stock debe ser mayor o igual a 0")
@@ -83,11 +83,11 @@ public class MaterialsDTO {
         this.name = name;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

@@ -18,8 +18,8 @@ public class RoleServiceImpl implements RoleService {
     private final RoleMapper roleMapper;
 
     public RoleServiceImpl(RoleManager roleManager,
-                           RoleQueryService roleQueryService,
-                           RoleMapper roleMapper) {
+            RoleQueryService roleQueryService,
+            RoleMapper roleMapper) {
         this.roleManager = roleManager;
         this.roleQueryService = roleQueryService;
         this.roleMapper = roleMapper;

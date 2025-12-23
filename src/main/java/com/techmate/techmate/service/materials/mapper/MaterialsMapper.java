@@ -31,9 +31,9 @@ public class MaterialsMapper {
     private final RoleService roleService;
 
     public MaterialsMapper(SubCategoriesRepository subCategoriesRepository,
-                           RoleRepository roleRepository,
-                           SubCategoriesService subCategoriesService,
-                           RoleService roleService) {
+            RoleRepository roleRepository,
+            SubCategoriesService subCategoriesService,
+            RoleService roleService) {
         this.subCategoriesRepository = subCategoriesRepository;
         this.roleRepository = roleRepository;
         this.subCategoriesService = subCategoriesService;
@@ -42,12 +42,17 @@ public class MaterialsMapper {
 
     // Convierte un MaterialRequest (API) a MaterialsDTO (interno)
     public MaterialsDTO fromRequest(MaterialRequest req) {
-        if (req == null) return null;
+        if (req == null)
+            return null;
 
         MaterialsDTO dto = new MaterialsDTO();
         dto.setName(req.getName());
         dto.setDescription(req.getDescription());
-        dto.setPrice(req.getPrice() != null ? req.getPrice() : 0.0);
+        if (req.getPrice() != null) {
+            dto.setPrice(java.math.BigDecimal.valueOf(req.getPrice()));
+        } else {
+            dto.setPrice(java.math.BigDecimal.ZERO);
+        }
         dto.setStock(req.getStock() != null ? req.getStock() : 0);
         dto.setSubCategoryId(req.getSubCategoryId() != null ? req.getSubCategoryId() : 0);
         dto.setRoleIds(req.getRoleIds());
@@ -58,7 +63,8 @@ public class MaterialsMapper {
 
     // Convierte un MaterialsDTO interno a MaterialResponse público
     public MaterialResponse toResponse(MaterialsDTO dto, String serverUrl) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
 
         String imagePath = dto.getImagePath();
         if (imagePath != null && serverUrl != null && !serverUrl.isEmpty() && !imagePath.startsWith("http")) {
@@ -71,7 +77,8 @@ public class MaterialsMapper {
     }
 
     public MaterialsDTO toDTO(Materials materials) {
-        if (materials == null) return null;
+        if (materials == null)
+            return null;
 
         MaterialsDTO dto = new MaterialsDTO();
         dto.setId(materials.getId());
@@ -105,7 +112,8 @@ public class MaterialsMapper {
     }
 
     public Materials toEntity(MaterialsDTO materialsDTO) {
-        if (materialsDTO == null) return null;
+        if (materialsDTO == null)
+            return null;
 
         Materials materials = new Materials();
         materials.setImagePath(materialsDTO.getImagePath());
@@ -124,7 +132,8 @@ public class MaterialsMapper {
 
         // SubCategory
         SubCategories subCategories = subCategoriesRepository.findById(materialsDTO.getSubCategoryId())
-                .orElseThrow(() -> new RuntimeException("Subcategoría no encontrada con ID: " + materialsDTO.getSubCategoryId()));
+                .orElseThrow(() -> new RuntimeException(
+                        "Subcategoría no encontrada con ID: " + materialsDTO.getSubCategoryId()));
         materials.setSubCategory(subCategories);
 
         // Roles
@@ -145,5 +154,3 @@ public class MaterialsMapper {
         return materials;
     }
 }
-
-

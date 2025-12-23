@@ -2,6 +2,7 @@ package com.techmate.techmate.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,11 +12,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.techmate.techmate.dto.MovementsDTO;
 import com.techmate.techmate.dto.MovementResponse;
 import com.techmate.techmate.entity.MoveType;
+import com.techmate.techmate.security.TokenUtils;
 import com.techmate.techmate.service.MovementsService;
 import com.techmate.techmate.service.movements.mapper.MovementsMapper;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,11 +27,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import com.techmate.techmate.testutils.JWTTestHelper;
 import org.springframework.security.core.Authentication;
 
 @WebMvcTest(controllers = MovementsController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc(addFilters = false) // Deshabilita filtros de seguridad reales para testing aislado
 class MovementsControllerTest {
 
     @Autowired
@@ -39,9 +42,20 @@ class MovementsControllerTest {
     @MockitoBean
     private MovementsMapper movementsMapper;
 
+    // Mock estático para TokenUtils
+    private MockedStatic<TokenUtils> tokenUtilsMock;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        // Inicializar el mock estático para evitar el 403 en el controlador
+        tokenUtilsMock = mockStatic(TokenUtils.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Cerrar el mock estático es CRÍTICO para no afectar otros tests
+        tokenUtilsMock.close();
     }
 
     @Test
@@ -57,9 +71,8 @@ class MovementsControllerTest {
         when(movementsService.getMovementsByID(1)).thenReturn(dto);
         when(movementsMapper.toResponse(eq(dto))).thenReturn(resp);
 
-        // call path /admin/movement/1 and include request param id=1 to satisfy the
-        // controller signature
-        mockMvc.perform(get("/admin/movement/1").param("id", "1").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/admin/movement/1").param("id", "1")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.quantity").value(5));
@@ -81,23 +94,29 @@ class MovementsControllerTest {
         MovementResponse resp = new MovementResponse(10, MoveType.BORROW, 3, new java.util.Date(), "test", 5, "Admin",
                 2, "MaterialName");
 
-        String token = JWTTestHelper.createTokenWithRoles(5, "user@example.com", "user", "USER");
+        // Mockear el comportamiento del servicio
         when(movementsService.createMovementsDTO(any(MovementsDTO.class), eq(5))).thenReturn(created);
         when(movementsMapper.toResponse(eq(created))).thenReturn(resp);
 
-        // Mock Authentication object since security filters are disabled
+        // Mockear Authentication
         Authentication mockAuth = org.mockito.Mockito.mock(Authentication.class);
         when(mockAuth.getName()).thenReturn("user@example.com");
-        when(mockAuth.getCredentials()).thenReturn(token);
+        when(mockAuth.getCredentials()).thenReturn("dummy-token");
+        when(mockAuth.isAuthenticated()).thenReturn(true);
+
+        // 🟢 Configurar comportamiento estático de TokenUtils para este test
+        tokenUtilsMock.when(TokenUtils::getAuthenticatedUserRole).thenReturn("ADMIN");
+        // ESTA es la clave para que extractUserIdFromAuthentication no falle:
+        tokenUtilsMock.when(() -> TokenUtils.getUserIdFromToken("dummy-token")).thenReturn(5);
 
         mockMvc.perform(post("/admin/movement/create")
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer dummy-token")
                 .param("quantity", "3")
                 .param("moveType", "OUT")
                 .param("id_material", "2")
                 .param("comment", "test")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .principal(mockAuth)) // Add the mocked Authentication
+                .principal(mockAuth)) // Inyectar el principal mockeado
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(10))
                 .andExpect(jsonPath("$.move_type").value("OUT"));

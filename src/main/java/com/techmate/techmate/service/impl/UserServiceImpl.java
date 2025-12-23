@@ -23,8 +23,8 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     public UserServiceImpl(UserQueryService userQueryService,
-                           UserManager userManager,
-                           UserMapper userMapper) {
+            UserManager userManager,
+            UserMapper userMapper) {
         this.userQueryService = userQueryService;
         this.userManager = userManager;
         this.userMapper = userMapper;

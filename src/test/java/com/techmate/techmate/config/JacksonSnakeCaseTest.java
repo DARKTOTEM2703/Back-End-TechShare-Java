@@ -3,6 +3,7 @@ package com.techmate.techmate.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.techmate.techmate.entity.Borrow;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +20,7 @@ public class JacksonSnakeCaseTest {
         Borrow b = new Borrow();
         b.setId(123);
         b.setDate(new Date());
-        b.setAmount(10.5);
+        b.setAmount(BigDecimal.valueOf(10.5));
 
         String json = mapper.writeValueAsString(b);
         assertTrue(json.contains("borrow_id") || json.contains("id"));
@@ -27,4 +28,3 @@ public class JacksonSnakeCaseTest {
         assertTrue(json.contains("amount"));
     }
 }
-

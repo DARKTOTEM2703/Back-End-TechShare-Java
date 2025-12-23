@@ -42,5 +42,3 @@ public class RoleQueryService {
                 .orElseThrow(() -> new RuntimeException("Role not found with ID: " + id));
     }
 }
-
-

@@ -2,6 +2,7 @@ package com.techmate.techmate.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,6 +25,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import com.techmate.techmate.testutils.JWTTestHelper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,9 +41,18 @@ class MovementsControllerSecurityTest {
     @MockitoBean
     private MovementsMapper movementsMapper;
 
+    @MockitoBean
+    private com.techmate.techmate.security.UserDetailsServiceImpl userDetailsServiceImpl;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        when(userDetailsServiceImpl.loadUserByUsername(anyString()))
+                .thenReturn(org.springframework.security.core.userdetails.User
+                        .withUsername("admin@example.com")
+                        .password("password")
+                        .roles("ADMIN")
+                        .build());
     }
 
     @Test
@@ -65,7 +76,6 @@ class MovementsControllerSecurityTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = { "ADMIN" })
     void securedCreateMovement_withValidToken_returnsCreated() throws Exception {
         MovementsDTO created = new MovementsDTO();
         created.setId(99);
@@ -80,8 +90,10 @@ class MovementsControllerSecurityTest {
 
         when(movementsService.createMovementsDTO(any(), any())).thenReturn(created);
         when(movementsMapper.toResponse(any())).thenReturn(resp);
+        String token = JWTTestHelper.createTokenForAdmin(7);
 
         mockMvc.perform(post("/admin/movement/create")
+                .header("Authorization", "Bearer " + token)
                 .param("quantity", "2")
                 .param("moveType", "BORROW")
                 .param("id_material", "5")

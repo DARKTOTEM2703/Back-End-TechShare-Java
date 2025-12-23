@@ -38,8 +38,8 @@ public class BorrowDTO {
     @NotNull(message = "El estado del préstamo no puede ser nulo")
     private Status status;
 
-    @Min(value = 0, message = "El monto no puede ser negativo")
-    private double amount;
+    @jakarta.validation.constraints.DecimalMin(value = "0.00", inclusive = true, message = "El monto no puede ser negativo")
+    private java.math.BigDecimal amount;
 
     @NotNull(message = "El ID del usuario no puede ser nulo")
     @Min(value = 1, message = "El ID del usuario debe ser mayor a 0")

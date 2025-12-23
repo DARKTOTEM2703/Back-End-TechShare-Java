@@ -33,7 +33,7 @@ class MaterialsServiceSearchTest {
         testMaterial.setId(1);
         testMaterial.setName("Java Programming");
         testMaterial.setStock(10);
-        testMaterial.setBorrowable_stock(8);
+        testMaterial.setBorrowableStock(8);
     }
 
     @Test

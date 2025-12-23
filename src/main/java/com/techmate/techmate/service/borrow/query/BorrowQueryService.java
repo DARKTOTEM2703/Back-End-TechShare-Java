@@ -18,7 +18,8 @@ import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
  * 
  * PRINCIPIOS SOLID APLICADOS:
  * - SRP: Solo se encarga de consultas y filtros de préstamos
- * - OCP: Extensible para nuevos tipos de consultas sin modificar código existente
+ * - OCP: Extensible para nuevos tipos de consultas sin modificar código
+ * existente
  * - LSP: Puede ser sustituido por cualquier implementación del contrato
  * - ISP: Interfaz específica para consultas de préstamos
  * - DIP: Depende de abstracciones (Repository, Mapper) no de implementaciones
@@ -36,10 +37,10 @@ import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
 @Component
 @Transactional(readOnly = true)
 public class BorrowQueryService {
-    
+
     private final BorrowRepository borrowRepository;
     private final BorrowMapper borrowMapper;
-    
+
     /**
      * Constructor injection para cumplir con DIP.
      */
@@ -85,13 +86,13 @@ public class BorrowQueryService {
         if (borrowId == null) {
             throw new IllegalArgumentException("El ID del préstamo es requerido");
         }
-        
+
         return borrowRepository.findById(borrowId)
                 .map(borrowMapper::toDTO)
                 .orElseThrow(() -> new RuntimeException(
-                    String.format("Préstamo no encontrado con ID: %d", borrowId)));
+                        String.format("Préstamo no encontrado con ID: %d", borrowId)));
     }
-    
+
     /**
      * Obtiene préstamos filtrados por estado con parsing inteligente.
      * 
@@ -101,33 +102,33 @@ public class BorrowQueryService {
      */
     public List<BorrowDTO> getBorrowsByStatus(String statusString) {
         Status status = parseStatus(statusString);
-        
+
         return borrowRepository.findByStatus(status).stream()
                 .map(borrowMapper::toDTO)
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Obtiene préstamos filtrados por rango de fechas.
      * 
      * @param startDate Fecha de inicio (inclusive)
-     * @param endDate Fecha de fin (inclusive)
+     * @param endDate   Fecha de fin (inclusive)
      * @return Lista de préstamos en el rango de fechas
      */
     public List<BorrowDTO> getBorrowsByDateRange(Date startDate, Date endDate) {
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Las fechas de inicio y fin son requeridas");
         }
-        
+
         if (startDate.after(endDate)) {
             throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin");
         }
-        
+
         return borrowRepository.findByDateBetween(startDate, endDate).stream()
                 .map(borrowMapper::toDTO)
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Obtiene préstamos de un usuario específico.
      * 
@@ -138,12 +139,12 @@ public class BorrowQueryService {
         if (userId == null) {
             throw new IllegalArgumentException("El ID del usuario es requerido");
         }
-        
+
         return borrowRepository.findByUsuarioId(userId).stream()
                 .map(borrowMapper::toDTO)
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Obtiene préstamos activos (PENDING y BORROWED).
      * 
@@ -152,13 +153,13 @@ public class BorrowQueryService {
     public List<BorrowDTO> getActiveBorrows() {
         List<BorrowDTO> pendingBorrows = getBorrowsByStatus("PENDING");
         List<BorrowDTO> borrowedBorrows = getBorrowsByStatus("BORROWED");
-        
+
         pendingBorrows.addAll(borrowedBorrows);
         return pendingBorrows;
     }
-    
+
     // ==================== MÉTODOS PRIVADOS ====================
-    
+
     /**
      * Parsea un string a enum Status de forma inteligente.
      * Soporta case-insensitive y variaciones comunes.
@@ -171,9 +172,9 @@ public class BorrowQueryService {
         if (statusString == null || statusString.trim().isEmpty()) {
             throw new IllegalArgumentException("El estado es requerido");
         }
-        
+
         String normalizedStatus = statusString.trim().toUpperCase();
-        
+
         switch (normalizedStatus) {
             case "PROCESS":
             case "PROCESSING":
@@ -198,9 +199,8 @@ public class BorrowQueryService {
 
             default:
                 throw new IllegalArgumentException(
-                    String.format("Estado inválido: %s. Estados válidos: PENDING, REJECTED, BORROWED, RETURNED", 
-                        statusString));
+                        String.format("Estado inválido: %s. Estados válidos: PENDING, REJECTED, BORROWED, RETURNED",
+                                statusString));
         }
     }
 }
-

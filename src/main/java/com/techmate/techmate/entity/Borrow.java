@@ -38,7 +38,7 @@ public class Borrow {
     @Column(name = "resource_id")
     private Integer resourceId;
 
-    private double amount;
+    private java.math.BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -84,12 +84,13 @@ public class Borrow {
      * 
      * @return Suma de los precios totales de todos los detalles del préstamo
      */
-    public double calculateTotalAmount() {
+    public java.math.BigDecimal calculateTotalAmount() {
         if (details != null && !details.isEmpty()) {
             return details.stream()
-                    .mapToDouble(DetailsBorrow::getTotalPrice)
-                    .sum();
+                    .map(DetailsBorrow::getTotalPrice)
+                    .filter(java.util.Objects::nonNull)
+                    .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
         }
-        return 0;
+        return java.math.BigDecimal.ZERO;
     }
 }

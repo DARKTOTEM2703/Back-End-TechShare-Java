@@ -15,6 +15,7 @@ import com.techmate.techmate.dto.MaterialResponse;
 import com.techmate.techmate.dto.MaterialsDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.math.BigDecimal;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -51,7 +52,8 @@ class MaterialsControllerTest {
         dto.setId(1);
         dto.setName("Test Material");
 
-        MaterialResponse resp = new MaterialResponse(1, "img.jpg", "Test Material", "desc", 10.0, 5, 5, 1, "Sub", java.util.List.of("ROLE_USER"));
+        MaterialResponse resp = new MaterialResponse(1, "img.jpg", "Test Material", "desc", BigDecimal.valueOf(10.0), 5,
+                5, 1, "Sub", java.util.List.of("ROLE_USER"));
 
         when(materialsService.getMaterialsById(1)).thenReturn(dto);
         when(materialsMapper.toResponse(eq(dto), any())).thenReturn(resp);
@@ -80,7 +82,8 @@ class MaterialsControllerTest {
         created.setName("New Material");
         created.setImagePath("test.jpg");
 
-        MaterialResponse resp = new MaterialResponse(2, "test.jpg", "New Material", "", 0.0, 10, 10, 1, "Sub", java.util.List.of());
+        MaterialResponse resp = new MaterialResponse(2, "test.jpg", "New Material", "", BigDecimal.ZERO, 10, 10, 1,
+                "Sub", java.util.List.of());
 
         when(materialsMapper.fromRequest(any(MaterialRequest.class))).thenReturn(reqDto);
         when(materialsService.createMaterials(any(MaterialsDTO.class), any())).thenReturn(created);
@@ -96,4 +99,3 @@ class MaterialsControllerTest {
                 .andExpect(jsonPath("$.name").value("New Material"));
     }
 }
-

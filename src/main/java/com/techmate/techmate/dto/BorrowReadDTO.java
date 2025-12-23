@@ -47,7 +47,7 @@ public class BorrowReadDTO {
     /**
      * Monto total del préstamo
      */
-    private double amount;
+    private java.math.BigDecimal amount;
 
     /**
      * ID del usuario solicitante

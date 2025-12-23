@@ -18,9 +18,9 @@ public class RoleManager {
     private final RoleAssociationManager roleAssociationManager;
 
     public RoleManager(RoleRepository roleRepository,
-                       RoleValidator roleValidator,
-                       RoleMapper roleMapper,
-                       RoleAssociationManager roleAssociationManager) {
+            RoleValidator roleValidator,
+            RoleMapper roleMapper,
+            RoleAssociationManager roleAssociationManager) {
         this.roleRepository = roleRepository;
         this.roleValidator = roleValidator;
         this.roleMapper = roleMapper;
@@ -44,7 +44,8 @@ public class RoleManager {
                 .orElseThrow(() -> new RuntimeException("Role not found with ID: " + roleId));
 
         // 2. Validar
-        // Nota: Podría requerirse una validación que excluya el propio ID si el nombre no cambió,
+        // Nota: Podría requerirse una validación que excluya el propio ID si el nombre
+        // no cambió,
         // pero mantenemos la lógica original del servicio por fidelidad.
         roleValidator.validateUniqueName(roleDTO.getName());
 

@@ -24,8 +24,8 @@ public class UserQueryService {
     private final UserMapper userMapper;
 
     public UserQueryService(UsuarioRepository usuarioRepository,
-                            UsuarioRoleRepository usuarioRoleRepository,
-                            UserMapper userMapper) {
+            UsuarioRoleRepository usuarioRoleRepository,
+            UserMapper userMapper) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioRoleRepository = usuarioRoleRepository;
         this.userMapper = userMapper;
@@ -46,14 +46,16 @@ public class UserQueryService {
                     .map(ur -> ur.getRole().getNombre())
                     .collect(Collectors.toSet());
             // Filtrar usuarios root
-            if (roles.stream().anyMatch(role -> role.equalsIgnoreCase("root"))) return null;
+            if (roles.stream().anyMatch(role -> role.equalsIgnoreCase("root")))
+                return null;
             return userMapper.toDTO(usuario, roles);
         }).filter(r -> r != null).collect(Collectors.toList());
     }
 
     public UsuarioDTO getById(Integer id) {
         return findDTOById(id)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                        "Usuario no encontrado con ID: " + id));
     }
 
     // Nuevo método helper para devolver Optional y ser usado por el Service
@@ -66,4 +68,3 @@ public class UserQueryService {
         });
     }
 }
-

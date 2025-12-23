@@ -1,6 +1,7 @@
 package com.techmate.techmate.dto;
 
 import jakarta.validation.constraints.Min;
+import java.math.BigDecimal;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
@@ -25,11 +26,11 @@ public class DetailsBorrowDTO {
     private Integer quantity; // Cantidad de materiales
 
     @NotNull(message = "El precio unitario no puede ser nulo")
-    @Min(value = 0, message = "El precio unitario debe ser mayor o igual a 0")
-    private double unitPrice; // Precio unitario del material
+    @jakarta.validation.constraints.DecimalMin(value = "0.00", inclusive = true, message = "El precio unitario debe ser mayor o igual a 0")
+    private BigDecimal unitPrice; // Precio unitario del material
 
-    @Min(value = 0, message = "El precio total debe ser mayor o igual a 0")
-    private double totalPrice; // Precio total del detalle
+    @jakarta.validation.constraints.DecimalMin(value = "0.00", inclusive = true, message = "El precio total debe ser mayor o igual a 0")
+    private BigDecimal totalPrice; // Precio total del detalle
 
     @NotNull(message = "El ID del material no puede ser nulo")
     @Positive(message = "El ID del material debe ser mayor a 0")

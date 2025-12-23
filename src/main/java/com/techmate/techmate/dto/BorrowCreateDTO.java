@@ -39,8 +39,8 @@ public class BorrowCreateDTO {
     /**
      * Monto total del préstamo
      */
-    @Min(value = 0, message = "El monto no puede ser negativo")
-    private double amount;
+    @jakarta.validation.constraints.DecimalMin(value = "0.00", inclusive = true, message = "El monto no puede ser negativo")
+    private java.math.BigDecimal amount;
 
     /**
      * ID del usuario que solicita el préstamo

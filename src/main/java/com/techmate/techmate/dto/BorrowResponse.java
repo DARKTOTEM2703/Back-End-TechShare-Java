@@ -17,7 +17,7 @@ public class BorrowResponse {
     private Date endDate;
     private Date returnDate;
     private com.techmate.techmate.entity.Status status;
-    private double amount;
+    private java.math.BigDecimal amount;
 
     private int usuarioId;
     private String usuarioName;
@@ -27,5 +27,3 @@ public class BorrowResponse {
 
     private List<DetailsBorrowResponse> details;
 }
-
-

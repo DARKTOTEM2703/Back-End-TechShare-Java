@@ -119,7 +119,8 @@ public class MovementsServiceImpl implements MovementsService {
         // 2️⃣ CREAR Pageable para paginación a nivel de BD
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
 
-        // 3️⃣ DELEGAR a query service (obtiene página desde BD, NO carga toda en memoria)
+        // 3️⃣ DELEGAR a query service (obtiene página desde BD, NO carga toda en
+        // memoria)
         return movementQueryService.getPaged(pageRequest);
     }
 

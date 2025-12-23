@@ -20,7 +20,8 @@ public class UserManager {
     private final RoleRepository roleRepository;
     private final UserValidator userValidator;
 
-    public UserManager(UsuarioRepository usuarioRepository, RoleRepository roleRepository, UserValidator userValidator) {
+    public UserManager(UsuarioRepository usuarioRepository, RoleRepository roleRepository,
+            UserValidator userValidator) {
         this.usuarioRepository = usuarioRepository;
         this.roleRepository = roleRepository;
         this.userValidator = userValidator;

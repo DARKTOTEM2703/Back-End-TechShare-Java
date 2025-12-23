@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.techmate.techmate.entity.Borrow;
+import java.math.BigDecimal;
 import com.techmate.techmate.entity.Status;
 import com.techmate.techmate.repository.BorrowRepository;
 
@@ -33,7 +34,7 @@ class BorrowServiceSearchTest {
         testBorrow = new Borrow();
         testBorrow.setId(1);
         testBorrow.setStatus(Status.BORROWED);
-        testBorrow.setAmount(100.0);
+        testBorrow.setAmount(BigDecimal.valueOf(100.0));
     }
 
     @Test

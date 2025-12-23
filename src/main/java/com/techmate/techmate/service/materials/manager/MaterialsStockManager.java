@@ -21,29 +21,27 @@ public class MaterialsStockManager {
     }
 
     public int getAvailableStock(Integer materialId) {
-    Materials m = materialsRepository.findById(materialId)
-        .orElseThrow(() -> new NotFoundException("Material no encontrado con ID: " + materialId));
+        Materials m = materialsRepository.findById(materialId)
+                .orElseThrow(() -> new NotFoundException("Material no encontrado con ID: " + materialId));
         return m.getBorrowableStock();
     }
 
     @Transactional
     public void reduceStock(Integer materialId, int quantity) {
-    Materials m = materialsRepository.findById(materialId)
-        .orElseThrow(() -> new NotFoundException("Material no encontrado con ID: " + materialId));
-    if (m.getBorrowableStock() < quantity) {
-        throw new InsufficientStockException("Stock insuficiente para material ID: " + materialId);
-    }
+        Materials m = materialsRepository.findById(materialId)
+                .orElseThrow(() -> new NotFoundException("Material no encontrado con ID: " + materialId));
+        if (m.getBorrowableStock() < quantity) {
+            throw new InsufficientStockException("Stock insuficiente para material ID: " + materialId);
+        }
         m.setBorrowableStock(m.getBorrowableStock() - quantity);
         materialsRepository.save(m);
     }
 
     @Transactional
     public void restoreStock(Integer materialId, int quantity) {
-    Materials m = materialsRepository.findById(materialId)
-        .orElseThrow(() -> new NotFoundException("Material no encontrado con ID: " + materialId));
+        Materials m = materialsRepository.findById(materialId)
+                .orElseThrow(() -> new NotFoundException("Material no encontrado con ID: " + materialId));
         m.setBorrowableStock(m.getBorrowableStock() + quantity);
         materialsRepository.save(m);
     }
 }
-
-
