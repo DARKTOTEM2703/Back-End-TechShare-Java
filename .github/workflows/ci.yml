@@ -129,8 +129,8 @@ jobs:
           SPRING_PROFILES_ACTIVE: test
         run: ./mvnw clean test -B -X 2>&1 | tee maven-test.log
 
-      - name: 🏗️ Build JAR
-        run: ./mvnw clean package -DskipTests -B
+      - name: 🏗️ Build JAR (sin clean para preservar reportes)
+        run: ./mvnw package -DskipTests -B
 
       - name: 🔎 List test report files (debug)
         if: always()
@@ -167,8 +167,8 @@ jobs:
         if: always()
         with:
           name: test-results
-          # Upload any surefire/failsafe report directories
-          path: '**/target/**/surefire-reports/'
+          # Ruta correcta: target/surefire-reports (sin asteriscos innecesarios)
+          path: 'target/surefire-reports/TEST-*.xml'
           retention-days: 30
 
       - name: ✅ Build Summary
