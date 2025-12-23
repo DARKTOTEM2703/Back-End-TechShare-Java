@@ -120,9 +120,11 @@ jobs:
         if: success() || failure() # Run even if tests fail
         with:
           name: Maven Tests
-          path: target/surefire-reports/*.xml
+          # Match surefire and failsafe reports anywhere under target
+          path: '**/target/*surefire-reports/*.xml'
           reporter: java-junit
-          fail-on-error: false # Don't fail the workflow, just report
+          fail-on-error: false # Don't fail the workflow on reporter errors
+          fail-on-empty: false # Don't error if no report files are found
 
       - name: 📦 Upload JAR artifact
         uses: actions/upload-artifact@v4
@@ -137,7 +139,8 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: target/surefire-reports/
+          # Upload any surefire/failsafe report directories
+          path: '**/target/*surefire-reports/'
           retention-days: 30
 
       - name: ✅ Build Summary
@@ -149,7 +152,7 @@ jobs:
           echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Java Version:** ${{ env.JAVA_VERSION }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Build Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          if [ -f target/surefire-reports/*.xml ]; then
+          if ls target/surefire-reports/*.xml 1> /dev/null 2>&1; then
             TEST_COUNT=$(grep -c "testcase" target/surefire-reports/*.xml || echo "0")
             echo "- **Tests Run:** $TEST_COUNT" >> $GITHUB_STEP_SUMMARY
           fi
