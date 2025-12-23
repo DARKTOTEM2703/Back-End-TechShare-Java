@@ -5,10 +5,12 @@
 Este script ayuda a crear los secretos necesarios en GitHub de forma segura.
 
 ### Requisitos:
+
 - CLI de GitHub: https://cli.github.com/
 - Permisos de administrador en el repositorio
 
 ### Ejecutar:
+
 ```bash
 # 1. Login en GitHub CLI
 gh auth login
@@ -62,6 +64,7 @@ gh secret set GHCR_TOKEN --body "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
 O usa GITHUB_TOKEN (automático en CI):
+
 ```yaml
 # En el workflow, usa:
 with:
@@ -104,6 +107,7 @@ env:
 ```
 
 Luego en `.env.production`:
+
 ```bash
 # En server antes de deploy:
 export JWT_SECRET=$(aws secretsmanager get-secret-value --secret-id jwt_secret | jq -r .SecretString)
@@ -129,6 +133,7 @@ export JWT_SECRET=$(aws secretsmanager get-secret-value --secret-id jwt_secret |
 ## 🧪 Verificar Que CI/CD Funciona
 
 ### Paso 1: Hacer un push a dev
+
 ```bash
 git add .github/workflows/ci-cd.yml .github/CI-CD-SETUP.md
 git commit -m "ci: add github actions ci/cd pipeline"
@@ -136,6 +141,7 @@ git push origin dev
 ```
 
 ### Paso 2: Monitorear en GitHub
+
 1. Ve a `https://github.com/RafaPacheco2003/Back-End-TechShare-Java/actions`
 2. Deberías ver un nuevo workflow "TechShare Backend CI/CD" corriendo
 3. Espera a que complete (5-10 minutos)
@@ -145,6 +151,7 @@ git push origin dev
    - ✅ Docker Build & Push (si configuraste registry)
 
 ### Paso 3: Verificar Docker Image (si pusheó)
+
 ```bash
 docker pull ghcr.io/RafaPacheco2003/Back-End-TechShare-Java/techshare-backend:dev
 docker run -p 8080:8080 ghcr.io/RafaPacheco2003/Back-End-TechShare-Java/techshare-backend:dev
@@ -155,15 +162,19 @@ docker run -p 8080:8080 ghcr.io/RafaPacheco2003/Back-End-TechShare-Java/techshar
 ## 🚨 Troubleshooting
 
 ### "Error: permission denied to GHCR"
+
 → Verifica que GITHUB_TOKEN tenga `write:packages`
 
 ### "Docker build context not found"
+
 → Revisa que `context: Back-End-TechShare-Java` es correcto en workflow
 
 ### "JDK 17 not found"
+
 → Usa `actions/setup-java@v4` (versión correcta)
 
 ### Tests fallan solo en CI
+
 → Verifica variables ENV, conexión BD, permisos de archivo
 
 ---

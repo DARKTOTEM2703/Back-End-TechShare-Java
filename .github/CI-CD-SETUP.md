@@ -1,6 +1,7 @@
 # GitHub Actions CI/CD Setup Guide
 
 ## Overview
+
 Este proyecto tiene configurado un pipeline CI/CD completo con GitHub Actions que:
 
 1. ✅ Compila el código
@@ -15,6 +16,7 @@ Este proyecto tiene configurado un pipeline CI/CD completo con GitHub Actions qu
 ## Pipeline Stages
 
 ### 1️⃣ Build & Test
+
 - **Trigger**: Push a `dev` o `main`
 - **Java**: JDK 17 (Temurin)
 - **Steps**:
@@ -29,12 +31,14 @@ Este proyecto tiene configurado un pipeline CI/CD completo con GitHub Actions qu
 ---
 
 ### 2️⃣ Code Quality Analysis
+
 - **Trigger**: Después del Build (siempre)
 - **Steps**:
   - Dependency security check
   - Compilación para análisis estático
-  
+
 **Opcional**: Integrar con:
+
 - SonarQube: `./mvnw sonar:sonar`
 - Checkstyle: `./mvnw checkstyle:check`
 
@@ -43,6 +47,7 @@ Este proyecto tiene configurado un pipeline CI/CD completo con GitHub Actions qu
 ---
 
 ### 3️⃣ Docker Build & Push
+
 - **Trigger**: Push a `dev` o `main` (solo en ramas)
 - **Registry**: GitHub Container Registry (ghcr.io)
 - **Steps**:
@@ -53,6 +58,7 @@ Este proyecto tiene configurado un pipeline CI/CD completo con GitHub Actions qu
   - Cache habilitado (GHA)
 
 **Prerequisitos**:
+
 1. `Back-End-TechShare-Java/Dockerfile` debe existir ✓
 2. Token GITHUB_TOKEN se usa automáticamente ✓
 
@@ -61,6 +67,7 @@ Este proyecto tiene configurado un pipeline CI/CD completo con GitHub Actions qu
 ---
 
 ### 4️⃣ Deploy to Staging
+
 - **Trigger**: Push a rama `dev`
 - **Environment**: staging (requiere aprobación manual)
 - **Steps**:
@@ -69,6 +76,7 @@ Este proyecto tiene configurado un pipeline CI/CD completo con GitHub Actions qu
   - Health check
 
 **Para activar**:
+
 ```bash
 # En Settings > Environments > staging, agregar:
 # - STAGING_HOST: hostname o IP
@@ -83,8 +91,9 @@ Este proyecto tiene configurado un pipeline CI/CD completo con GitHub Actions qu
 ---
 
 ### 5️⃣ Notifications
+
 - **Trigger**: Después de Build & Quality
-- **Output**: 
+- **Output**:
   - Build summary en GitHub UI
   - Status message (success/failure)
 
@@ -97,9 +106,11 @@ Este proyecto tiene configurado un pipeline CI/CD completo con GitHub Actions qu
 Para que el pipeline funcione completamente, configura estos secretos:
 
 ### Obligatorios (Build & Docker):
+
 - **GITHUB_TOKEN**: Automático en GitHub Actions ✓
 
 ### Opcionales (Deploy a Staging):
+
 ```
 STAGING_HOST         = host.example.com
 STAGING_USER         = deploy_user
@@ -107,12 +118,14 @@ STAGING_SSH_KEY      = -----BEGIN PRIVATE KEY-----...
 ```
 
 ### Recomendados (Seguridad):
+
 ```
 SLACK_WEBHOOK        = https://hooks.slack.com/services/...
 EMAIL_NOTIFY         = devops@company.com
 ```
 
 ### Para tu proyecto específico:
+
 ```
 # En producción (inyectar en .env durante deploy):
 JWT_SECRET           = (generada, nunca commiteada)
@@ -126,11 +139,13 @@ REDIS_PASSWORD       = (from vault/secrets manager)
 ## ⚙️ Configuración en GitHub
 
 ### Step 1: Habilitar GitHub Actions
+
 1. Ve a tu repositorio en GitHub
 2. Settings > Actions > General
 3. Asegura que "Allow GitHub Actions to create and approve pull requests" esté ✓
 
 ### Step 2: Agregar Secretos
+
 1. Settings > Secrets and variables > Actions
 2. Click "New repository secret"
 3. Ejemplo:
@@ -140,12 +155,14 @@ REDIS_PASSWORD       = (from vault/secrets manager)
    ```
 
 ### Step 3: Configurar Ambientes (opcional)
+
 1. Settings > Environments
 2. Click "New environment" > "staging"
 3. Protección (require approval): ✓
 4. Agregar secretos específicos del ambiente
 
 ### Step 4: Revisar Workflow
+
 1. Actions > TechShare Backend CI/CD
 2. Ver logs y status de cada job
 
@@ -154,11 +171,13 @@ REDIS_PASSWORD       = (from vault/secrets manager)
 ## 📊 Monitorear el Pipeline
 
 ### En GitHub UI:
+
 - **Actions tab**: Ver todos los workflows
 - **Commit status**: ✅ o ❌ al lado del commit
 - **Branch protections**: Requerir "Passing checks" antes de merge
 
 ### Configurar Branch Protection (dev):
+
 1. Settings > Branches > Branch protection rules
 2. Add rule para rama `dev`:
    ```
@@ -172,6 +191,7 @@ REDIS_PASSWORD       = (from vault/secrets manager)
 ## 🐳 Docker Image Registry
 
 ### Acceder a la imagen:
+
 ```bash
 # Login a ghcr.io
 docker login ghcr.io -u <USERNAME> -p <GITHUB_TOKEN>
@@ -193,6 +213,7 @@ docker run -p 8080:8080 \
 ## 🚀 Deployment Strategies
 
 ### Option A: Manual Deployment (sin Pipeline)
+
 ```bash
 # En tu servidor staging:
 docker pull ghcr.io/.../techshare-backend:dev
@@ -200,9 +221,11 @@ docker-compose up -d
 ```
 
 ### Option B: Automated Deployment (Pipeline)
+
 Descomenta la sección `deploy-staging` y configura secretos SSH.
 
 ### Option C: Kubernetes Deployment
+
 ```bash
 # En lugar de docker-compose, usa:
 kubectl set image deployment/techshare-backend \
@@ -226,15 +249,18 @@ kubectl set image deployment/techshare-backend \
 ## 🔧 Troubleshooting
 
 ### Build falla en CI pero pasa local
+
 - Verifica Java version: `./mvnw --version`
 - Limpia Maven cache: `./mvnw clean`
 - Revisa logs en GitHub Actions UI
 
 ### Docker push falla
+
 - Verifica que GITHUB_TOKEN tiene permiso `write:packages`
 - Revisa que el Dockerfile existe: `Back-End-TechShare-Java/Dockerfile`
 
 ### Deploy no inicia
+
 - SSH key format debe ser OpenSSH (no PuTTY)
 - Host conocido: agrega `known_hosts` en workflow
 - Permisos: usuario deploy debe tener acceso a `/opt/techshare`
