@@ -1,11 +1,14 @@
 # 🔄 CI/CD Consolidation Summary
 
 ## Problema Identificado
+
 Había **dos workflows de CI/CD** ejecutándose:
+
 1. **`ci.yml`** (28 nov) — Workflow existente, más completo ✅
 2. **`ci-cd.yml`** (22 dic) — Workflow duplicado que acabo de crear ❌
 
 ## Solución Aplicada
+
 ✅ **Eliminado `ci-cd.yml`** — Workflow redundante  
 ✅ **Mantenido `ci.yml`** — Workflow existente es superior
 
@@ -13,18 +16,18 @@ Había **dos workflows de CI/CD** ejecutándose:
 
 ## 📊 Comparativa
 
-| Feature | ci.yml (Mantenido) | ci-cd.yml (Eliminado) |
-|---------|-------------------|----------------------|
-| **Code Quality** | ✅ Dependency tree | ✅ Dependency check |
-| **Build & Test** | ✅ Con MySQL service | ✅ Basado en H2 |
-| **Test Reports** | ✅ Test reporter integrado | ✅ Básico |
-| **Docker Build** | ✅ Multi-platform | ✅ Standard |
-| **Deploy Staging** | ✅ Comentado (listo) | ✅ Comentado (listo) |
-| **Deploy Prod** | ✅ Comentado (listo) | ❌ No incluido |
-| **Notifications** | ✅ Avanzadas | ✅ Básicas |
-| **Complexity** | 296 líneas | 200+ líneas |
-| **Metadata** | 🎨 Emojis + descripción | 🎨 Emojis |
-| **Triggers** | push, PR, workflow_dispatch | push, PR |
+| Feature            | ci.yml (Mantenido)          | ci-cd.yml (Eliminado) |
+| ------------------ | --------------------------- | --------------------- |
+| **Code Quality**   | ✅ Dependency tree          | ✅ Dependency check   |
+| **Build & Test**   | ✅ Con MySQL service        | ✅ Basado en H2       |
+| **Test Reports**   | ✅ Test reporter integrado  | ✅ Básico             |
+| **Docker Build**   | ✅ Multi-platform           | ✅ Standard           |
+| **Deploy Staging** | ✅ Comentado (listo)        | ✅ Comentado (listo)  |
+| **Deploy Prod**    | ✅ Comentado (listo)        | ❌ No incluido        |
+| **Notifications**  | ✅ Avanzadas                | ✅ Básicas            |
+| **Complexity**     | 296 líneas                  | 200+ líneas           |
+| **Metadata**       | 🎨 Emojis + descripción     | 🎨 Emojis             |
+| **Triggers**       | push, PR, workflow_dispatch | push, PR              |
 
 ---
 
@@ -33,11 +36,13 @@ Había **dos workflows de CI/CD** ejecutándose:
 ### Jobs Ejecutados:
 
 1. **🔍 Code Quality & Security**
+
    - Análisis de dependencias
    - Verificación OWASP (opcional)
    - Full git history para análisis
 
 2. **🏗️ Build and Test Backend**
+
    - MySQL 8.0 service en paralelo
    - Compilation + 383 tests
    - Test report (JUnit XML)
@@ -45,12 +50,14 @@ Había **dos workflows de CI/CD** ejecutándose:
    - Upload artifacts (5 días)
 
 3. **🐳 Docker Build & Push**
+
    - Multi-platform build (linux/amd64, linux/arm64)
    - Push a ghcr.io
    - Metadata + tags automáticos
    - Cache optimization (GHA)
 
 4. **🚀 Deploy to Staging** (dev branch only)
+
    - SSH deployment (comentado, listo para configurar)
    - Health check
    - Notifications
@@ -66,10 +73,10 @@ Había **dos workflows de CI/CD** ejecutándose:
 ```yaml
 on:
   push:
-    branches: [dev, main, "release/**"]  # Todas estas ramas
+    branches: [dev, main, "release/**"] # Todas estas ramas
   pull_request:
-    branches: [dev, main]                 # PRs también triggerean
-  workflow_dispatch:                      # Manual trigger en GitHub UI
+    branches: [dev, main] # PRs también triggerean
+  workflow_dispatch: # Manual trigger en GitHub UI
 ```
 
 ---

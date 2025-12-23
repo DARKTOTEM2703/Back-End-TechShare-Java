@@ -40,7 +40,7 @@ on:
     branches: [dev, main, "release/**"]
   pull_request:
     branches: [dev, main]
-  workflow_dispatch:  # Manual
+  workflow_dispatch: # Manual
 ```
 
 ---
@@ -96,4 +96,4 @@ PROD_SSH_KEY              # SSH private key
 
 ---
 
-*This validation report confirms the CI/CD pipeline is properly configured and ready for production use.*
+_This validation report confirms the CI/CD pipeline is properly configured and ready for production use._

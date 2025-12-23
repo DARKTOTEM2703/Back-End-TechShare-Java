@@ -189,6 +189,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
+
+    <!-- Thumbnailator for image optimization in OptimizedImageStorage -->
+    <dependency>
+        <groupId>net.coobird</groupId>
+        <artifactId>thumbnailator</artifactId>
+        <version>0.4.14</version>
+    </dependency>
     
     <!-- Lettuce (Redis client - ya viene con spring-boot-starter-data-redis) -->
     <!-- No necesita dependency extra, pero si quieres usar Jedis en vez de Lettuce, agrégalo aquí -->

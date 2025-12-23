@@ -11,6 +11,7 @@
 ### ✅ What Has Been Completed
 
 #### 1. **Code Quality & Refactoring**
+
 - ✅ Migrated monetary fields to `BigDecimal` (accounting precision)
 - ✅ Implemented Facade pattern for service layer (SOLID principles)
 - ✅ Updated all 383 unit tests to match new architecture
@@ -18,6 +19,7 @@
 - ✅ Standardized JSON output to `snake_case` globally
 
 #### 2. **Configuration & Security**
+
 - ✅ Audited `application.properties` (no hardcoded secrets)
 - ✅ Configured JWT authentication with Spring Security
 - ✅ Implemented HikariCP connection pooling
@@ -25,6 +27,7 @@
 - ✅ Hibernate set to `validate` mode (safe for production)
 
 #### 3. **Build & Deployment**
+
 - ✅ Maven build successful (0 errors, 383 tests pass)
 - ✅ Docker image optimized (multi-stage, JDK 17)
 - ✅ GitHub Actions CI/CD pipeline configured
@@ -32,6 +35,7 @@
 - ✅ Staging deployment ready
 
 #### 4. **Documentation**
+
 - ✅ `CI-CD-SETUP.md` — Complete pipeline guide
 - ✅ `SECRETS-SETUP.md` — Secrets management instructions
 - ✅ `CI-CD-PIPELINE-SUMMARY.md` — Visual pipeline overview
@@ -41,32 +45,32 @@
 
 ## 🎯 Technology Stack
 
-| Layer | Technology | Version | Status |
-|-------|-----------|---------|--------|
-| **Runtime** | Java | 17 (LTS) | ✅ |
-| **Framework** | Spring Boot | 3.4.1 | ✅ |
-| **Security** | Spring Security | 6.x + JWT | ✅ |
-| **Data** | Spring Data JPA | Latest | ✅ |
-| **Database** | MySQL | 8.0+ | ✅ |
-| **Migrations** | Flyway | Latest | ✅ |
-| **Testing** | JUnit 5 + Mockito | Latest | ✅ |
-| **Build** | Maven | 3.8+ | ✅ |
-| **Container** | Docker | 20.x+ | ✅ |
-| **CI/CD** | GitHub Actions | Native | ✅ |
+| Layer          | Technology        | Version   | Status |
+| -------------- | ----------------- | --------- | ------ |
+| **Runtime**    | Java              | 17 (LTS)  | ✅     |
+| **Framework**  | Spring Boot       | 3.4.1     | ✅     |
+| **Security**   | Spring Security   | 6.x + JWT | ✅     |
+| **Data**       | Spring Data JPA   | Latest    | ✅     |
+| **Database**   | MySQL             | 8.0+      | ✅     |
+| **Migrations** | Flyway            | Latest    | ✅     |
+| **Testing**    | JUnit 5 + Mockito | Latest    | ✅     |
+| **Build**      | Maven             | 3.8+      | ✅     |
+| **Container**  | Docker            | 20.x+     | ✅     |
+| **CI/CD**      | GitHub Actions    | Native    | ✅     |
 
 ---
 
 ## 📈 Quality Metrics
 
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| Tests Executed | 383 | 300+ | ✅ Pass |
-| Test Success Rate | 100% | 95%+ | ✅ Pass |
-| Build Time | 3:34 min | 5 min | ✅ Pass |
-| Code Compilation | 194 files | No errors | ✅ Pass |
-| Dependencies | Clean | No conflicts | ✅ Pass |
-| Security Issues | 0 known | 0 CVEs | ✅ Pass |
-| Docker Image Size | ~500MB | <1GB | ✅ Pass |
+| Metric            | Value     | Target       | Status  |
+| ----------------- | --------- | ------------ | ------- |
+| Tests Executed    | 383       | 300+         | ✅ Pass |
+| Test Success Rate | 100%      | 95%+         | ✅ Pass |
+| Build Time        | 3:34 min  | 5 min        | ✅ Pass |
+| Code Compilation  | 194 files | No errors    | ✅ Pass |
+| Dependencies      | Clean     | No conflicts | ✅ Pass |
+| Security Issues   | 0 known   | 0 CVEs       | ✅ Pass |
+| Docker Image Size | ~500MB    | <1GB         | ✅ Pass |
 
 ---
 
@@ -88,6 +92,7 @@
 ## 🚀 Quick Start for Developers
 
 ### Local Development
+
 ```bash
 # 1. Clone repository
 git clone https://github.com/RafaPacheco2003/Back-End-TechShare-Java
@@ -106,6 +111,7 @@ source .env
 ```
 
 ### Docker Deployment
+
 ```bash
 # 1. Build image locally
 docker build -t techshare-backend:dev .
@@ -119,6 +125,7 @@ curl http://localhost:8080/actuator/health
 ```
 
 ### GitHub Actions (Automatic)
+
 ```bash
 # 1. Push to dev/main branch
 git push origin dev
@@ -135,12 +142,14 @@ docker pull ghcr.io/RafaPacheco2003/Back-End-TechShare-Java/techshare-backend:de
 ## 📋 Deployment Checklist
 
 ### Pre-Deployment (Dev Environment)
+
 - [ ] All tests passing locally: `./mvnw test`
 - [ ] Code reviewed and approved
 - [ ] Branch protection rules enabled
 - [ ] Secrets configured in GitHub
 
 ### Deploy to Staging
+
 - [ ] GitHub Actions CI/CD pipeline green ✅
 - [ ] Docker image pushed successfully
 - [ ] Configure staging environment variables
@@ -148,6 +157,7 @@ docker pull ghcr.io/RafaPacheco2003/Back-End-TechShare-Java/techshare-backend:de
 - [ ] Check logs and health endpoints
 
 ### Deploy to Production
+
 - [ ] Staging tests completed
 - [ ] Database migrations validated (Flyway)
 - [ ] Backup database before migration
@@ -162,6 +172,7 @@ docker pull ghcr.io/RafaPacheco2003/Back-End-TechShare-Java/techshare-backend:de
 ## 🔧 Environment Configuration
 
 ### Development (.env.local)
+
 ```bash
 SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/techshare_db
 SPRING_DATASOURCE_USERNAME=root
@@ -171,6 +182,7 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000
 ```
 
 ### Staging (.env.staging)
+
 ```bash
 SPRING_DATASOURCE_URL=jdbc:mysql://staging-db:3306/techshare_db
 SPRING_DATASOURCE_USERNAME=staging_user
@@ -180,6 +192,7 @@ CORS_ALLOWED_ORIGINS=https://staging.techshare.com
 ```
 
 ### Production (.env.prod)
+
 ```bash
 SPRING_DATASOURCE_URL=jdbc:mysql://prod-db:3306/techshare_db?ssl=true
 SPRING_DATASOURCE_USERNAME=prod_user
@@ -195,6 +208,7 @@ CACHE_TYPE=redis
 ## 📊 Monitoring & Observability
 
 ### Health Checks
+
 ```bash
 # Application health
 curl http://localhost:8080/actuator/health
@@ -210,12 +224,14 @@ curl http://localhost:8080/actuator/prometheus
 ```
 
 ### Logging
+
 - Console: Real-time logs with colors
 - JSON File: `logs/techshare-backend.json` (structured)
 - Error File: `logs/techshare-backend-errors.json`
 - Archives: Automatic rotation daily + size-based
 
 ### Alert Rules (Suggested)
+
 ```
 - CPU usage > 80% for 5 min
 - Memory usage > 85%
@@ -230,6 +246,7 @@ curl http://localhost:8080/actuator/prometheus
 ## 🔄 CI/CD Pipeline Details
 
 ### On Push to `dev`:
+
 1. ✅ Checkout code
 2. ✅ Setup JDK 17
 3. ✅ Compile (Maven)
@@ -244,6 +261,7 @@ curl http://localhost:8080/actuator/prometheus
 **Total Time**: 3-5 minutes
 
 ### Docker Image Tags
+
 - `dev` — Latest from dev branch
 - `main` — Latest from main branch
 - `sha-xxxxx` — Specific commit hash
@@ -253,15 +271,15 @@ curl http://localhost:8080/actuator/prometheus
 
 ## 📚 Documentation Files
 
-| File | Purpose | Audience |
-|------|---------|----------|
-| `README.md` | Project overview | Everyone |
-| `.github/CI-CD-SETUP.md` | GitHub Actions setup | DevOps |
-| `.github/SECRETS-SETUP.md` | Secrets management | DevOps |
+| File                                | Purpose                | Audience   |
+| ----------------------------------- | ---------------------- | ---------- |
+| `README.md`                         | Project overview       | Everyone   |
+| `.github/CI-CD-SETUP.md`            | GitHub Actions setup   | DevOps     |
+| `.github/SECRETS-SETUP.md`          | Secrets management     | DevOps     |
 | `.github/CI-CD-PIPELINE-SUMMARY.md` | Pipeline visualization | Developers |
-| `application.properties` | App configuration | Operations |
-| `Dockerfile` | Container definition | DevOps |
-| `docker-compose.yml` | Local dev environment | Developers |
+| `application.properties`            | App configuration      | Operations |
+| `Dockerfile`                        | Container definition   | DevOps     |
+| `docker-compose.yml`                | Local dev environment  | Developers |
 
 ---
 
@@ -280,24 +298,28 @@ curl http://localhost:8080/actuator/prometheus
 ### Common Issues
 
 **Build fails locally**
+
 ```bash
 ./mvnw clean install
 # If persists, check Java version: java -version
 ```
 
 **Tests fail**
+
 ```bash
 ./mvnw test -DskipTests=false -X
 # -X enables debug logging
 ```
 
 **Docker build fails**
+
 ```bash
 docker build --no-cache -t techshare:dev .
 # Force rebuild without cache
 ```
 
 **Deployment hangs**
+
 ```bash
 # Check logs
 docker logs container_id
@@ -329,6 +351,7 @@ docker inspect container_id | grep Networks
 **TechShare Backend is ready for production deployment!**
 
 The codebase is:
+
 - ✅ Well-tested (383 tests, 100% pass rate)
 - ✅ Properly configured (no secrets, audited)
 - ✅ Automated (CI/CD pipeline functional)
@@ -336,6 +359,7 @@ The codebase is:
 - ✅ Documented (guides & examples provided)
 
 ### Next Steps:
+
 1. **Configure staging environment** (AWS/Azure/K8s)
 2. **Setup monitoring** (DataDog/New Relic/Prometheus)
 3. **Run E2E tests** with frontend

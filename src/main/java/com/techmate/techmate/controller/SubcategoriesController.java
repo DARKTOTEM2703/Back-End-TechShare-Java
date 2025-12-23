@@ -9,7 +9,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.techmate.techmate.config.AppProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,15 +34,13 @@ public class SubcategoriesController {
 
     private final SubCategoriesMapper subCategoriesMapper;
 
-    @Value("${storage.location}")
-    private String storageLocation; // Directorio para almacenar imágenes
+    private final AppProperties appProperties;
 
-    @Value("${server.url}")
-    private String serverUrl; // URL base del servidor
-
-    public SubcategoriesController(SubCategoriesService subcategoriesService, SubCategoriesMapper subCategoriesMapper) {
+    public SubcategoriesController(SubCategoriesService subcategoriesService, SubCategoriesMapper subCategoriesMapper,
+            AppProperties appProperties) {
         this.subcategoriesService = subcategoriesService;
         this.subCategoriesMapper = subCategoriesMapper;
+        this.appProperties = appProperties;
     }
 
     @PostMapping("/create")
@@ -52,7 +50,7 @@ public class SubcategoriesController {
 
         SubCategoriesDTO dto = subCategoriesMapper.fromRequest(request);
         SubCategoriesDTO saved = subcategoriesService.createSubCategory(dto, image);
-        SubCategoryResponse resp = subCategoriesMapper.toResponse(saved, serverUrl);
+        SubCategoryResponse resp = subCategoriesMapper.toResponse(saved, appProperties.getServerUrl());
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
 
@@ -65,7 +63,7 @@ public class SubcategoriesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        SubCategoryResponse resp = subCategoriesMapper.toResponse(subcategory, serverUrl);
+        SubCategoryResponse resp = subCategoriesMapper.toResponse(subcategory, appProperties.getServerUrl());
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
@@ -82,7 +80,7 @@ public class SubcategoriesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        SubCategoryResponse resp = subCategoriesMapper.toResponse(updated, serverUrl);
+        SubCategoryResponse resp = subCategoriesMapper.toResponse(updated, appProperties.getServerUrl());
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
@@ -90,7 +88,7 @@ public class SubcategoriesController {
     public ResponseEntity<?> getAllSubcategories() {
         try {
             List<SubCategoryResponse> subcategories = subcategoriesService.getAllSubCategories().stream()
-                    .map(subcategory -> subCategoriesMapper.toResponse(subcategory, serverUrl))
+                    .map(subcategory -> subCategoriesMapper.toResponse(subcategory, appProperties.getServerUrl()))
                     .collect(Collectors.toList());
 
             if (subcategories == null || subcategories.isEmpty()) {
@@ -115,6 +113,7 @@ public class SubcategoriesController {
     @GetMapping("/images/{filename:.+}")
     public ResponseEntity<byte[]> getImage(@PathVariable String filename) throws IOException {
 
+        String storageLocation = appProperties.getStorage().getLocation();
         Path imagePath = Paths.get(storageLocation).resolve(filename);
         File file = imagePath.toFile();
 
