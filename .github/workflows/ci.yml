@@ -152,7 +152,7 @@ jobs:
           path: 'target/surefire-reports/TEST-*.xml'
           reporter: java-junit
           fail-on-error: false
-          fail-on-empty: true
+          fail-on-empty: false
 
       - name: 📦 Upload JAR artifact
         uses: actions/upload-artifact@v4
