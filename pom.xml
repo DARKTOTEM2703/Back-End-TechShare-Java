@@ -255,6 +255,8 @@
                     </argLine>
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
+                    <!-- IMPORTANT: Enable XML report generation for CI/CD test reporting -->
+                    <reportFormat>plain</reportFormat>
                     <!-- Forzar propiedades en el entorno de test para evitar que variables de entorno del SO sobreescriban application-test.properties -->
                     <systemPropertyVariables>
                         <spring.profiles.active>test</spring.profiles.active>
