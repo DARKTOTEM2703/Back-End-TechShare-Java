@@ -32,11 +32,12 @@ public interface MovementsRepository extends JpaRepository<Movements, Integer> {
      * EVITA: N+1 problem
      * CARGA: material + subCategory + usuario en 1 query
      */
-    @Query("SELECT DISTINCT m FROM Movements m " +
-           "LEFT JOIN FETCH m.materials mat " +
-           "LEFT JOIN FETCH mat.subCategory " +
-           "LEFT JOIN FETCH m.usuario")
-    List<Movements> findAllOptimized();
+        @Query("SELECT DISTINCT m FROM Movements m " +
+            "LEFT JOIN FETCH m.materials mat " +
+            "LEFT JOIN FETCH mat.subCategory " +
+            "LEFT JOIN FETCH m.usuario")
+        @Override
+        List<Movements> findAll();
     
     /**
      * Obtiene un movimiento por ID con todas sus relaciones (1 query).
@@ -46,7 +47,8 @@ public interface MovementsRepository extends JpaRepository<Movements, Integer> {
            "LEFT JOIN FETCH mat.subCategory " +
            "LEFT JOIN FETCH m.usuario " +
         "WHERE m.id = :id")
-    Optional<Movements> findByIdOptimized(@Param("id") Integer id);
+    @Override
+    Optional<Movements> findById(@Param("id") Integer id);
     
     /**
      * Paginación optimizada con JOIN FETCH.

@@ -225,8 +225,8 @@ Tests: 405/405 passing
 
 ```java
 ✅ EXCELENTE - Queries con JOIN FETCH
-- findAllOptimized() - Carga details, materials, subCategory, usuario
-- findByIdOptimized() - Una sola query para todo
+- `findAll()` (sobrescrito) - Carga `details`, `materials`, `subCategory`, `usuario` en 1 query
+- `findById()` (sobrescrito) - Devuelve la entidad con relaciones cargadas en 1 query
 - Paginación optimizada con countQuery separada
 - Filtros dinámicos optimizados
 ```
@@ -253,8 +253,8 @@ Tests: 405/405 passing
 
 ```java
 ✅ EXCELENTE - JOIN FETCH completo
-- findAllOptimized() - materials + subCategory + usuario
-- findByIdOptimized() - Una query para todo
+- `findAll()` (sobrescrito) - materials + subCategory + usuario
+- `findById()` (sobrescrito) - Una query para todo
 - Paginación con countQuery separada
 - Queries de estadísticas agregadas
 ```

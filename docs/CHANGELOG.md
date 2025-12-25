@@ -146,8 +146,8 @@ Todos los cambios notables del proyecto se documentan en este archivo.
 
 ### 🔧 Modificado
 - **Queries JOIN FETCH**: Optimización de repositorios
-  - BorrowRepository: findAllOptimized, findByIdOptimized, findByFiltersOptimized
-  - MovementsRepository: findAllOptimized, findByMaterialIdOptimized
+  - BorrowRepository: `findAll()` (sobrescrito, JOIN FETCH), `findById()` (sobrescrito, JOIN FETCH), findByFiltersOptimized
+  - MovementsRepository: `findAll()` (sobrescrito, JOIN FETCH), `findById()` (sobrescrito, JOIN FETCH), findByMaterialIdOptimized
   - MaterialsRepository: Queries optimizadas
 - **spring.jpa.open-in-view**: Configurado a `false`
 - **Hibernate Statistics**: Habilitadas para detectar N+1

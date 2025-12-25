@@ -44,20 +44,21 @@ public interface BorrowRepository extends JpaRepository<Borrow, Integer>,
        // ============================================
 
        /**
-        * Obtiene todos los préstamos con sus relaciones cargadas (1 query).
-        * EVITA: N+1 problem
-        * ANTES: 1 + N (details) + M (materials) + K (subcategories) queries
-        * AHORA: 1 query con joins
+        * Sobrescribimos `findAll()` de `JpaRepository` para devolver siempre
+        * los `Borrow` con sus relaciones necesarias cargadas y evitar N+1.
         */
        @Query("SELECT DISTINCT b FROM Borrow b " +
                      "LEFT JOIN FETCH b.details d " +
                      "LEFT JOIN FETCH d.materials m " +
                      "LEFT JOIN FETCH m.subCategory " +
                      "LEFT JOIN FETCH b.usuario")
-       List<Borrow> findAllOptimized();
+       @Override
+       List<Borrow> findAll();
 
        /**
-        * Obtiene un préstamo por ID con todas sus relaciones (1 query).
+        * Sobrescribimos `findById(Integer)` de `JpaRepository` para devolver
+        * la entidad con relaciones cargadas y evitar cargas perezosas fuera de
+        * la transacción.
         */
        @Query("SELECT b FROM Borrow b " +
                      "LEFT JOIN FETCH b.details d " +
@@ -65,7 +66,8 @@ public interface BorrowRepository extends JpaRepository<Borrow, Integer>,
                      "LEFT JOIN FETCH m.subCategory " +
                      "LEFT JOIN FETCH b.usuario " +
                      "WHERE b.id = :id")
-       Optional<Borrow> findByIdOptimized(@Param("id") Integer id);
+       @Override
+       Optional<Borrow> findById(@Param("id") Integer id);
 
        /**
         * Paginación optimizada con JOIN FETCH.

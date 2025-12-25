@@ -130,7 +130,7 @@ public class BorrowSpecification {
 
     /**
      * Combinación completa de fetch joins para cargar TODO en 1 query.
-     * Equivalente a findAllOptimized() del repository.
+     * Equivalente a `findAll()` del repository (ahora sobrescrito para usar JOIN FETCH).
      * 
      * PERFORMANCE: 1 query vs N+1
      * 

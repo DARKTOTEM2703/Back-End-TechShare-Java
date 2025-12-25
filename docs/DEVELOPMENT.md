@@ -422,11 +422,14 @@ public Borrow getBorrow(@PathVariable Long id) {
     return borrow;
 }
 
-// ✅ SOLUCIÓN: JOIN FETCH
+// ✅ SOLUCIÓN: JOIN FETCH - Sobrescribir `findById` para devolver la entidad con relaciones cargadas
 @Query("SELECT b FROM Borrow b " +
-       "JOIN FETCH b.materials " +
-       "WHERE b.id = :id")
-Borrow findByIdOptimized(@Param("id") Long id);
+    "LEFT JOIN FETCH b.details d " +
+    "LEFT JOIN FETCH d.materials m " +
+    "LEFT JOIN FETCH m.subCategory " +
+    "LEFT JOIN FETCH b.usuario " +
+    "WHERE b.id = :id")
+Optional<Borrow> findById(@Param("id") Integer id);
 ```
 
 ---
