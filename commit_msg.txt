@@ -1,9 +1,0 @@
-﻿perf(backend): eliminate N+1 problem in Borrow and Movement repositories
-
-- Refactor BorrowRepository & MovementsRepository to override standard findAll()/findById() with JOIN FETCH queries
-- Remove deprecated/redundant methods (*Optimized) for cleaner API
-- Verify MovementQueryService compliance with standard methods
-- Add BorrowNPlusOneIntegrationTest validating hibernate query count (1 statement for full fetch)
-- Update CHANGELOG and Audit documentation to reflect architectural changes
-
-Closes #NPLUS1-FIX
