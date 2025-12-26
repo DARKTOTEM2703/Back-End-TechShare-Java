@@ -60,6 +60,11 @@ public class BorrowReadDTO {
     private String usuarioName;
 
     /**
+     * Email del usuario solicitante
+     */
+    private String usuarioEmail;
+
+    /**
      * ID del administrador que procesó el préstamo
      */
     private Integer adminId;
@@ -73,6 +78,13 @@ public class BorrowReadDTO {
      * Detalles del préstamo
      */
     private List<DetailsBorrowDTO> details;
+
+    /**
+     * Material relacionado (si aplica)
+     */
+    private Integer materialId;
+
+    private String materialName;
 
     // ══════════════════════════════════════════════════════════════
     // ✅ COMPATIBILITY METHOD (Legacy code support)

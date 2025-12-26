@@ -38,6 +38,11 @@ public class DetailsBorrowDTO {
 
     private Integer borrowId; // ID del préstamo asociado a este detalle
 
+    /**
+     * Nombre del material asociado a este detalle (enriquecido para lectura)
+     */
+    private String materialName;
+
     // ✅ COMPATIBILITY METHOD
     public Integer getDetailsBorrowId() {
         return this.id;
