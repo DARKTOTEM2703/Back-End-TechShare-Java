@@ -7,28 +7,33 @@ Cambiar la estrategia de nombrado de JSON del backend TechShare de **SNAKE_CASE*
 ## Cambios Realizados
 
 ### 1. **Configuración Jackson** (JacksonConfig.java)
+
 - ✅ Removida estrategia SNAKE_CASE del método `jsonCustomizer()` bean
 - ✅ Removida estrategia SNAKE_CASE del método estático `objectMapper()`
 - ✅ Ahora usa la estrategia por defecto de Spring Boot (CAMEL_CASE)
 
 **Antes:**
+
 ```java
 builder.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 ```
 
 **Después:**
+
 ```java
 // Comentario: // Use default naming strategy (CAMEL_CASE) for compatibility with Next.js frontend
 // Estrategia por defecto automáticamente aplicada
 ```
 
 ### 2. **Propiedades de Aplicación**
+
 - ✅ application.properties: Removida línea `spring.jackson.property-naming-strategy=SNAKE_CASE`
 - ✅ application-test.properties: Removida línea `spring.jackson.property-naming-strategy=SNAKE_CASE`
 - ✅ Comentarios actualizados para reflejar el uso de CAMEL_CASE
 
 ### 3. **Data Transfer Objects (DTO)**
+
 - ✅ CurrentUserDTO.java:
   - Removidas 3 anotaciones @JsonProperty innecesarias
   - Campos renombrados a camelCase:
@@ -38,6 +43,7 @@ mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
   - Lombok genera automáticamente setters compatibles
 
 ### 4. **Controladores**
+
 - ✅ AuthenticatedUserController.java:
   - Actualizadas 3 llamadas a setters para usar nuevos nombres camelCase:
     - `setUser_name()` → `setUserName()`
@@ -45,32 +51,37 @@ mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     - `setLast_name()` → `setLastName()`
 
 ### 5. **Tests Actualizados**
+
 Todos los tests que validaban formato JSON fueron actualizados para esperar camelCase:
 
-| Archivo | Cambio | Línea |
-|---------|--------|-------|
-| MaterialsControllerTest.java | `materials_id` → `materialsId` | 63, 98 |
-| MovementsControllerTest.java | `move_type` → `moveType` | 122 |
-| MovementsControllerSecurityTest.java | `move_type` → `moveType` | 104 |
-| MoveTypeJacksonIntegrationTest.java | `move_type` → `moveType` | 58, 62 |
+| Archivo                              | Cambio                         | Línea  |
+| ------------------------------------ | ------------------------------ | ------ |
+| MaterialsControllerTest.java         | `materials_id` → `materialsId` | 63, 98 |
+| MovementsControllerTest.java         | `move_type` → `moveType`       | 122    |
+| MovementsControllerSecurityTest.java | `move_type` → `moveType`       | 104    |
+| MoveTypeJacksonIntegrationTest.java  | `move_type` → `moveType`       | 58, 62 |
 
 ### 6. **Nuevos Tests**
+
 - ✅ Creado JacksonCamelCaseTest.java:
   - `jacksonShouldSerializeBorrowWithCamelCase()`: Verifica que ObjectMapper por defecto usa camelCase
   - `jacksonConfigObjectMapperShouldUseCamelCase()`: Verifica que JacksonConfig.objectMapper() utiliza camelCase
   - Status: 2/2 tests passing
 
 ### 7. **Tests Obsoletos**
+
 - ✅ Eliminado JacksonSnakeCaseTest.java (ya no aplica)
 
 ## Resultados Finales
 
 ### Compilación ✅
+
 ```
 BUILD SUCCESS
 ```
 
 ### Suite de Tests ✅
+
 ```
 Tests run: 401
 Failures: 0
@@ -82,6 +93,7 @@ Status: BUILD SUCCESS
 ## Comportamiento Esperado
 
 ### JSON Response Before (SNAKE_CASE):
+
 ```json
 {
   "user_id": 1,
@@ -94,6 +106,7 @@ Status: BUILD SUCCESS
 ```
 
 ### JSON Response After (CAMEL_CASE):
+
 ```json
 {
   "userId": 1,
@@ -128,15 +141,19 @@ Migrate JSON naming strategy from SNAKE_CASE to CAMEL_CASE for Next.js compatibi
 Para verificar que el cambio funciona correctamente:
 
 1. **Compilar sin tests:**
+
    ```bash
    .\mvnw.cmd clean -DskipTests package
    ```
+
    Resultado: ✅ BUILD SUCCESS
 
 2. **Ejecutar suite completa:**
+
    ```bash
    .\mvnw.cmd test
    ```
+
    Resultado: ✅ 401 tests passing, 0 failures
 
 3. **Verificar endpoints específicos:**
@@ -154,6 +171,7 @@ Para verificar que el cambio funciona correctamente:
 ## Estado: COMPLETADO ✅
 
 Todos los objetivos alcanzados:
+
 - ✅ Configuración Jackson migrada a CAMEL_CASE
 - ✅ DTOs refactorizados con nombres camelCase
 - ✅ Tests actualizados para validar nuevo formato

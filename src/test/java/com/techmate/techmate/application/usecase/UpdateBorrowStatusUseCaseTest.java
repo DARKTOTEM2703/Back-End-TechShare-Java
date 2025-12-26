@@ -18,7 +18,8 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for UpdateBorrowStatusUseCase (Onion Architecture).
- * Tests domain state transitions: PENDING -> BORROWED, BORROWED -> RETURNED, etc.
+ * Tests domain state transitions: PENDING -> BORROWED, BORROWED -> RETURNED,
+ * etc.
  */
 @ExtendWith(MockitoExtension.class)
 class UpdateBorrowStatusUseCaseTest {

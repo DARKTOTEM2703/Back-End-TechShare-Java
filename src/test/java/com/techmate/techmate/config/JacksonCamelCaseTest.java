@@ -31,20 +31,20 @@ public class JacksonCamelCaseTest {
         b.setStatus(com.techmate.techmate.entity.Status.PENDING);
 
         String json = mapper.writeValueAsString(b);
-        
+
         // Verify camelCase serialization (NOT snake_case)
-        assertTrue(json.contains("\"id\":123"), 
-            "Expected 'id' in camelCase, got: " + json);
+        assertTrue(json.contains("\"id\":123"),
+                "Expected 'id' in camelCase, got: " + json);
         assertTrue(json.contains("\"amount\":") || json.contains("\"amount\":10.5"),
-            "Expected 'amount' field in camelCase, got: " + json);
+                "Expected 'amount' field in camelCase, got: " + json);
         assertTrue(json.contains("\"status\":\"PENDING\""),
-            "Expected 'status' field in camelCase, got: " + json);
-        
+                "Expected 'status' field in camelCase, got: " + json);
+
         // Verify NO snake_case is present (the old format)
         assertFalse(json.contains("borrow_id"),
-            "Should NOT contain snake_case 'borrow_id', got: " + json);
+                "Should NOT contain snake_case 'borrow_id', got: " + json);
         assertFalse(json.contains("issue_date"),
-            "Should NOT contain snake_case 'issue_date', got: " + json);
+                "Should NOT contain snake_case 'issue_date', got: " + json);
     }
 
     @Test
@@ -58,15 +58,15 @@ public class JacksonCamelCaseTest {
         b.setStatus(com.techmate.techmate.entity.Status.BORROWED);
 
         String json = mapper.writeValueAsString(b);
-        
+
         // Verify camelCase in serialized JSON
         assertTrue(json.contains("\"id\":456"),
-            "Expected camelCase 'id' field, got: " + json);
+                "Expected camelCase 'id' field, got: " + json);
         assertTrue(json.contains("\"amount\":") || json.contains("\"amount\":99.99"),
-            "Expected camelCase 'amount' field, got: " + json);
-        
+                "Expected camelCase 'amount' field, got: " + json);
+
         // Ensure no snake_case format
         assertFalse(json.toLowerCase().contains("_id") && json.contains("borrow"),
-            "Should not contain snake_case 'borrow_id', got: " + json);
+                "Should not contain snake_case 'borrow_id', got: " + json);
     }
 }

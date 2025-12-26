@@ -27,15 +27,16 @@ public class AuthenticatedUserController {
 
     /**
      * Obtiene la información del usuario autenticado actualmente
+     * 
      * @return datos del usuario con su nombre, email y roles
      */
     @GetMapping("/me")
     public ResponseEntity<CurrentUserDTO> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
+
         log.debug("GET /user/me - Authentication object: {}", authentication);
         log.debug("Is authenticated: {}", authentication != null ? authentication.isAuthenticated() : "null");
-        
+
         if (authentication == null || !authentication.isAuthenticated()) {
             log.warn("Unauthorized access attempt to /user/me");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
@@ -43,7 +44,7 @@ public class AuthenticatedUserController {
 
         if (authentication.getPrincipal() instanceof UserDetailsImpl) {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            
+
             CurrentUserDTO currentUser = new CurrentUserDTO();
             currentUser.setId(userDetails.getId());
             currentUser.setUserName(userDetails.getNombre()); // username del usuario (jafethgamboabaas)
@@ -53,11 +54,11 @@ public class AuthenticatedUserController {
             currentUser.setRoles(userDetails.getAuthorities().stream()
                     .map(auth -> auth.getAuthority())
                     .collect(Collectors.toList()));
-            
+
             log.info("User info returned for: {}", userDetails.getUsername());
             return ResponseEntity.ok(currentUser);
         }
-        
+
         // Si el principal no es la implementación esperada, puede deberse a que
         // la autenticación no se resolvió como un usuario (p.ej. token inválido
         // o anonymous). Devolver 401 para que el cliente SPA pueda manejarlo
@@ -66,5 +67,3 @@ public class AuthenticatedUserController {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
     }
 }
-
-
