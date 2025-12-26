@@ -119,6 +119,6 @@ class MovementsControllerTest {
                 .principal(mockAuth)) // Inyectar el principal mockeado
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(10))
-                .andExpect(jsonPath("$.move_type").value("OUT"));
+                .andExpect(jsonPath("$.moveType").value("OUT"));
     }
 }

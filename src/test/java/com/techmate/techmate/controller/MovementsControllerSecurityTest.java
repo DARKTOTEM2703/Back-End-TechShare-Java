@@ -101,6 +101,6 @@ class MovementsControllerSecurityTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(99))
-                .andExpect(jsonPath("$.move_type").value("OUT"));
+                .andExpect(jsonPath("$.moveType").value("OUT"));
     }
 }

@@ -18,7 +18,7 @@ public class JacksonConfig {
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
         return builder -> {
-            builder.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+            // Use default naming strategy (CAMEL_CASE) for compatibility with Next.js frontend
             builder.modules(new JavaTimeModule());
             builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         };
@@ -27,7 +27,7 @@ public class JacksonConfig {
     // Utility for places that still create ObjectMapper manually.
     public static ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        // Use default naming strategy (CAMEL_CASE) for compatibility with Next.js frontend
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return mapper;

@@ -15,14 +15,11 @@ import java.util.List;
 public class CurrentUserDTO {
     private Integer id;
     
-    @JsonProperty("userName")
-    private String user_name;
-    
-    @JsonProperty("firstName")
-    private String first_name;
-    
-    @JsonProperty("lastName")
-    private String last_name;
+private String userName;
+
+    private String firstName;
+
+    private String lastName;
     
     private String email;
     private List<String> roles;

@@ -55,11 +55,11 @@ public class MoveTypeJacksonIntegrationTest {
         String json = objectMapper.writeValueAsString(p);
 
         // Debe usar snake_case
-        assertTrue(json.contains("\"move_type\""), "Debe serializar campo como move_type");
+        assertTrue(json.contains("\"moveType\""), "Debe serializar campo como moveType");
         assertTrue(json.contains("\"id\":2"), "id debe incluir el valor");
 
         // Deserialización desde la API legacy
-        String input = "{\"move_type\":\"BORROW\",\"id\":2}";
+        String input = "{\"moveType\":\"BORROW\",\"id\":2}";
         Payload des = objectMapper.readValue(input, Payload.class);
         assertEquals(MoveType.BORROW, des.getMoveType());
         assertEquals(2, des.getId());
