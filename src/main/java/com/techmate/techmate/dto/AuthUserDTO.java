@@ -1,6 +1,8 @@
 package com.techmate.techmate.dto;
 
 import java.util.List;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * DTO optimizado para autenticación que evita los problemas de lazy loading 
@@ -12,7 +14,11 @@ import java.util.List;
 public class AuthUserDTO {
     private Integer id;
     private String username;
+    
+    @NotBlank(message = "El email no puede estar vacío")
+    @Email(message = "El email debe ser válido")
     private String email;
+    
     private String password;
     private String firstName;
     private String lastName;
