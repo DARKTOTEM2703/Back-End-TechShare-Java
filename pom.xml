@@ -30,6 +30,19 @@
 		<java.version>17</java.version>
 		<mockito.version>5.3.1</mockito.version>
 	</properties>
+    
+    <!-- AWS SDK v2 BOM -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.21.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 	<dependencies>
     <!-- MapStruct for automatic mapping between domain and DTOs -->
     <dependency>
@@ -201,6 +214,19 @@
         <groupId>net.coobird</groupId>
         <artifactId>thumbnailator</artifactId>
         <version>0.4.14</version>
+    </dependency>
+    
+    <!-- MinIO Java client for S3-compatible object storage -->
+    <dependency>
+        <groupId>io.minio</groupId>
+        <artifactId>minio</artifactId>
+        <version>8.5.5</version>
+    </dependency>
+    
+    <!-- AWS S3 SDK v2 -->
+    <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>s3</artifactId>
     </dependency>
     
     <!-- Lettuce (Redis client - ya viene con spring-boot-starter-data-redis) -->

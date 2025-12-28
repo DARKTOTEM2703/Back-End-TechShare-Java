@@ -5,6 +5,8 @@ import com.techmate.techmate.exception.ValidationException;
 import com.techmate.techmate.imageStorage.ImageStorageStrategy;
 import com.techmate.techmate.validation.ImageValidationStrategy;
 import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Component
+@ConditionalOnProperty(name = "app.storage.type", havingValue = "local", matchIfMissing = true)
 public class FileSystemImageStorage implements ImageStorageStrategy {
 
     private final ImageValidationStrategy imageValidationStrategy;
