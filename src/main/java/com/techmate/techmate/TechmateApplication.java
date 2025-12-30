@@ -14,13 +14,14 @@ import java.util.List;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {
-    "com.techmate.techmate.hexagonal"
+		"com.techmate.techmate.hexagonal"
 })
 @EnableConfigurationProperties(AppProperties.class)
 public class TechmateApplication {
 
 	public static void main(String[] args) {
-		// Cargar .env (si existe) antes de inicializar Spring para que variables como JWT_SECRET
+		// Cargar .env (si existe) antes de inicializar Spring para que variables como
+		// JWT_SECRET
 		// estén disponibles como System properties y puedan inyectarse con @Value.
 		loadDotEnv();
 
@@ -37,22 +38,26 @@ public class TechmateApplication {
 			List<String> lines = Files.readAllLines(envPath, StandardCharsets.UTF_8);
 			for (String raw : lines) {
 				String line = raw.trim();
-				if (line.isEmpty() || line.startsWith("#")) continue;
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
 
 				int idx = line.indexOf('=');
-				if (idx <= 0) continue;
+				if (idx <= 0)
+					continue;
 				String key = line.substring(0, idx).trim();
 				String value = line.substring(idx + 1).trim();
 
 				// Remove optional surrounding quotes
-				if ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'"))) {
+				if ((value.startsWith("\"") && value.endsWith("\""))
+						|| (value.startsWith("'") && value.endsWith("'"))) {
 					value = value.substring(1, value.length() - 1);
 				}
 
 				// No sobrescribir variables ya definidas en el sistema/entorno
 				String existingSysProp = System.getProperty(key);
 				String existingEnv = System.getenv(key);
-				if ((existingSysProp == null || existingSysProp.isBlank()) && (existingEnv == null || existingEnv.isBlank())) {
+				if ((existingSysProp == null || existingSysProp.isBlank())
+						&& (existingEnv == null || existingEnv.isBlank())) {
 					System.setProperty(key, value);
 					// también dejamos en el cerrr para debug durante desarrollo
 					System.out.println("[dotenv] cargado " + key + " desde .env");
@@ -64,5 +69,3 @@ public class TechmateApplication {
 	}
 
 }
-
-

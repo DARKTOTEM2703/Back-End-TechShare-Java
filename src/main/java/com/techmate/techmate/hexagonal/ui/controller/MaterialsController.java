@@ -35,14 +35,13 @@ public class MaterialsController {
     private final EmailService emailService;
     private final AppProperties appProperties;
 
-    public MaterialsController(MaterialManagementUseCase materialManagementUseCase, 
+    public MaterialsController(MaterialManagementUseCase materialManagementUseCase,
             EmailService emailService,
             AppProperties appProperties) {
         this.materialManagementUseCase = materialManagementUseCase;
         this.emailService = emailService;
         this.appProperties = appProperties;
     }
-
 
     @PostMapping("/create")
     public ResponseEntity<MaterialResponse> createMaterial(
@@ -131,10 +130,3 @@ public class MaterialsController {
         }
     }
 }
-
-
-
-
-
-
-
