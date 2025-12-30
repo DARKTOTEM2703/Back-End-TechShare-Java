@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.techmate.techmate.hexagonal.domain.entity.Usuario;
-import com.techmate.techmate.dto.AuthUserDTO;
+import com.techmate.techmate.hexagonal.infrastructure.dto.AuthUserDTO;
 
 import java.util.Optional;
 
@@ -74,4 +74,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     void enableUserById(@Param("userId") Integer userId);
 
 }
+
 

@@ -12,3 +12,4 @@ public interface UserRepositoryPort {
 
     Optional<Usuario> findByEmail(String email);
 }
+

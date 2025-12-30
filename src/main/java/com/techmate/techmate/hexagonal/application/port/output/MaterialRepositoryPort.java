@@ -13,3 +13,4 @@ public interface MaterialRepositoryPort {
 
     void delete(Long id);
 }
+

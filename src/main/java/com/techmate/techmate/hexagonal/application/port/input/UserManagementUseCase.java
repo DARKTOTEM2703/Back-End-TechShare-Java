@@ -1,8 +1,8 @@
 package com.techmate.techmate.hexagonal.application.port.input;
 
-import com.techmate.techmate.dto.RegisterRequest;
-import com.techmate.techmate.dto.AuthUserDTO;
-import com.techmate.techmate.dto.UsuarioDTO;
+import com.techmate.techmate.hexagonal.infrastructure.dto.RegisterRequest;
+import com.techmate.techmate.hexagonal.infrastructure.dto.AuthUserDTO;
+import com.techmate.techmate.hexagonal.infrastructure.dto.UsuarioDTO;
 
 public interface UserManagementUseCase {
     UsuarioDTO register(RegisterRequest request);
@@ -13,3 +13,4 @@ public interface UserManagementUseCase {
 
     UsuarioDTO updateUser(Long id, UsuarioDTO userDto);
 }
+

@@ -9,3 +9,4 @@ public interface ImageUploadUseCase {
 
     void deleteImage(String imageKey);
 }
+

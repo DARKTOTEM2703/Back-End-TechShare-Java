@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.techmate.techmate.dto.AuthUserDTO;
+import com.techmate.techmate.hexagonal.infrastructure.dto.AuthUserDTO;
 
 import java.util.List;
 
@@ -69,3 +69,4 @@ public class AuthenticationRepository {
         return jdbcTemplate.queryForList(sql, String.class, userId);
     }
 }
+

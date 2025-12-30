@@ -1,7 +1,7 @@
 package com.techmate.techmate.hexagonal.application.port.input;
 
-import com.techmate.techmate.dto.MaterialRequest;
-import com.techmate.techmate.dto.MaterialResponse;
+import com.techmate.techmate.hexagonal.infrastructure.dto.MaterialRequest;
+import com.techmate.techmate.hexagonal.infrastructure.dto.MaterialResponse;
 import java.util.List;
 
 public interface MaterialManagementUseCase {
@@ -15,3 +15,4 @@ public interface MaterialManagementUseCase {
 
     void deleteMaterial(Long id);
 }
+

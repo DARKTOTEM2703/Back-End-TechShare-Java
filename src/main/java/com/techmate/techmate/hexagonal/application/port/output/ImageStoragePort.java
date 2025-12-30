@@ -9,3 +9,4 @@ public interface ImageStoragePort {
 
     void delete(String fileName);
 }
+

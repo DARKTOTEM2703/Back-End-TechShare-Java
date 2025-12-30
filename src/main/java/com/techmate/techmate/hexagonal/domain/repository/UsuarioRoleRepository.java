@@ -29,3 +29,4 @@ public interface UsuarioRoleRepository extends JpaRepository<UsuarioRole, Intege
 
 
 
+
