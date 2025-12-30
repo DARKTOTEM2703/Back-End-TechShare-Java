@@ -3,17 +3,15 @@ package com.techmate.techmate.hexagonal.infrastructure.adapter.storage;
 import com.techmate.techmate.hexagonal.application.port.output.ImageStoragePort;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.http.HttpUtils;
-import io.minio.messages.DeleteError;
-import io.minio.messages.DeleteObject;
 import io.minio.RemoveObjectsArgs;
+import io.minio.messages.DeleteObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.UUID;
 
 @Component
 public class MinioImageStorageAdapter implements ImageStoragePort {
@@ -26,15 +24,17 @@ public class MinioImageStorageAdapter implements ImageStoragePort {
     }
 
     @Override
-    public String upload(String fileName, InputStream fileStream, String contentType) {
+    public String saveImage(MultipartFile file, String folderName) {
         try {
-            long size = fileStream.available();
+            String fileName = generateFileName(file.getOriginalFilename(), folderName);
+            long size = file.getSize();
+            
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
                             .object(fileName)
-                            .stream(fileStream, size, -1)
-                            .contentType(contentType)
+                            .stream(file.getInputStream(), size, -1)
+                            .contentType(file.getContentType())
                             .build());
             return fileName;
         } catch (Exception e) {
@@ -43,24 +43,10 @@ public class MinioImageStorageAdapter implements ImageStoragePort {
     }
 
     @Override
-    public String getPresignedUrl(String fileName) {
-        try {
-            return minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(io.minio.http.Method.GET)
-                            .bucket(bucketName)
-                            .object(fileName)
-                            .build());
-        } catch (Exception e) {
-            throw new RuntimeException("Error generating presigned URL: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void delete(String fileName) {
+    public void deleteImage(String imageUrl) {
         try {
             List<DeleteObject> deleteObjects = new LinkedList<>();
-            deleteObjects.add(new DeleteObject(fileName));
+            deleteObjects.add(new DeleteObject(imageUrl));
             minioClient.removeObjects(
                     RemoveObjectsArgs.builder()
                             .bucket(bucketName)
@@ -69,5 +55,12 @@ public class MinioImageStorageAdapter implements ImageStoragePort {
         } catch (Exception e) {
             throw new RuntimeException("Error deleting file from MinIO: " + e.getMessage(), e);
         }
+    }
+
+    private String generateFileName(String originalFileName, String folderName) {
+        String extension = (originalFileName != null && originalFileName.contains("."))
+                ? originalFileName.substring(originalFileName.lastIndexOf('.'))
+                : "";
+        return String.format("%s/%s%s", folderName, UUID.randomUUID(), extension);
     }
 }

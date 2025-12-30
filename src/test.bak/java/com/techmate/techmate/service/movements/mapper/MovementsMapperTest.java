@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.techmate.techmate.dto.MovementResponse;
 import com.techmate.techmate.dto.MovementsDTO;
-import com.techmate.techmate.entity.MoveType;
+import com.techmate.techmate.hexagonal.domain.entity.MoveType;
 
 public class MovementsMapperTest {
 
@@ -16,7 +16,7 @@ public class MovementsMapperTest {
     void toResponse_mapsAllFields() {
         MovementsDTO dto = new MovementsDTO();
         dto.setId(42);
-    dto.setMoveType(MoveType.STOCK_ADD);
+        dto.setMoveType(MoveType.STOCK_ADD);
         dto.setQuantity(5);
         Date now = new Date();
         dto.setDate(now);
@@ -40,4 +40,3 @@ public class MovementsMapperTest {
         assertEquals(dto.getMaterialsName(), resp.getMaterialsName());
     }
 }
-

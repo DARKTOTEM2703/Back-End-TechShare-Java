@@ -8,13 +8,9 @@ import java.util.Optional;
 
 import com.techmate.techmate.config.AppProperties;
 import com.techmate.techmate.dto.RegisterRequest;
-import com.techmate.techmate.entity.Usuario;
-import com.techmate.techmate.entity.VerificationToken;
-import com.techmate.techmate.repository.RoleRepository;
-import com.techmate.techmate.repository.UsuarioRepository;
-import com.techmate.techmate.repository.VerificationTokenRepository;
-import com.techmate.techmate.service.mapper.AuthMapper;
-import com.techmate.techmate.repository.UsuarioRoleRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario;
+import com.techmate.techmate.hexagonal.domain.entity.VerificationToken;com.techmate.techmate.hexagonal.domain.repository.RoleRepository;com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;com.techmate.techmate.hexagonal.domain.repository.VerificationTokenRepository;
+import com.techmate.techmate.service.mapper.AuthMapper;com.techmate.techmate.hexagonal.domain.repository.UsuarioRoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;

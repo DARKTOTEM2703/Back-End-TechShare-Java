@@ -8,12 +8,10 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import com.techmate.techmate.dto.MaterialsDTO;
-import com.techmate.techmate.entity.Materials;
-import com.techmate.techmate.entity.Role;
-import com.techmate.techmate.entity.RoleMaterials;
-import com.techmate.techmate.entity.SubCategories;
-import com.techmate.techmate.repository.RoleRepository;
-import com.techmate.techmate.repository.SubCategoriesRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Materials;
+import com.techmate.techmate.hexagonal.domain.entity.Role;
+import com.techmate.techmate.hexagonal.domain.entity.RoleMaterials;
+import com.techmate.techmate.hexagonal.domain.entity.SubCategories;com.techmate.techmate.hexagonal.domain.repository.RoleRepository;com.techmate.techmate.hexagonal.domain.repository.SubCategoriesRepository;
 import com.techmate.techmate.service.RoleService;
 import com.techmate.techmate.service.SubCategoriesService;
 

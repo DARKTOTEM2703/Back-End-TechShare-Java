@@ -3,9 +3,9 @@ package com.techmate.techmate.infra.mapper;
 import com.techmate.techmate.domain.model.material.Category;
 import com.techmate.techmate.domain.model.material.Material;
 import com.techmate.techmate.domain.model.material.SubCategory;
-import com.techmate.techmate.entity.Categories;
-import com.techmate.techmate.entity.Materials;
-import com.techmate.techmate.entity.SubCategories;
+import com.techmate.techmate.hexagonal.domain.entity.Categories;
+import com.techmate.techmate.hexagonal.domain.entity.Materials;
+import com.techmate.techmate.hexagonal.domain.entity.SubCategories;
 import org.springframework.stereotype.Component;
 
 /**
@@ -68,16 +68,15 @@ public class DomainMaterialMapper {
         }
 
         return Material.builder()
-            .id(entity.getId())
-            .name(entity.getName())
-            .description(entity.getDescription())
-            .price(entity.getPrice())
-            .stock(entity.getStock())
-            .borrowableStock(entity.getBorrowableStock())
-            .imagePath(entity.getImagePath())
-            .subCategoryId(entity.getSubCategory() != null ? 
-                entity.getSubCategory().getId() : null)
-            .build();
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .price(entity.getPrice())
+                .stock(entity.getStock())
+                .borrowableStock(entity.getBorrowableStock())
+                .imagePath(entity.getImagePath())
+                .subCategoryId(entity.getSubCategory() != null ? entity.getSubCategory().getId() : null)
+                .build();
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -108,10 +107,10 @@ public class DomainMaterialMapper {
         }
 
         return Category.builder()
-            .id(entity.getId())
-            .name(entity.getName())
-            .imagePath(entity.getImagePath())
-            .build();
+                .id(entity.getId())
+                .name(entity.getName())
+                .imagePath(entity.getImagePath())
+                .build();
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -150,11 +149,10 @@ public class DomainMaterialMapper {
         }
 
         return SubCategory.builder()
-            .id(entity.getId())
-            .name(entity.getName())
-            .imagePath(entity.getImagePath())
-            .categoryId(entity.getCategory() != null ? 
-                entity.getCategory().getId() : null)
-            .build();
+                .id(entity.getId())
+                .name(entity.getName())
+                .imagePath(entity.getImagePath())
+                .categoryId(entity.getCategory() != null ? entity.getCategory().getId() : null)
+                .build();
     }
 }

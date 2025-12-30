@@ -2,9 +2,9 @@ package com.techmate.techmate.infra.adapter.output.jpa;
 
 import com.techmate.techmate.domain.model.material.SubCategory;
 import com.techmate.techmate.domain.port.out.SubCategoryRepositoryPort;
-import com.techmate.techmate.entity.SubCategories;
+import com.techmate.techmate.hexagonal.domain.entity.SubCategories;
 import com.techmate.techmate.infra.mapper.DomainMaterialMapper;
-import com.techmate.techmate.repository.SubCategoriesRepository;
+import com.techmate.techmate.hexagonal.domain.repository.SubCategoriesRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

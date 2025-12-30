@@ -107,6 +107,28 @@ public interface MaterialsRepository extends JpaRepository<Materials, Integer>,
     @Query("SELECT m FROM Materials m WHERE m.stock < :threshold")
     List<Materials> findLowStock(@Param("threshold") int threshold);
 
+    /**
+     * Busca materiales por subcategoría
+     */
+    @EntityGraph(attributePaths = { "subCategory" })
+    List<Materials> findBySubCategoryId(Integer subCategoryId);
+
+    /**
+     * Busca materiales por nombre (case-insensitive)
+     */
+    List<Materials> findByNameContainingIgnoreCase(String name);
+
+    /**
+     * Busca materiales disponibles para préstamo
+     */
+    @Query("SELECT m FROM Materials m WHERE m.borrowableStock > :threshold")
+    List<Materials> findByBorrowableStockGreaterThan(@Param("threshold") int threshold);
+
+    /**
+     * Busca materiales por subcategoría con paginación
+     */
+    @EntityGraph(attributePaths = { "subCategory" })
+    Page<Materials> findBySubCategoryIdWithPagination(@Param("subCategoryId") Integer subCategoryId, Pageable pageable);
 }
 
 

@@ -1,7 +1,7 @@
 package com.techmate.techmate.service.impl;
 
 import com.techmate.techmate.dto.BorrowDTO;
-import com.techmate.techmate.entity.Status;
+import com.techmate.techmate.hexagonal.domain.entity.Status;
 import com.techmate.techmate.service.borrow.processor.BorrowStateProcessor;
 import com.techmate.techmate.service.borrow.query.BorrowQueryService;
 import org.junit.jupiter.api.BeforeEach;

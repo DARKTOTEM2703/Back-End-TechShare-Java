@@ -9,9 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.techmate.techmate.repository.MaterialsRepository;
-import com.techmate.techmate.repository.RoleRepository;
-import com.techmate.techmate.repository.SubCategoriesRepository;
+com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;com.techmate.techmate.hexagonal.domain.repository.RoleRepository;com.techmate.techmate.hexagonal.domain.repository.SubCategoriesRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class MaterialsValidatorTest {
@@ -31,7 +29,8 @@ public class MaterialsValidatorTest {
     @Test
     void validateUniqueName_whenExists_throws() {
         when(materialsRepository.findByName("X")).thenReturn(new com.techmate.techmate.entity.Materials());
-    assertThatThrownBy(() -> validator.validateUniqueName("X")).isInstanceOf(com.techmate.techmate.exception.ValidationException.class);
+        assertThatThrownBy(() -> validator.validateUniqueName("X"))
+                .isInstanceOf(com.techmate.techmate.exception.ValidationException.class);
     }
 
     @Test
@@ -45,14 +44,16 @@ public class MaterialsValidatorTest {
     void validateRolesExist_missing_throws() {
         when(roleRepository.findById(1)).thenReturn(java.util.Optional.empty());
         // now should throw NotFoundException
-    assertThatThrownBy(() -> validator.validateRolesExist(java.util.Arrays.asList(1))).isInstanceOf(com.techmate.techmate.exception.NotFoundException.class);
+        assertThatThrownBy(() -> validator.validateRolesExist(java.util.Arrays.asList(1)))
+                .isInstanceOf(com.techmate.techmate.exception.NotFoundException.class);
     }
 
     @Test
     void validateSubCategoryExists_missing_throws() {
         when(subCategoriesRepository.findById(2)).thenReturn(java.util.Optional.empty());
         // now should throw NotFoundException
-    assertThatThrownBy(() -> validator.validateSubCategoryExists(2)).isInstanceOf(com.techmate.techmate.exception.NotFoundException.class);
+        assertThatThrownBy(() -> validator.validateSubCategoryExists(2))
+                .isInstanceOf(com.techmate.techmate.exception.NotFoundException.class);
     }
 
     @Test
@@ -108,18 +109,18 @@ public class MaterialsValidatorTest {
         when(materialsRepository.findByName("Laptop")).thenReturn(null);
         when(materialsRepository.findByName("Monitor")).thenReturn(null);
         when(materialsRepository.findByName("Mouse")).thenReturn(null);
-        
+
         validator.validateUniqueName("Laptop");
         validator.validateUniqueName("Monitor");
         validator.validateUniqueName("Mouse");
-        
+
         verify(materialsRepository, times(3)).findByName(anyString());
     }
 
     @Test
     void validateRolesExist_withMultipleRoles_firstInvalid_throws() {
         when(roleRepository.findById(999)).thenReturn(java.util.Optional.empty());
-        
+
         assertThatThrownBy(() -> validator.validateRolesExist(java.util.Arrays.asList(999, 1, 2)))
                 .isInstanceOf(com.techmate.techmate.exception.NotFoundException.class);
     }
@@ -127,7 +128,7 @@ public class MaterialsValidatorTest {
     @Test
     void validateSubCategoryExists_withNegativeId_throws() {
         when(subCategoriesRepository.findById(-1)).thenReturn(java.util.Optional.empty());
-        
+
         assertThatThrownBy(() -> validator.validateSubCategoryExists(-1))
                 .isInstanceOf(com.techmate.techmate.exception.NotFoundException.class);
     }
@@ -135,7 +136,7 @@ public class MaterialsValidatorTest {
     @Test
     void validateSubCategoryExists_withZeroId_throws() {
         when(subCategoriesRepository.findById(0)).thenReturn(java.util.Optional.empty());
-        
+
         assertThatThrownBy(() -> validator.validateSubCategoryExists(0))
                 .isInstanceOf(com.techmate.techmate.exception.NotFoundException.class);
     }
@@ -144,14 +145,13 @@ public class MaterialsValidatorTest {
     void validateRolesExist_withLargeIdList_ok() {
         com.techmate.techmate.entity.Role role = new com.techmate.techmate.entity.Role();
         java.util.List<Integer> roleIds = java.util.Arrays.asList(1, 2, 3, 4, 5, 10, 50, 100);
-        
+
         for (Integer id : roleIds) {
             when(roleRepository.findById(id)).thenReturn(java.util.Optional.of(role));
         }
-        
+
         validator.validateRolesExist(roleIds);
-        
+
         verify(roleRepository, times(8)).findById(anyInt());
     }
 }
-

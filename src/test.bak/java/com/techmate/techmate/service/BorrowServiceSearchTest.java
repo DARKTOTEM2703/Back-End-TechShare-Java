@@ -12,10 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.techmate.techmate.entity.Borrow;
+import com.techmate.techmate.hexagonal.domain.entity.Borrow;
 import java.math.BigDecimal;
-import com.techmate.techmate.entity.Status;
-import com.techmate.techmate.repository.BorrowRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Status;com.techmate.techmate.hexagonal.domain.repository.BorrowRepository;
 
 /**
  * Tests para BorrowService - Búsquedas y queries

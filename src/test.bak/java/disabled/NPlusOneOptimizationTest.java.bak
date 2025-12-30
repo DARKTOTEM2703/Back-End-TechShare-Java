@@ -1,6 +1,6 @@
 package com.techmate.techmate.repository;
 
-import com.techmate.techmate.entity.*;
+import com.techmate.techmate.hexagonal.domain.entity.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.BeforeEach;

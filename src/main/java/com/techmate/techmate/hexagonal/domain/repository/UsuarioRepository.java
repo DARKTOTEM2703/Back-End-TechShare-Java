@@ -1,5 +1,6 @@
 package com.techmate.techmate.hexagonal.domain.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 import com.techmate.techmate.hexagonal.infrastructure.dto.AuthUserDTO;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,6 +34,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findById(@NonNull Integer id);
 
     Optional<Usuario> getUsuarioUsernamById(int usernameId);
+
+    /**
+     * Busca usuario por username
+     */
+    Optional<Usuario> findByUsername(String username);
 
     /**
      * Login optimizado con query nativa para evitar ConcurrentModificationException.
@@ -67,12 +74,45 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     Optional<Usuario> findByEmail(String email);
 
+    /**
+     * Busca todos los usuarios habilitados
+     */
+    List<Usuario> findByIsEnabledTrue();
+
+    /**
+     * Busca todos los usuarios deshabilitados
+     */
+    List<Usuario> findByIsEnabledFalse();
+
+    /**
+     * Busca usuarios por nombre de rol
+     */
+    @Query("SELECT u FROM Usuario u JOIN u.roles r WHERE r.name = :roleName")
+    List<Usuario> findByRoleNames(@Param("roleName") String roleName);
+
+    /**
+     * Verifica si existe usuario por username
+     */
+    boolean existsByUsername(String username);
+
+    /**
+     * Verifica si existe usuario por email
+     */
+    boolean existsByEmail(String email);
+
     // Query nativa para activar usuario sin cargar relaciones complejas
     @Modifying
     @Transactional
     @Query(value = "UPDATE users SET is_enabled = TRUE WHERE id = :userId", nativeQuery = true)
     void enableUserById(@Param("userId") Integer userId);
 
+    /**
+     * Actualiza el último tiempo de login
+     */
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE users SET last_login = NOW() WHERE id = :userId", nativeQuery = true)
+    void updateLastLoginTime(@Param("userId") Integer userId);
 }
 
 

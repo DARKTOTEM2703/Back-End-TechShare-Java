@@ -2,7 +2,7 @@ package com.techmate.techmate.service.borrow.validator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.techmate.techmate.entity.Status;
+import com.techmate.techmate.hexagonal.domain.entity.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,8 +35,7 @@ class BorrowStateValidatorTest {
     void validateStateTransition_FromReturnedToAnything_Invalid() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> borrowStateValidator.validateStateTransition(Status.RETURNED, Status.BORROWED)
-        );
+                () -> borrowStateValidator.validateStateTransition(Status.RETURNED, Status.BORROWED));
         assertTrue(exception.getMessage().contains("No se puede cambiar"));
     }
 
@@ -44,8 +43,7 @@ class BorrowStateValidatorTest {
     void validateStateTransition_FromRejectedToAnything_Invalid() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> borrowStateValidator.validateStateTransition(Status.REJECTED, Status.BORROWED)
-        );
+                () -> borrowStateValidator.validateStateTransition(Status.REJECTED, Status.BORROWED));
         assertTrue(exception.getMessage().contains("No se puede cambiar"));
     }
 
@@ -59,8 +57,7 @@ class BorrowStateValidatorTest {
     void validateStateTransition_FromPendingToReturned_Invalid() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> borrowStateValidator.validateStateTransition(Status.PENDING, Status.RETURNED)
-        );
+                () -> borrowStateValidator.validateStateTransition(Status.PENDING, Status.RETURNED));
         assertNotNull(exception.getMessage());
     }
 
@@ -82,8 +79,7 @@ class BorrowStateValidatorTest {
         // Cannot go directly from PENDING to RETURNED
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> borrowStateValidator.validateStateTransition(Status.PENDING, Status.RETURNED)
-        );
+                () -> borrowStateValidator.validateStateTransition(Status.PENDING, Status.RETURNED));
         assertNotNull(exception.getMessage());
     }
 
@@ -91,27 +87,25 @@ class BorrowStateValidatorTest {
     void validateStateTransition_FromBorrowedToRejected_Invalid() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> borrowStateValidator.validateStateTransition(Status.BORROWED, Status.REJECTED)
-        );
+                () -> borrowStateValidator.validateStateTransition(Status.BORROWED, Status.REJECTED));
         assertNotNull(exception.getMessage());
     }
 
     @Test
     void validateStateTransition_MultipleInvalidTransitions() {
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.RETURNED, Status.BORROWED));
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.REJECTED, Status.BORROWED));
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.PENDING, Status.RETURNED));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.RETURNED, Status.BORROWED));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.REJECTED, Status.BORROWED));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.PENDING, Status.RETURNED));
     }
 
     @Test
     void validateStateTransition_WithNullFromStatus_Invalid() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> borrowStateValidator.validateStateTransition(null, Status.BORROWED)
-        );
+                () -> borrowStateValidator.validateStateTransition(null, Status.BORROWED));
         assertTrue(exception.getMessage().contains("nulos"));
     }
 
@@ -119,8 +113,7 @@ class BorrowStateValidatorTest {
     void validateStateTransition_WithNullToStatus_Invalid() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> borrowStateValidator.validateStateTransition(Status.PENDING, null)
-        );
+                () -> borrowStateValidator.validateStateTransition(Status.PENDING, null));
         assertTrue(exception.getMessage().contains("nulos"));
     }
 
@@ -128,8 +121,7 @@ class BorrowStateValidatorTest {
     void validateStateTransition_WithBothNullStatus_Invalid() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> borrowStateValidator.validateStateTransition(null, null)
-        );
+                () -> borrowStateValidator.validateStateTransition(null, null));
         assertTrue(exception.getMessage().contains("nulos"));
     }
 
@@ -144,19 +136,19 @@ class BorrowStateValidatorTest {
     @Test
     void validateStateTransition_AllInvalidTransitions() {
         // Terminal states cannot transition
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.RETURNED, Status.PENDING));
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.RETURNED, Status.BORROWED));
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.RETURNED, Status.REJECTED));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.RETURNED, Status.PENDING));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.RETURNED, Status.BORROWED));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.RETURNED, Status.REJECTED));
 
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.REJECTED, Status.PENDING));
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.REJECTED, Status.BORROWED));
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.REJECTED, Status.RETURNED));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.REJECTED, Status.PENDING));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.REJECTED, Status.BORROWED));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.REJECTED, Status.RETURNED));
     }
 
     @Test
@@ -170,7 +162,7 @@ class BorrowStateValidatorTest {
     @Test
     void validateStateTransition_EdgeCaseAllStatusCombinations() {
         Status[] allStatuses = Status.values();
-        
+
         for (Status from : allStatuses) {
             for (Status to : allStatuses) {
                 if (from == Status.PENDING && (to == Status.BORROWED || to == Status.REJECTED)) {
@@ -184,12 +176,12 @@ class BorrowStateValidatorTest {
                     assertTrue(borrowStateValidator.validateStateTransition(from, to));
                 } else if (from == Status.RETURNED || from == Status.REJECTED) {
                     // Terminal states cannot transition
-                    assertThrows(IllegalArgumentException.class, () -> 
-                        borrowStateValidator.validateStateTransition(from, to));
+                    assertThrows(IllegalArgumentException.class,
+                            () -> borrowStateValidator.validateStateTransition(from, to));
                 } else {
                     // Other invalid transitions
-                    assertThrows(IllegalArgumentException.class, () -> 
-                        borrowStateValidator.validateStateTransition(from, to));
+                    assertThrows(IllegalArgumentException.class,
+                            () -> borrowStateValidator.validateStateTransition(from, to));
                 }
             }
         }
@@ -212,8 +204,7 @@ class BorrowStateValidatorTest {
     void validateStateTransition_FromPendingToRejected_ThenAttemptTransition() {
         assertTrue(borrowStateValidator.validateStateTransition(Status.PENDING, Status.REJECTED));
         // After rejection, no further transitions
-        assertThrows(IllegalArgumentException.class, () -> 
-            borrowStateValidator.validateStateTransition(Status.REJECTED, Status.BORROWED));
+        assertThrows(IllegalArgumentException.class,
+                () -> borrowStateValidator.validateStateTransition(Status.REJECTED, Status.BORROWED));
     }
 }
-

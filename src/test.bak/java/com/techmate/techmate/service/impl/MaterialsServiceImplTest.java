@@ -1,10 +1,9 @@
 package com.techmate.techmate.service.impl;
 
 import com.techmate.techmate.dto.MaterialsDTO;
-import com.techmate.techmate.entity.Materials;
+import com.techmate.techmate.hexagonal.domain.entity.Materials;
 import com.techmate.techmate.service.materials.manager.MaterialsManager;
-import com.techmate.techmate.service.materials.query.MaterialsQueryService;
-import com.techmate.techmate.repository.MaterialsRepository;
+import com.techmate.techmate.service.materials.query.MaterialsQueryService;com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

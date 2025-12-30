@@ -4,9 +4,9 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-import com.techmate.techmate.entity.Movements;
-import com.techmate.techmate.entity.Materials;
-import com.techmate.techmate.entity.Usuario;
+import com.techmate.techmate.hexagonal.domain.entity.Movements;
+import com.techmate.techmate.hexagonal.domain.entity.Materials;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 import com.techmate.techmate.hexagonal.domain.model.movement.Movement;
 import com.techmate.techmate.hexagonal.domain.model.movement.MoveType;
 import com.techmate.techmate.hexagonal.domain.port.input.MovementManagementUseCase;
@@ -129,7 +129,7 @@ public class DomainMovementMapper {
     /**
      * Convert JPA MoveType enum to domain MoveType enum
      */
-    private MoveType convertJpaMoveType(com.techmate.techmate.entity.MoveType jpaMoveType) {
+    private MoveType convertJpaMoveType(com.techmate.techmate.hexagonal.domain.entity.MoveType jpaMoveType) {
         if (jpaMoveType == null) {
             return null;
         }
@@ -151,20 +151,20 @@ public class DomainMovementMapper {
     /**
      * Convert domain MoveType enum to JPA MoveType enum
      */
-    private com.techmate.techmate.entity.MoveType convertDomainMoveType(MoveType domainMoveType) {
+    private com.techmate.techmate.hexagonal.domain.entity.MoveType convertDomainMoveType(MoveType domainMoveType) {
         if (domainMoveType == null) {
             return null;
         }
 
         switch (domainMoveType) {
             case BORROW:
-                return com.techmate.techmate.entity.MoveType.BORROW;
+                return com.techmate.techmate.hexagonal.domain.entity.MoveType.BORROW;
             case RETURN:
-                return com.techmate.techmate.entity.MoveType.RETURN;
+                return com.techmate.techmate.hexagonal.domain.entity.MoveType.RETURN;
             case STOCK_ADD:
-                return com.techmate.techmate.entity.MoveType.STOCK_ADD;
+                return com.techmate.techmate.hexagonal.domain.entity.MoveType.STOCK_ADD;
             case ADJUSTMENT:
-                return com.techmate.techmate.entity.MoveType.ADJUSTMENT;
+                return com.techmate.techmate.hexagonal.domain.entity.MoveType.ADJUSTMENT;
             default:
                 return null;
         }

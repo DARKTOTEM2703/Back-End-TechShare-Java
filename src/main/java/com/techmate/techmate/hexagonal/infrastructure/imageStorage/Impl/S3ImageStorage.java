@@ -1,7 +1,8 @@
 package com.techmate.techmate.hexagonal.infrastructure.imageStorage.Impl;
 
-import com.techmate.techmate.hexagonal.infrastructure.imageStorage.ImageStorageStrategy;
+import com.techmate.techmate.hexagonal.application.port.output.ImageStoragePort;
 import com.techmate.techmate.hexagonal.infrastructure.validation.ImageValidationStrategy;
+import com.techmate.techmate.hexagonal.application.exception.ImageStorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,7 +32,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 @ConditionalOnProperty(name = "app.storage.type", havingValue = "minio", matchIfMissing = false)
-public class S3ImageStorage implements ImageStorageStrategy {
+public class S3ImageStorage implements ImageStoragePort {
 
     private final S3Client s3Client;
     private final ImageValidationStrategy imageValidationStrategy;
@@ -67,10 +68,6 @@ public class S3ImageStorage implements ImageStorageStrategy {
     }
 
     @Override
-    public String saveImage(MultipartFile image) {
-        return saveImage(image, "general");
-    }
-
     public String saveImage(MultipartFile image, String directory) {
         if (image == null || image.isEmpty()) {
             return null;
@@ -95,11 +92,10 @@ public class S3ImageStorage implements ImageStorageStrategy {
 
         } catch (IOException | S3Exception e) {
             log.error("❌ Error subiendo archivo a S3/MinIO: {}", e.getMessage());
-            throw new RuntimeException("Error almacenando imagen: " + e.getMessage(), e);
+            throw new ImageStorageException("Error almacenando imagen: " + e.getMessage(), e);
         }
     }
 
-    @Override
     public byte[] getImage(String filename) {
         String key = extractKeyFromUrl(filename);
 
@@ -109,7 +105,7 @@ public class S3ImageStorage implements ImageStorageStrategy {
                     .key(key)
                     .build()).readAllBytes();
         } catch (IOException | S3Exception e) {
-            throw new RuntimeException("No se pudo recuperar la imagen: " + filename, e);
+            throw new ImageStorageException("No se pudo recuperar la imagen: " + filename, e);
         }
     }
 
@@ -124,6 +120,7 @@ public class S3ImageStorage implements ImageStorageStrategy {
             log.info("✅ Imagen eliminada: {}", key);
         } catch (S3Exception e) {
             log.warn("⚠️ No se pudo borrar imagen: {}", key);
+            throw new ImageStorageException("No se pudo borrar imagen: " + key, e);
         }
     }
 

@@ -3,8 +3,7 @@ package com.techmate.techmate.service.role.validator;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.techmate.techmate.entity.Role;
-import com.techmate.techmate.repository.RoleRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Role;com.techmate.techmate.hexagonal.domain.repository.RoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -39,8 +38,7 @@ class RoleValidatorTest {
 
         RuntimeException exception = assertThrows(
                 RuntimeException.class,
-                () -> roleValidator.validateUniqueName("EXISTING_ROLE")
-        );
+                () -> roleValidator.validateUniqueName("EXISTING_ROLE"));
         assertTrue(exception.getMessage().contains("Ya existe un rol"));
     }
 
@@ -90,8 +88,7 @@ class RoleValidatorTest {
         // Assuming repository is case-sensitive
         RuntimeException exception = assertThrows(
                 RuntimeException.class,
-                () -> roleValidator.validateUniqueName("ADMIN")
-        );
+                () -> roleValidator.validateUniqueName("ADMIN"));
         assertNotNull(exception.getMessage());
     }
 
@@ -109,8 +106,7 @@ class RoleValidatorTest {
 
         RuntimeException exception = assertThrows(
                 RuntimeException.class,
-                () -> roleValidator.validateUniqueName("DUPLICATE_ROLE")
-        );
+                () -> roleValidator.validateUniqueName("DUPLICATE_ROLE"));
         assertTrue(exception.getMessage().contains("DUPLICATE_ROLE"));
     }
 
@@ -173,8 +169,7 @@ class RoleValidatorTest {
 
         Exception exception = assertThrows(
                 RuntimeException.class,
-                () -> roleValidator.validateUniqueName("DUPLICATE")
-        );
+                () -> roleValidator.validateUniqueName("DUPLICATE"));
         assertTrue(exception instanceof RuntimeException);
     }
 
@@ -192,15 +187,12 @@ class RoleValidatorTest {
 
         RuntimeException exception1 = assertThrows(
                 RuntimeException.class,
-                () -> roleValidator.validateUniqueName("ROLE")
-        );
+                () -> roleValidator.validateUniqueName("ROLE"));
         RuntimeException exception2 = assertThrows(
                 RuntimeException.class,
-                () -> roleValidator.validateUniqueName("ROLE")
-        );
+                () -> roleValidator.validateUniqueName("ROLE"));
 
         assertTrue(exception1.getMessage().contains("Ya existe"));
         assertTrue(exception2.getMessage().contains("Ya existe"));
     }
 }
-

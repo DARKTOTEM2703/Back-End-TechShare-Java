@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.techmate.techmate.hexagonal.domain.model.user.Role;
 import com.techmate.techmate.hexagonal.domain.port.out.RoleRepositoryPort;
 import com.techmate.techmate.hexagonal.infra.mapper.DomainUserMapper;
-import com.techmate.techmate.repository.RoleRepository;
+import com.techmate.techmate.hexagonal.domain.repository.RoleRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,8 +77,8 @@ public class JpaRoleRepositoryAdapter implements RoleRepositoryPort {
     @Transactional
     public Role save(Role role) {
         logger.debug("Saving role: {}", role.getName());
-        com.techmate.techmate.entity.Role roleEntity = roleMapper.roleToEntity(role);
-        com.techmate.techmate.entity.Role savedEntity = roleRepository.save(roleEntity);
+        com.techmate.techmate.hexagonal.domain.entity.Role roleEntity = roleMapper.roleToEntity(role);
+        com.techmate.techmate.hexagonal.domain.entity.Role savedEntity = roleRepository.save(roleEntity);
         return roleMapper.roleToDomain(savedEntity);
     }
 

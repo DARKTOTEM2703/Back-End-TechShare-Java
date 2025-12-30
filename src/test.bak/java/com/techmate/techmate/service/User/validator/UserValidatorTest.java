@@ -3,8 +3,7 @@ package com.techmate.techmate.service.User.validator;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.techmate.techmate.entity.Role;
-import com.techmate.techmate.repository.RoleRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Role;com.techmate.techmate.hexagonal.domain.repository.RoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -58,8 +57,7 @@ class UserValidatorTest {
         Set<String> roles = new HashSet<>(Collections.singletonList("NONEXISTENT"));
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> userValidator.validateRolesExist(roles)
-        );
+                () -> userValidator.validateRolesExist(roles));
         assertTrue(exception.getMessage().contains("Rol no encontrado"));
     }
 
@@ -72,8 +70,7 @@ class UserValidatorTest {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "INVALID"));
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> userValidator.validateRolesExist(roles)
-        );
+                () -> userValidator.validateRolesExist(roles));
         assertTrue(exception.getMessage().contains("INVALID"));
     }
 
@@ -167,8 +164,7 @@ class UserValidatorTest {
         Set<String> roles = new HashSet<>(Collections.singletonList("MISSING_ROLE"));
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> userValidator.validateRolesExist(roles)
-        );
+                () -> userValidator.validateRolesExist(roles));
         assertTrue(exception.getMessage().contains("MISSING_ROLE"));
     }
 
@@ -235,4 +231,3 @@ class UserValidatorTest {
         assertDoesNotThrow(() -> userValidator.validateRolesExist(roles));
     }
 }
-

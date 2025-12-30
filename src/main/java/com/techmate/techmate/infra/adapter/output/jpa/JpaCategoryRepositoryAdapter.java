@@ -2,9 +2,9 @@ package com.techmate.techmate.infra.adapter.output.jpa;
 
 import com.techmate.techmate.domain.model.material.Category;
 import com.techmate.techmate.domain.port.out.CategoryRepositoryPort;
-import com.techmate.techmate.entity.Categories;
+import com.techmate.techmate.hexagonal.domain.entity.Categories;
 import com.techmate.techmate.infra.mapper.DomainMaterialMapper;
-import com.techmate.techmate.repository.CategoriesRepository;
+import com.techmate.techmate.hexagonal.domain.repository.CategoriesRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -54,8 +54,8 @@ public class JpaCategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     @Override
     public Optional<Category> findByName(String name) {
-        return jpaRepository.findByName(name)
-            .map(mapper::toDomain);
+        Categories entity = jpaRepository.findByName(name);
+        return entity != null ? Optional.of(mapper.toDomain(entity)) : Optional.empty();
     }
 
     @Override
@@ -70,6 +70,6 @@ public class JpaCategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     @Override
     public boolean existsByName(String name) {
-        return jpaRepository.existsByName(name);
+        return jpaRepository.findByName(name) != null;
     }
 }

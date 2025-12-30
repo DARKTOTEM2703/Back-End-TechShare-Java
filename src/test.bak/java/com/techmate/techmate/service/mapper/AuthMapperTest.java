@@ -2,7 +2,7 @@ package com.techmate.techmate.service.mapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 import com.techmate.techmate.dto.RegisterRequest;
-import com.techmate.techmate.entity.Usuario;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 import org.junit.jupiter.api.Test;
 
 class AuthMapperTest {
@@ -27,4 +27,3 @@ class AuthMapperTest {
         assertEquals("secret", u.getPassword());
     }
 }
-

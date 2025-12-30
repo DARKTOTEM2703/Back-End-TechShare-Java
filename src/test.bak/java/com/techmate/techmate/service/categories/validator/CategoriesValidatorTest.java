@@ -3,8 +3,7 @@ package com.techmate.techmate.service.categories.validator;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.techmate.techmate.entity.Categories;
-import com.techmate.techmate.repository.CategoriesRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Categories;com.techmate.techmate.hexagonal.domain.repository.CategoriesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,11 +33,10 @@ class CategoriesValidatorTest {
     void validateUniqueName_WithDuplicateName_ThrowsIllegalArgumentException() {
         Categories existingCategory = new Categories();
         when(categoriesRepository.findByName("Electronics")).thenReturn(existingCategory);
-        
+
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> categoriesValidator.validateUniqueName("Electronics")
-        );
+                () -> categoriesValidator.validateUniqueName("Electronics"));
         assertTrue(exception.getMessage().contains("Ya existe una categoría"));
     }
 
@@ -78,11 +76,10 @@ class CategoriesValidatorTest {
     void validateUniqueName_WithDuplicateNameErrorMessageContainsName() {
         Categories existingCategory = new Categories();
         when(categoriesRepository.findByName("Laptops")).thenReturn(existingCategory);
-        
+
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> categoriesValidator.validateUniqueName("Laptops")
-        );
+                () -> categoriesValidator.validateUniqueName("Laptops"));
         assertTrue(exception.getMessage().contains("Laptops"));
     }
 
@@ -126,11 +123,11 @@ class CategoriesValidatorTest {
     @Test
     void validateUniqueName_MultipleCallsWithSameName() {
         when(categoriesRepository.findByName("Hardware")).thenReturn(null);
-        
+
         for (int i = 0; i < 5; i++) {
             assertDoesNotThrow(() -> categoriesValidator.validateUniqueName("Hardware"));
         }
-        
+
         verify(categoriesRepository, times(5)).findByName("Hardware");
     }
 
@@ -138,12 +135,11 @@ class CategoriesValidatorTest {
     void validateUniqueName_DuplicateNameThrowsCorrectMessage() {
         Categories existing = new Categories();
         when(categoriesRepository.findByName("DuplicateName")).thenReturn(existing);
-        
+
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> categoriesValidator.validateUniqueName("DuplicateName")
-        );
-        
+                () -> categoriesValidator.validateUniqueName("DuplicateName"));
+
         assertEquals("Ya existe una categoría con el nombre: DuplicateName", exception.getMessage());
     }
 
@@ -151,18 +147,16 @@ class CategoriesValidatorTest {
     void validateUniqueName_FirstCallThrowsThenSecondCallSucceeds() {
         when(categoriesRepository.findByName("Category1")).thenReturn(new Categories());
         when(categoriesRepository.findByName("Category2")).thenReturn(null);
-        
-        assertThrows(IllegalArgumentException.class, () -> 
-            categoriesValidator.validateUniqueName("Category1"));
-        assertDoesNotThrow(() -> 
-            categoriesValidator.validateUniqueName("Category2"));
+
+        assertThrows(IllegalArgumentException.class, () -> categoriesValidator.validateUniqueName("Category1"));
+        assertDoesNotThrow(() -> categoriesValidator.validateUniqueName("Category2"));
     }
 
     @Test
     void validateUniqueName_EdgeCaseWhitespaceHandling() {
         when(categoriesRepository.findByName("\t")).thenReturn(null);
         when(categoriesRepository.findByName("\n")).thenReturn(null);
-        
+
         assertDoesNotThrow(() -> categoriesValidator.validateUniqueName("\t"));
         assertDoesNotThrow(() -> categoriesValidator.validateUniqueName("\n"));
     }
@@ -171,14 +165,12 @@ class CategoriesValidatorTest {
     void validateUniqueName_CaseInsensitivity() {
         Categories existing = new Categories();
         when(categoriesRepository.findByName("ELECTRONICS")).thenReturn(existing);
-        
+
         // This test assumes repository is case-insensitive
         // If it returns existing category for "ELECTRONICS", the validator throws
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> categoriesValidator.validateUniqueName("ELECTRONICS")
-        );
+                () -> categoriesValidator.validateUniqueName("ELECTRONICS"));
         assertNotNull(exception.getMessage());
     }
 }
-

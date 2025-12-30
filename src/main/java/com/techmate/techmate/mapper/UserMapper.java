@@ -1,10 +1,8 @@
 package com.techmate.techmate.mapper;
 
-import com.techmate.techmate.dto.UsuarioDTO;
-// FIXME: UserRegistrationDTO no existe - comentado temporalmente
-// import com.techmate.techmate.dto.UserRegistrationDTO;
-import com.techmate.techmate.entity.Usuario;
-import com.techmate.techmate.entity.Role;
+import com.techmate.techmate.hexagonal.infrastructure.dto.UsuarioDTO;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario;
+import com.techmate.techmate.hexagonal.domain.entity.Role;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -31,7 +29,7 @@ public interface UserMapper {
      * Maps Usuario entity to DTO, handling field name differences
      * Password is explicitly ignored for security
      */
-    @Mapping(target = "userName", source = "username") // Usuario.username -> UsuarioDTO.userName
+    @Mapping(target = "userName", source = "user_name") // Usuario.user_name -> UsuarioDTO.userName
     @Mapping(target = "firstName", source = "first_name")
     @Mapping(target = "lastName", source = "last_name")
     @Mapping(target = "profileImageUrl", source = "profile_image_url")
@@ -48,7 +46,7 @@ public interface UserMapper {
      * Password must be handled separately by service (encrypted)
      * Roles must be loaded by service from repository
      */
-    @Mapping(target = "username", source = "userName") // UsuarioDTO.userName -> Usuario.username
+    @Mapping(target = "user_name", source = "userName") // UsuarioDTO.userName -> Usuario.user_name
     @Mapping(target = "first_name", source = "firstName")
     @Mapping(target = "last_name", source = "lastName")
     @Mapping(target = "profile_image_url", source = "profileImageUrl")

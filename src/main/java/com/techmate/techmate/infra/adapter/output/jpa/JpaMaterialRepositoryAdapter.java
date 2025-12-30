@@ -2,9 +2,9 @@ package com.techmate.techmate.infra.adapter.output.jpa;
 
 import com.techmate.techmate.domain.model.material.Material;
 import com.techmate.techmate.domain.port.out.MaterialRepositoryPort;
-import com.techmate.techmate.entity.Materials;
+import com.techmate.techmate.hexagonal.domain.entity.Materials;
 import com.techmate.techmate.infra.mapper.DomainMaterialMapper;
-import com.techmate.techmate.repository.MaterialsRepository;
+import com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 

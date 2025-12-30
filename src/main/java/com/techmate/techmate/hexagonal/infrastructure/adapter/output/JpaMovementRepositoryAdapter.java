@@ -9,12 +9,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import com.techmate.techmate.entity.Movements;
-import com.techmate.techmate.entity.Materials;
-import com.techmate.techmate.entity.Usuario;
-import com.techmate.techmate.repository.MovementsRepository;
-import com.techmate.techmate.repository.MaterialsRepository;
-import com.techmate.techmate.repository.UsuarioRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Movements;
+import com.techmate.techmate.hexagonal.domain.entity.Materials;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario;
+import com.techmate.techmate.hexagonal.domain.repository.MovementsRepository;
+import com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
+import com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;
 import com.techmate.techmate.hexagonal.domain.model.movement.Movement;
 import com.techmate.techmate.hexagonal.domain.model.movement.MoveType;
 import com.techmate.techmate.hexagonal.domain.port.output.MovementRepositoryPort;
@@ -66,7 +66,7 @@ public class JpaMovementRepositoryAdapter implements MovementRepositoryPort {
 
     @Override
     public List<Movement> findByMoveType(MoveType moveType) {
-        com.techmate.techmate.entity.MoveType jpaMoveType = convertMoveType(moveType);
+        com.techmate.techmate.hexagonal.domain.entity.MoveType jpaMoveType = convertMoveType(moveType);
         return movementsRepository.findByMoveType(jpaMoveType).stream()
                 .map(movementMapper::toDomain)
                 .collect(Collectors.toList());
@@ -148,20 +148,20 @@ public class JpaMovementRepositoryAdapter implements MovementRepositoryPort {
     /**
      * Convert domain MoveType to JPA MoveType enum
      */
-    private com.techmate.techmate.entity.MoveType convertMoveType(MoveType domainType) {
+    private com.techmate.techmate.hexagonal.domain.entity.MoveType convertMoveType(MoveType domainType) {
         if (domainType == null) {
             return null;
         }
 
         switch (domainType) {
             case BORROW:
-                return com.techmate.techmate.entity.MoveType.BORROW;
+                return com.techmate.techmate.hexagonal.domain.entity.MoveType.BORROW;
             case RETURN:
-                return com.techmate.techmate.entity.MoveType.RETURN;
+                return com.techmate.techmate.hexagonal.domain.entity.MoveType.RETURN;
             case STOCK_ADD:
-                return com.techmate.techmate.entity.MoveType.STOCK_ADD;
+                return com.techmate.techmate.hexagonal.domain.entity.MoveType.STOCK_ADD;
             case ADJUSTMENT:
-                return com.techmate.techmate.entity.MoveType.ADJUSTMENT;
+                return com.techmate.techmate.hexagonal.domain.entity.MoveType.ADJUSTMENT;
             default:
                 return null;
         }

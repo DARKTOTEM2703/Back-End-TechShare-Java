@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.techmate.techmate.entity.Borrow;
+import com.techmate.techmate.hexagonal.domain.entity.Borrow;
 
 import java.util.List;
 

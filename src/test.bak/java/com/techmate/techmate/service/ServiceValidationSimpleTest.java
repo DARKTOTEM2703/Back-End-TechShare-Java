@@ -12,9 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.techmate.techmate.entity.Role;
-import com.techmate.techmate.entity.Usuario;
-import com.techmate.techmate.repository.UsuarioRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Role;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario;com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;
 
 /**
  * Tests simples de validación para diferentes servicios

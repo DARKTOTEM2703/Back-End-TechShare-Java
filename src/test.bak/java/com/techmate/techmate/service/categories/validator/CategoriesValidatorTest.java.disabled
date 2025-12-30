@@ -3,8 +3,8 @@ package com.techmate.techmate.service.categories.validator;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.techmate.techmate.entity.Categories;
-import com.techmate.techmate.repository.CategoriesRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Categories;
+com.techmate.techmate.hexagonal.domain.repository.CategoriesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

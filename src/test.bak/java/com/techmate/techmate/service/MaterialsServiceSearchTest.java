@@ -12,8 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.techmate.techmate.entity.Materials;
-import com.techmate.techmate.repository.MaterialsRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Materials;com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
 
 /**
  * Tests para MaterialsService - Búsquedas y filtros

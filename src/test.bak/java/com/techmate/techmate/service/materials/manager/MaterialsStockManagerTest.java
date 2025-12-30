@@ -4,8 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-import com.techmate.techmate.entity.Materials;
-import com.techmate.techmate.repository.MaterialsRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Materials;com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

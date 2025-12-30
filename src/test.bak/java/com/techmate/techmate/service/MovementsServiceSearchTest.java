@@ -12,8 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.techmate.techmate.entity.Movements;
-import com.techmate.techmate.repository.MovementsRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Movements;com.techmate.techmate.hexagonal.domain.repository.MovementsRepository;
 
 /**
  * Tests para MovementsService - Búsquedas y tracking

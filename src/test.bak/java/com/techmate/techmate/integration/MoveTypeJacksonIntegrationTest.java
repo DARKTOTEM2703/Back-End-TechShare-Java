@@ -1,7 +1,7 @@
 package com.techmate.techmate.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techmate.techmate.entity.MoveType;
+import com.techmate.techmate.hexagonal.domain.entity.MoveType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,17 +1,9 @@
 package com.techmate.techmate.hexagonal.application.port.output;
 
-import java.io.InputStream;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageStoragePort {
-    String upload(String fileName, InputStream fileStream, String contentType);
+    String saveImage(MultipartFile file, String folderName);
 
-    String getPresignedUrl(String fileName);
-
-    void delete(String fileName);
+    void deleteImage(String imageUrl);
 }
-
-
-
-
-
-

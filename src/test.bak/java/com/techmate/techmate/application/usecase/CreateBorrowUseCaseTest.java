@@ -8,7 +8,7 @@ import com.techmate.techmate.domain.port.out.DetailsBorrowRepositoryPort;
 import com.techmate.techmate.domain.port.out.MaterialsRepositoryPort;
 import com.techmate.techmate.dto.BorrowDTO;
 import com.techmate.techmate.dto.DetailsBorrowDTO;
-import com.techmate.techmate.entity.Status;
+import com.techmate.techmate.hexagonal.domain.entity.Status;
 import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

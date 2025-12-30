@@ -2,7 +2,7 @@ package com.techmate.techmate.application.usecase;
 
 import com.techmate.techmate.domain.model.Borrow;
 import com.techmate.techmate.domain.port.out.BorrowRepositoryPort;
-import com.techmate.techmate.entity.Status;
+import com.techmate.techmate.hexagonal.domain.entity.Status;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

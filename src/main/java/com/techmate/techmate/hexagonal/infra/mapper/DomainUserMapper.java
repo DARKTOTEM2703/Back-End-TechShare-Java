@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import com.techmate.techmate.hexagonal.domain.model.user.User;
 import com.techmate.techmate.hexagonal.domain.model.user.Role;
-import com.techmate.techmate.entity.Usuario;
-import com.techmate.techmate.entity.Usuario.Gender;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario.Gender;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -39,7 +39,7 @@ public class DomainUserMapper {
 
         Usuario entity = new Usuario();
         entity.setId(user.getId());
-        entity.setUsername(user.getUsername());  // Column 'username' -> field 'username'
+        entity.setUser_name(user.getUsername());  // Column 'username' -> field 'user_name'
         entity.setFirst_name(user.getFirstName());
         entity.setLast_name(user.getLastName());
         entity.setEmail(user.getEmail());
@@ -72,11 +72,11 @@ public class DomainUserMapper {
             return null;
         }
 
-        logger.debug("Mapping JPA Usuario to domain User: {}", entity.getUsername());
+        logger.debug("Mapping JPA Usuario to domain User: {}", entity.getUser_name());
 
         return User.builder()
                 .id(entity.getId())
-                .username(entity.getUsername())  // Field 'username' -> 'username'
+                .username(entity.getUser_name())  // Field 'user_name' -> 'username'
                 .firstName(entity.getFirst_name())
                 .lastName(entity.getLast_name())
                 .email(entity.getEmail())
@@ -94,14 +94,14 @@ public class DomainUserMapper {
     /**
      * Converts domain Role to JPA Role entity.
      */
-    public com.techmate.techmate.entity.Role roleToEntity(Role role) {
+    public com.techmate.techmate.hexagonal.domain.entity.Role roleToEntity(Role role) {
         if (role == null) {
             return null;
         }
 
         logger.debug("Mapping domain Role to JPA Role: {}", role.getName());
 
-        com.techmate.techmate.entity.Role entity = new com.techmate.techmate.entity.Role();
+        com.techmate.techmate.hexagonal.domain.entity.Role entity = new com.techmate.techmate.hexagonal.domain.entity.Role();
         entity.setId(role.getId());
         entity.setName(role.getName());
         
@@ -111,7 +111,7 @@ public class DomainUserMapper {
     /**
      * Converts JPA Role entity to domain Role.
      */
-    public Role roleToDomain(com.techmate.techmate.entity.Role entity) {
+    public Role roleToDomain(com.techmate.techmate.hexagonal.domain.entity.Role entity) {
         if (entity == null) {
             return null;
         }

@@ -1,90 +1,75 @@
 package com.techmate.techmate.hexagonal.infra.adapter.output.security;
 
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.techmate.techmate.hexagonal.domain.port.out.TokenGeneratorPort;
-import com.techmate.techmate.security.TokenUtils;
-import com.techmate.techmate.service.TokenService;
-
+import com.techmate.techmate.hexagonal.infrastructure.security.TokenUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * JWT token generator adapter using existing TokenUtils and TokenService.
- * 
- * Implements TokenGeneratorPort to provide JWT token generation and validation.
- * Integrates with existing TokenUtils and TokenService infrastructure.
- */
 @Component
 public class JwtTokenGeneratorAdapter implements TokenGeneratorPort {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtTokenGeneratorAdapter.class);
+    private final TokenUtils tokenUtils;
 
-    private final TokenService tokenService;
-
-    public JwtTokenGeneratorAdapter(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public JwtTokenGeneratorAdapter(TokenUtils tokenUtils) {
+        this.tokenUtils = tokenUtils;
     }
 
     @Override
     public String generateToken(Integer userId, String username, String email, List<String> roles) {
-        logger.debug("Generating JWT token for user: {} ({})", username, userId);
-        
-        if (userId == null || username == null || email == null) {
-            throw new IllegalArgumentException("User ID, username, and email cannot be null");
-        }
-        
-        // Convert String roles to Integer role IDs (using placeholder; adjust as needed)
-        List<Integer> roleIds = roles != null ? roles.stream()
+        // Convertir roles de String a Integer si es necesario
+        List<Integer> roleIds = (roles != null && !roles.isEmpty()) ? 
+            roles.stream()
                 .map(role -> {
-                    // Simple mapping: ROLE_USER -> 1, ROLE_ADMIN -> 2, ROLE_MODERATOR -> 3
                     return switch (role.toUpperCase()) {
                         case "ADMIN" -> 2;
                         case "MODERATOR" -> 3;
                         default -> 1;  // Default to USER
                     };
                 })
-                .toList() : List.of();
+                .toList() : new ArrayList<>();
         
         return TokenUtils.createToken(userId, email, username, roles, roleIds);
     }
 
     @Override
     public Integer extractUserId(String token) {
-        logger.debug("Extracting user ID from token");
-        return tokenService.getUserIdFromToken(token);
+        return TokenUtils.getUserIdFromToken(token);
     }
 
     @Override
     public String extractUsername(String token) {
-        logger.debug("Extracting username from token");
-        return tokenService.getUserNameFromToken(token);
+        return TokenUtils.getUsernameFromToken(token);
     }
 
     @Override
     public List<String> extractRoles(String token) {
-        logger.debug("Extracting roles from token");
-        return tokenService.getRolesFromToken(token)
-                .map(roleIds -> roleIds.stream()
-                        .map(roleId -> switch (roleId) {
-                            case 2 -> "ADMIN";
-                            case 3 -> "MODERATOR";
-                            default -> "USER";
-                        })
-                        .toList())
-                .orElse(List.of());
+        var rolesOptional = TokenUtils.getRolesFromToken(token);
+        // Convertir Integer roles de vuelta a String
+        return rolesOptional.map(intRoles -> 
+            intRoles.stream()
+                .map(roleId -> switch (roleId) {
+                    case 2 -> "ADMIN";
+                    case 3 -> "MODERATOR";
+                    default -> "USER";
+                })
+                .toList()
+        ).orElse(new ArrayList<>());
     }
 
     @Override
     public boolean isValid(String token) {
-        logger.debug("Validating JWT token");
         try {
-            // If decodeToken succeeds without exception, token is valid
-            TokenUtils.decodeToken(token);
-            return true;
+            // Usar un UserDetails dummy para validar el token
+            UserDetails dummyUser = User.builder()
+                .username(extractUsername(token))
+                .password("")
+                .authorities(new ArrayList<>())
+                .build();
+            return TokenUtils.validateToken(token, dummyUser);
         } catch (Exception e) {
-            logger.warn("Token validation failed: {}", e.getMessage());
             return false;
         }
     }

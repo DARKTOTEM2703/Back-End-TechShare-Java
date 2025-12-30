@@ -45,10 +45,11 @@ public class MaterialsController {
 
     @PostMapping("/create")
     public ResponseEntity<MaterialResponse> createMaterial(
-            @RequestParam("image") MultipartFile image,
+            @RequestParam(value = "image", required = false) MultipartFile image,
             @ModelAttribute MaterialRequest materialRequest) {
         try {
-            MaterialResponse resp = materialManagementUseCase.createMaterial(materialRequest);
+            // Pasamos la imagen al puerto de entrada; el UseCase se encarga del almacenamiento
+            MaterialResponse resp = materialManagementUseCase.createMaterial(materialRequest, image);
             return new ResponseEntity<>(resp, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             log.error("Invalid material data: {}", e.getMessage());

@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.techmate.techmate.dto.MovementsDTO;
 import com.techmate.techmate.dto.MovementResponse;
-import com.techmate.techmate.entity.MoveType;
+import com.techmate.techmate.hexagonal.domain.entity.MoveType;
 import com.techmate.techmate.security.TokenUtils;
 import com.techmate.techmate.service.MovementsService;
 import com.techmate.techmate.service.movements.mapper.MovementsMapper;

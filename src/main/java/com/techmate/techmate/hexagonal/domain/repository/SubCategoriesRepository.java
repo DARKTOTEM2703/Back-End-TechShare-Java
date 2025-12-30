@@ -4,22 +4,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.techmate.techmate.hexagonal.domain.entity.SubCategories;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface SubCategoriesRepository extends JpaRepository<SubCategories, Integer>{
-    /*@Query("SELECT s.name FROM SubCategories s WHERE s.id = ?1")
-    String findNameSubCategoryId(int SubCategoryId);¨*/
+public interface SubCategoriesRepository extends JpaRepository<SubCategories, Integer> {
 
+    List<SubCategories> findByCategoryId(Integer categoryId);
 
-    SubCategories findByName(String name);
+    Optional<SubCategories> findByName(String name);
+
+    boolean existsByNameAndCategoryId(String name, Integer categoryId);
 }
-
-
-
-
-
-
-
-
-
-

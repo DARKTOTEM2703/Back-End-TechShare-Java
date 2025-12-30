@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.techmate.techmate.hexagonal.domain.model.user.User;
 import com.techmate.techmate.hexagonal.domain.port.out.UserRepositoryPort;
 import com.techmate.techmate.hexagonal.infra.mapper.DomainUserMapper;
-import com.techmate.techmate.repository.UsuarioRepository;
-import com.techmate.techmate.entity.Usuario;
+import com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 
 import java.util.List;
 import java.util.Optional;

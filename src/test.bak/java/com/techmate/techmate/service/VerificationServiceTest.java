@@ -6,10 +6,8 @@ import static org.mockito.Mockito.*;
 import java.util.Calendar;
 
 import com.techmate.techmate.dto.VerificationResponse;
-import com.techmate.techmate.entity.Usuario;
-import com.techmate.techmate.entity.VerificationToken;
-import com.techmate.techmate.repository.UsuarioRepository;
-import com.techmate.techmate.repository.VerificationTokenRepository;
+import com.techmate.techmate.hexagonal.domain.entity.Usuario;
+import com.techmate.techmate.hexagonal.domain.entity.VerificationToken;com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;com.techmate.techmate.hexagonal.domain.repository.VerificationTokenRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +47,7 @@ class VerificationServiceTest {
         // set expiry in the past
         cal.add(Calendar.MINUTE, -10);
         token.setExpiryDate(cal.getTime());
-        
+
         Usuario user = new Usuario();
         token.setUsuario(user);
 
@@ -84,4 +82,3 @@ class VerificationServiceTest {
         verify(usuarioRepository, times(1)).enableUserById(1);
     }
 }
-
