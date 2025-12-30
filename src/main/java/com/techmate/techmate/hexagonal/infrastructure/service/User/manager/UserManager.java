@@ -11,7 +11,7 @@ import com.techmate.techmate.hexagonal.domain.entity.Role;
 import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 import com.techmate.techmate.hexagonal.domain.repository.RoleRepository;
 import com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;
-import com.techmate.techmate.service.User.validator.UserValidator;
+import com.techmate.techmate.hexagonal.infrastructure.service.User.validator.UserValidator;
 
 @Component
 public class UserManager {
@@ -65,5 +65,9 @@ public class UserManager {
         return usuarioRepository.save(usuario);
     }
 }
+
+
+
+
 
 

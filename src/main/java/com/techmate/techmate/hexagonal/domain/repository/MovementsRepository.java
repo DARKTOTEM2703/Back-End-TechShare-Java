@@ -30,7 +30,7 @@ public interface MovementsRepository extends JpaRepository<Movements, Integer> {
     /**
      * Obtiene todos los movimientos con sus relaciones cargadas (1 query).
      * EVITA: N+1 problem
-     * CARGA: material + subCategory + usuario en 1 query
+     * CARGA: Materials + subCategory + usuario en 1 query
      */
         @Query("SELECT DISTINCT m FROM Movements m " +
             "LEFT JOIN FETCH m.materials mat " +
@@ -185,6 +185,10 @@ public interface MovementsRepository extends JpaRepository<Movements, Integer> {
     List<Movements> findByMoveType(MoveType moveType);
     List<Movements> findByMovementDateBetween(Date startDate, Date endDate);
 }
+
+
+
+
 
 
 

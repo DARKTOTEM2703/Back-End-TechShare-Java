@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import com.techmate.techmate.hexagonal.infrastructure.dto.SubCategoriesDTO;
 import com.techmate.techmate.hexagonal.domain.entity.SubCategories;
 import com.techmate.techmate.hexagonal.domain.repository.SubCategoriesRepository;
-import com.techmate.techmate.service.CategoriesService;
+import com.techmate.techmate.hexagonal.infrastructure.service.CategoriesService;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -87,5 +87,9 @@ public class SubCategoriesQueryService {
         return dto;
     }
 }
+
+
+
+
 
 

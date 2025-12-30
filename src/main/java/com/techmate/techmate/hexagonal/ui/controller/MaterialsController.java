@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.config.AppProperties;
+import com.techmate.techmate.hexagonal.infrastructure.config.AppProperties;
 import com.techmate.techmate.hexagonal.infrastructure.service.materials.mapper.MaterialsMapper;
 import com.techmate.techmate.hexagonal.infrastructure.service.MaterialsService;
 import com.techmate.techmate.hexagonal.infrastructure.service.EmailService;
@@ -246,5 +246,9 @@ public class MaterialsController {
                 .body(imageBytes);
     }
 }
+
+
+
+
 
 

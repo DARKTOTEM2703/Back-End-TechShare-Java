@@ -3,9 +3,9 @@ package com.techmate.techmate.hexagonal.infrastructure.service.impl;
 import com.techmate.techmate.hexagonal.infrastructure.dto.BorrowDTO;
 import com.techmate.techmate.hexagonal.domain.entity.Status;
 import com.techmate.techmate.hexagonal.infrastructure.security.TokenUtils;
-import com.techmate.techmate.service.BorrowService;
-import com.techmate.techmate.service.borrow.processor.BorrowStateProcessor;
-import com.techmate.techmate.service.borrow.query.BorrowQueryService;
+import com.techmate.techmate.hexagonal.infrastructure.service.BorrowService;
+import com.techmate.techmate.hexagonal.infrastructure.service.borrow.processor.BorrowStateProcessor;
+import com.techmate.techmate.hexagonal.infrastructure.service.borrow.query.BorrowQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -263,4 +263,8 @@ public class BorrowServiceImpl implements BorrowService {
         return queryService.getBorrowsByUser(userId);
     }
 }
+
+
+
+
 

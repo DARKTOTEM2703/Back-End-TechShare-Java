@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.techmate.techmate.config.AppProperties;
+import com.techmate.techmate.hexagonal.infrastructure.config.AppProperties;
 import com.techmate.techmate.hexagonal.infrastructure.dto.MaterialResponse;
 import com.techmate.techmate.hexagonal.infrastructure.dto.MaterialsDTO;
 import com.techmate.techmate.hexagonal.infrastructure.dto.PageResponse;
@@ -144,5 +144,9 @@ public class PublicMaterialsController {
         }
     }
 }
+
+
+
+
 
 

@@ -75,7 +75,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 throw new AuthenticationServiceException("La solicitud de autenticación está vacía");
             }
 
-            authCredentials = com.techmate.techmate.config.JacksonConfig.objectMapper().readValue(payload,
+            authCredentials = com.techmate.techmate.hexagonal.infrastructure.config.JacksonConfig.objectMapper().readValue(payload,
                     AuthCredentials.class);
         } catch (IOException e) {
             log.warn("Attempted authentication with invalid payload: {}", e.getMessage());
@@ -110,7 +110,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .validationErrors(java.util.List.of())
                 .build();
 
-        com.techmate.techmate.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), body);
+        com.techmate.techmate.hexagonal.infrastructure.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), body);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             response.setContentType("application/json;charset=UTF-8");
             Map<String, Object> payload = new HashMap<>();
             payload.put("error", "Cuenta no verificada");
-            com.techmate.techmate.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), payload);
+            com.techmate.techmate.hexagonal.infrastructure.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), payload);
             return;
         }
 
@@ -161,7 +161,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         resp.put("email", userDetails.getUsername());
         resp.put("roles", roleList);
 
-        com.techmate.techmate.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), resp);
+        com.techmate.techmate.hexagonal.infrastructure.config.JacksonConfig.objectMapper().writeValue(response.getWriter(), resp);
 
         log.info("Usuario {} autenticado correctamente, id={}, roles={}", userDetails.getUsername(), userId, roleList);
 
@@ -169,5 +169,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // cree una sesión HTTP (la aplicación es stateless y gestiona auth con JWT).
     }
 }
+
+
+
+
 
 

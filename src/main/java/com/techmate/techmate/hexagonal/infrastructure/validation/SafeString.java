@@ -35,3 +35,7 @@ public @interface SafeString {
     boolean allowSpecial() default true;
 }
 
+
+
+
+

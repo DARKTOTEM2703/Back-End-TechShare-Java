@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.techmate.techmate.hexagonal.infrastructure.dto.CategoriesDTO;
 import com.techmate.techmate.hexagonal.domain.entity.Categories;
 import com.techmate.techmate.hexagonal.domain.repository.CategoriesRepository;
-import com.techmate.techmate.service.categories.mapper.CategoriesMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.categories.mapper.CategoriesMapper;
 
 @Component
 public class CategoriesQueryService {
@@ -30,6 +30,10 @@ public class CategoriesQueryService {
         return categoriesMapper.toDTO(c);
     }
 }
+
+
+
+
 
 
 

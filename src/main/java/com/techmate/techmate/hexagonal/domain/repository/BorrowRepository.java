@@ -33,7 +33,7 @@ import com.techmate.techmate.hexagonal.domain.entity.Status;
  *                             .and(BorrowSpecification.byDateRange(start, end)));
  * </pre>
  * 
- * @see com.techmate.techmate.repository.specification.BorrowSpecification
+ * @see com.techmate.techmate.hexagonal.domain.repository.specification.BorrowSpecification
  */
 @Repository
 public interface BorrowRepository extends JpaRepository<Borrow, Integer>,
@@ -179,5 +179,9 @@ public interface BorrowRepository extends JpaRepository<Borrow, Integer>,
         */
        long countByStatus(Status status);
 }
+
+
+
+
 
 

@@ -1,9 +1,9 @@
 package com.techmate.techmate.hexagonal.infrastructure.service.borrow.mapper;
 
-import com.techmate.techmate.domain.model.Material;
+import com.techmate.techmate.hexagonal.domain.entity.Materials;
 import com.techmate.techmate.hexagonal.domain.entity.Usuario;
-import com.techmate.techmate.domain.model.Borrow;
-import com.techmate.techmate.domain.model.DetailsBorrow;
+import com.techmate.techmate.hexagonal.domain.entity.Borrow;
+import com.techmate.techmate.hexagonal.domain.entity.DetailsBorrow;
 import com.techmate.techmate.hexagonal.infrastructure.dto.BorrowReadDTO;
 import com.techmate.techmate.hexagonal.infrastructure.dto.DetailsBorrowDTO;
 import org.mapstruct.Mapper;
@@ -28,11 +28,15 @@ public interface BorrowDtoMapper {
     // From Materials
     @Mapping(target = "materialId", source = "material.id")
     @Mapping(target = "materialName", source = "material.name")
-    BorrowReadDTO toReadDto(Borrow borrow, Usuario user, Material material);
+    BorrowReadDTO toReadDto(Borrow borrow, Usuario user, Materials material);
 
     // Mapea cada detalle de dominio a su DTO (MapStruct hará el mapeo de campos por
     // nombre)
     DetailsBorrowDTO detailsToDto(DetailsBorrow details);
 }
+
+
+
+
 
 

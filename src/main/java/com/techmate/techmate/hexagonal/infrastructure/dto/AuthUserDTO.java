@@ -66,3 +66,7 @@ public class AuthUserDTO {
     public void setRoleNames(List<String> roleNames) { this.roleNames = roleNames; }
 }
 
+
+
+
+

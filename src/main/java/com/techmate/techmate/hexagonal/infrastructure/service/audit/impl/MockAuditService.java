@@ -1,6 +1,6 @@
 package com.techmate.techmate.hexagonal.infrastructure.service.audit.impl;
 
-import com.techmate.techmate.service.audit.AuditService;
+import com.techmate.techmate.hexagonal.infrastructure.service.audit.AuditService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +30,10 @@ public class MockAuditService implements AuditService {
         logAudit(action, "MATERIAL", materialId, details, null);
     }
 }
+
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 package com.techmate.techmate.hexagonal.infrastructure.imageStorage.Impl;
 
-import com.techmate.techmate.config.AppProperties;
+import com.techmate.techmate.hexagonal.infrastructure.config.AppProperties;
 import com.techmate.techmate.hexagonal.infrastructure.exception.ValidationException;
 import com.techmate.techmate.hexagonal.infrastructure.imageStorage.ImageStorageStrategy;
 import com.techmate.techmate.hexagonal.infrastructure.validation.ImageValidationStrategy;
@@ -100,4 +100,8 @@ public class FileSystemImageStorage implements ImageStorageStrategy {
         }
     }
 }
+
+
+
+
 

@@ -6,12 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
-import com.techmate.techmate.service.MovementsService;
+import com.techmate.techmate.hexagonal.infrastructure.service.MovementsService;
 import com.techmate.techmate.hexagonal.infrastructure.dto.MovementsDTO;
 import com.techmate.techmate.hexagonal.domain.entity.MoveType;
-import com.techmate.techmate.service.movements.mapper.MovementMapper;
-import com.techmate.techmate.service.movements.manager.MovementManager;
-import com.techmate.techmate.service.movements.query.MovementQueryService;
+import com.techmate.techmate.hexagonal.infrastructure.service.movements.mapper.MovementMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.movements.manager.MovementManager;
+import com.techmate.techmate.hexagonal.infrastructure.service.movements.query.MovementQueryService;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -131,5 +131,9 @@ public class MovementsServiceImpl implements MovementsService {
     }
 
 }
+
+
+
+
 
 

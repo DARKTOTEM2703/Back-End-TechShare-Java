@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.techmate.techmate.hexagonal.infrastructure.dto.RegisterRequest;
-import com.techmate.techmate.service.AuthService;
+import com.techmate.techmate.hexagonal.infrastructure.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,6 +101,10 @@ public class AuthController {
                 .replaceAll("\\p{Cntrl}", ""); // Remover caracteres de control
     }
 }
+
+
+
+
 
 
 

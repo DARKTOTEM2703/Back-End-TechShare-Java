@@ -41,7 +41,7 @@ public class MovementsController {
 
             @RequestParam("id_material") @jakarta.validation.constraints.NotNull(message = "El ID del material no puede ser nulo") @jakarta.validation.constraints.Min(value = 1, message = "El ID del material debe ser mayor a 0") Integer idMaterial,
 
-            @RequestParam(value = "comment", required = false) @jakarta.validation.constraints.Size(max = 500, message = "El comentario no puede exceder 500 caracteres") @com.techmate.techmate.validation.SafeString(allowSpecial = true) String comment, // Agregar
+            @RequestParam(value = "comment", required = false) @jakarta.validation.constraints.Size(max = 500, message = "El comentario no puede exceder 500 caracteres") @com.techmate.techmate.hexagonal.infrastructure.validation.SafeString(allowSpecial = true) String comment, // Agregar
                                                                                                                                                                                                                                                             // comentario
                                                                                                                                                                                                                                                             // opcional
 
@@ -198,5 +198,9 @@ public class MovementsController {
     }
 
 }
+
+
+
+
 
 

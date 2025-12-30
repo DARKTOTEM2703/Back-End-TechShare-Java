@@ -51,7 +51,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
      * Login con proyección type-safe para evitar entidades JPA con colecciones problemáticas.
      * FALLBACK: Solo si query nativa falla.
      */
-    @Query("SELECT new com.techmate.techmate.dto.AuthUserDTO(u.id, u.user_name, u.email, u.password, u.first_name, u.last_name, u.isEnabled, null) FROM Usuario u WHERE u.email = :email")
+    @Query("SELECT new com.techmate.techmate.hexagonal.infrastructure.dto.AuthUserDTO(u.id, u.user_name, u.email, u.password, u.first_name, u.last_name, u.isEnabled, null) FROM Usuario u WHERE u.email = :email")
     AuthUserDTO findAuthUserByEmail(@Param("email") String email);
 
     /**
@@ -74,5 +74,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     void enableUserById(@Param("userId") Integer userId);
 
 }
+
+
+
+
 
 

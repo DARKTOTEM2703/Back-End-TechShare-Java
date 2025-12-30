@@ -1,6 +1,6 @@
 package com.techmate.techmate.hexagonal.infrastructure.validation;
 
-import com.techmate.techmate.repository.MaterialsRepository;
+import com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,10 @@ public class UniqueMaterialNameValidator implements ConstraintValidator<UniqueMa
         return !materialsRepository.existsByName(name);
     }
 }
+
+
+
+
 
 
 

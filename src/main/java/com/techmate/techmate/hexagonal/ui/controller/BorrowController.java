@@ -15,8 +15,6 @@ import com.techmate.techmate.hexagonal.infrastructure.dto.BorrowDTO;
 import com.techmate.techmate.hexagonal.infrastructure.dto.BorrowReadDTO;
 import com.techmate.techmate.hexagonal.domain.entity.Status;
 import com.techmate.techmate.hexagonal.infrastructure.service.BorrowService;
-import com.techmate.techmate.application.usecase.GetBorrowsUseCase;
-import com.techmate.techmate.application.usecase.UpdateBorrowStatusUseCase;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -26,14 +24,9 @@ import jakarta.servlet.http.HttpServletRequest;
 @PreAuthorize("hasRole('ADMIN')")
 public class BorrowController {
     private final BorrowService borrowService;
-    private final UpdateBorrowStatusUseCase updateBorrowStatusUseCase;
-    private final GetBorrowsUseCase getBorrowsUseCase;
 
-    public BorrowController(BorrowService borrowService, UpdateBorrowStatusUseCase updateBorrowStatusUseCase,
-            GetBorrowsUseCase getBorrowsUseCase) {
+    public BorrowController(BorrowService borrowService) {
         this.borrowService = borrowService;
-        this.updateBorrowStatusUseCase = updateBorrowStatusUseCase;
-        this.getBorrowsUseCase = getBorrowsUseCase;
     }
 
     // Actualizar el estado de un préstamo
@@ -62,6 +55,8 @@ public class BorrowController {
         return ResponseEntity.ok("Estado del préstamo actualizado correctamente.");
     }
 
+    // TODO: Use case GetBorrowsUseCase pendiente
+    /*
     @GetMapping("/all")
     public ResponseEntity<List<BorrowReadDTO>> getAllBorrow() {
 
@@ -71,7 +66,12 @@ public class BorrowController {
         }
         return ResponseEntity.ok(response);
     }
+    */
 
 }
+
+
+
+
 
 

@@ -1,6 +1,6 @@
 package com.techmate.techmate.hexagonal.infrastructure.service.notification.impl;
 
-import com.techmate.techmate.service.notification.EmailService;
+import com.techmate.techmate.hexagonal.infrastructure.service.notification.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -63,5 +63,9 @@ public class MockEmailService implements EmailService {
                 adminEmail, materialName, currentStock, threshold);
     }
 }
+
+
+
+
 
 

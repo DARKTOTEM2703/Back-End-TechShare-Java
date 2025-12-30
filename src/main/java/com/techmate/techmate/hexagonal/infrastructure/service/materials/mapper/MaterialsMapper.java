@@ -15,8 +15,8 @@ import com.techmate.techmate.hexagonal.domain.entity.RoleMaterials;
 import com.techmate.techmate.hexagonal.domain.entity.SubCategories;
 import com.techmate.techmate.hexagonal.domain.repository.RoleRepository;
 import com.techmate.techmate.hexagonal.domain.repository.SubCategoriesRepository;
-import com.techmate.techmate.service.RoleService;
-import com.techmate.techmate.service.SubCategoriesService;
+import com.techmate.techmate.hexagonal.infrastructure.service.RoleService;
+import com.techmate.techmate.hexagonal.infrastructure.service.SubCategoriesService;
 
 /**
  * Mapper especializado para Materials (Entity <-> DTO).
@@ -154,5 +154,9 @@ public class MaterialsMapper {
         return materials;
     }
 }
+
+
+
+
 
 

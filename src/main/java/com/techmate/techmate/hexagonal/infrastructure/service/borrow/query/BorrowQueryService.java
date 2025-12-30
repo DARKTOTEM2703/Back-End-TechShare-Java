@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import com.techmate.techmate.hexagonal.infrastructure.dto.BorrowDTO;
 import com.techmate.techmate.hexagonal.domain.entity.Status;
 import com.techmate.techmate.hexagonal.domain.repository.BorrowRepository;
-import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.borrow.mapper.BorrowMapper;
 
 /**
  * 🎯 Servicio de consultas especializado para préstamos siguiendo SRP.
@@ -204,5 +204,9 @@ public class BorrowQueryService {
         }
     }
 }
+
+
+
+
 
 

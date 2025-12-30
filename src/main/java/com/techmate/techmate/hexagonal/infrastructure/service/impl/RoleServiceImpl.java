@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 
 import com.techmate.techmate.hexagonal.infrastructure.dto.RoleDTO;
 import com.techmate.techmate.hexagonal.domain.entity.Role;
-import com.techmate.techmate.service.RoleService;
-import com.techmate.techmate.service.role.manager.RoleManager;
-import com.techmate.techmate.service.role.mapper.RoleMapper;
-import com.techmate.techmate.service.role.query.RoleQueryService;
+import com.techmate.techmate.hexagonal.infrastructure.service.RoleService;
+import com.techmate.techmate.hexagonal.infrastructure.service.role.manager.RoleManager;
+import com.techmate.techmate.hexagonal.infrastructure.service.role.mapper.RoleMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.role.query.RoleQueryService;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -59,5 +59,9 @@ public class RoleServiceImpl implements RoleService {
     }
 
 }
+
+
+
+
 
 

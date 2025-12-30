@@ -13,7 +13,7 @@ import com.techmate.techmate.hexagonal.infrastructure.dto.MovementsDTO;
 import com.techmate.techmate.hexagonal.domain.entity.MoveType;
 import com.techmate.techmate.hexagonal.domain.entity.Movements;
 import com.techmate.techmate.hexagonal.domain.repository.MovementsRepository;
-import com.techmate.techmate.service.movements.mapper.MovementMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.movements.mapper.MovementMapper;
 
 @Component
 @Transactional(readOnly = true)
@@ -58,5 +58,9 @@ public class MovementQueryService {
                 .collect(Collectors.toList());
     }
 }
+
+
+
+
 
 

@@ -190,8 +190,7 @@ public class BorrowStockManager implements IBorrowStockManager {
         int newStock = material.getBorrowableStock() - quantity;
         material.setBorrowableStock(newStock);
 
-        // 3. Persistir cambios en material
-        materialsRepository.save(material);
+        // 3. Persistir cambios en Materials materialsRepository.save(material);
 
         // 4. Crear registro de movimiento (SALIDA/BORROW)
         Movements movement = new Movements();
@@ -243,8 +242,7 @@ public class BorrowStockManager implements IBorrowStockManager {
         int newStock = material.getBorrowableStock() + quantity;
         material.setBorrowableStock(newStock);
 
-        // 2. Persistir cambios en material
-        materialsRepository.save(material);
+        // 2. Persistir cambios en Materials materialsRepository.save(material);
 
         // 3. Crear registro de movimiento (ENTRADA/RETURN)
         Movements movement = new Movements();
@@ -263,5 +261,9 @@ public class BorrowStockManager implements IBorrowStockManager {
         movementsRepository.save(movement);
     }
 }
+
+
+
+
 
 

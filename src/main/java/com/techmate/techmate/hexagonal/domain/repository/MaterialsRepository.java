@@ -33,7 +33,7 @@ import com.techmate.techmate.hexagonal.domain.entity.Materials;
  *                 .and(MaterialsSpecification.byCategory(categoryId)));
  * </pre>
  * 
- * @see com.techmate.techmate.repository.specification.MaterialsSpecification
+ * @see com.techmate.techmate.hexagonal.domain.repository.specification.MaterialsSpecification
  */
 @Repository
 public interface MaterialsRepository extends JpaRepository<Materials, Integer>,
@@ -108,5 +108,9 @@ public interface MaterialsRepository extends JpaRepository<Materials, Integer>,
     List<Materials> findLowStock(@Param("threshold") int threshold);
 
 }
+
+
+
+
 
 

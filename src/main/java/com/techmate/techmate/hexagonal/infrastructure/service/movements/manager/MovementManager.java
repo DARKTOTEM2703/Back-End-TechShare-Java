@@ -14,9 +14,9 @@ import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 import com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
 import com.techmate.techmate.hexagonal.domain.repository.MovementsRepository;
 import com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;
-import com.techmate.techmate.service.MaterialsService;
-import com.techmate.techmate.service.movements.mapper.MovementMapper;
-import com.techmate.techmate.service.movements.validator.MovementValidator;
+import com.techmate.techmate.hexagonal.infrastructure.service.MaterialsService;
+import com.techmate.techmate.hexagonal.infrastructure.service.movements.mapper.MovementMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.movements.validator.MovementValidator;
 import com.techmate.techmate.hexagonal.infrastructure.security.UserDetailsServiceImpl;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -155,5 +155,9 @@ public class MovementManager {
         log.info("Movimiento con ID {} eliminado correctamente", movementsId);
     }
 }
+
+
+
+
 
 

@@ -5,11 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.techmate.techmate.service.MaterialsService;
+import com.techmate.techmate.hexagonal.infrastructure.service.MaterialsService;
 import com.techmate.techmate.hexagonal.infrastructure.dto.MaterialsDTO;
 import com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
-import com.techmate.techmate.service.materials.manager.MaterialsManager;
-import com.techmate.techmate.service.materials.query.MaterialsQueryService;
+import com.techmate.techmate.hexagonal.infrastructure.service.materials.manager.MaterialsManager;
+import com.techmate.techmate.hexagonal.infrastructure.service.materials.query.MaterialsQueryService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +91,7 @@ public class MaterialsServiceImpl implements MaterialsService {
     @Override
     public String getMaterialsNameById(int materialId) {
         return materialsRepository.findById(materialId)
-                .map(com.techmate.techmate.entity.Materials::getName)
+                .map(com.techmate.techmate.hexagonal.domain.entity.Materials::getName)
                 .orElse(null);
     }
 
@@ -110,7 +110,7 @@ public class MaterialsServiceImpl implements MaterialsService {
      */
     @Override
     public Page<MaterialsDTO> getAllMaterialsPaginated(Pageable pageable) {
-        Page<com.techmate.techmate.entity.Materials> materialsPage = materialsRepository.findAll(pageable);
+        Page<com.techmate.techmate.hexagonal.domain.entity.Materials> materialsPage = materialsRepository.findAll(pageable);
         return materialsPage.map(materials -> {
             // Se usa MaterialsQueryService para consistencia en mapeo
             return materialsQueryService.getById(materials.getId());
@@ -146,5 +146,9 @@ public class MaterialsServiceImpl implements MaterialsService {
         materialsManager.deleteMaterials(materialsId);
     }
 }
+
+
+
+
 
 

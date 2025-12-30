@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.techmate.techmate.hexagonal.infrastructure.dto.RoleDTO;
 import com.techmate.techmate.hexagonal.domain.entity.Role;
 import com.techmate.techmate.hexagonal.domain.repository.RoleRepository;
-import com.techmate.techmate.service.role.mapper.RoleMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.role.mapper.RoleMapper;
 
 @Component
 @Transactional(readOnly = true)
@@ -42,5 +42,9 @@ public class RoleQueryService {
                 .orElseThrow(() -> new RuntimeException("Role not found with ID: " + id));
     }
 }
+
+
+
+
 
 

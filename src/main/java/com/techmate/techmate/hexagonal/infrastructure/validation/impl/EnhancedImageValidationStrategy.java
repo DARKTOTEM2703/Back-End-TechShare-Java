@@ -37,7 +37,7 @@ import java.util.List;
  */
 @Component
 @Primary
-public class EnhancedImageValidationStrategy implements com.techmate.techmate.validation.ImageValidationStrategy {
+public class EnhancedImageValidationStrategy implements com.techmate.techmate.hexagonal.infrastructure.validation.ImageValidationStrategy {
 
     // Tamaño máximo de archivo: 10 MB
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB en bytes
@@ -145,5 +145,9 @@ public class EnhancedImageValidationStrategy implements com.techmate.techmate.va
         );
     }
 }
+
+
+
+
 
 

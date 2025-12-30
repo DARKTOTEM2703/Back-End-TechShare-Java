@@ -9,7 +9,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.techmate.techmate.config.AppProperties;
+import com.techmate.techmate.hexagonal.infrastructure.config.AppProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -127,5 +127,9 @@ public class SubcategoriesController {
                 .body(imageBytes);
     }
 }
+
+
+
+
 
 

@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.techmate.techmate.hexagonal.infrastructure.dto.RoleDTO;
 import com.techmate.techmate.hexagonal.domain.entity.Role;
 import com.techmate.techmate.hexagonal.domain.repository.RoleRepository;
-import com.techmate.techmate.service.role.mapper.RoleMapper;
-import com.techmate.techmate.service.role.validator.RoleValidator;
+import com.techmate.techmate.hexagonal.infrastructure.service.role.mapper.RoleMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.role.validator.RoleValidator;
 
 @Component
 public class RoleManager {
@@ -69,5 +69,9 @@ public class RoleManager {
         roleRepository.delete(role);
     }
 }
+
+
+
+
 
 

@@ -13,7 +13,7 @@ import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 import com.techmate.techmate.hexagonal.domain.entity.UsuarioRole;
 import com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;
 import com.techmate.techmate.hexagonal.domain.repository.UsuarioRoleRepository;
-import com.techmate.techmate.service.User.mapper.UserMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.User.mapper.UserMapper;
 
 @Component
 @Transactional(readOnly = true)
@@ -68,5 +68,9 @@ public class UserQueryService {
         });
     }
 }
+
+
+
+
 
 

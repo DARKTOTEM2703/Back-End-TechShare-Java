@@ -9,8 +9,8 @@ import com.techmate.techmate.hexagonal.domain.entity.Categories;
 import com.techmate.techmate.hexagonal.infrastructure.exception.BusinessException;
 import com.techmate.techmate.hexagonal.infrastructure.imageStorage.ImageStorageStrategy;
 import com.techmate.techmate.hexagonal.domain.repository.CategoriesRepository;
-import com.techmate.techmate.service.categories.mapper.CategoriesMapper;
-import com.techmate.techmate.service.categories.validator.CategoriesValidator;
+import com.techmate.techmate.hexagonal.infrastructure.service.categories.mapper.CategoriesMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.categories.validator.CategoriesValidator;
 import com.techmate.techmate.hexagonal.infrastructure.validation.ImageValidationStrategy;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -228,5 +228,9 @@ public class CategoriesManager {
         category.setImagePath(newImagePath);
     }
 }
+
+
+
+
 
 

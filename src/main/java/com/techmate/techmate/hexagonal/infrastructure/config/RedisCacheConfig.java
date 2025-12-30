@@ -43,7 +43,7 @@ public class RedisCacheConfig {
      * como bean para evitar que Spring Boot lo use como el mapper global de la aplicación).
      */
     private ObjectMapper createCacheObjectMapper() {
-    ObjectMapper mapper = com.techmate.techmate.config.JacksonConfig.objectMapper();
+    ObjectMapper mapper = com.techmate.techmate.hexagonal.infrastructure.config.JacksonConfig.objectMapper();
         mapper.registerModule(new JavaTimeModule());
         // Solo activar typing para el mapper usado por Redis (necesario para GenericJackson2JsonRedisSerializer
         // si se cachean tipos polimórficos). No exponer este mapper como bean global.
@@ -98,6 +98,10 @@ public class RedisCacheConfig {
             .build();
     }
 }
+
+
+
+
 
 
 

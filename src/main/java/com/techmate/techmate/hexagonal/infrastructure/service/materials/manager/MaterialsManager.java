@@ -13,14 +13,14 @@ import com.techmate.techmate.hexagonal.domain.entity.Materials;
 import com.techmate.techmate.hexagonal.domain.entity.Role;
 import com.techmate.techmate.hexagonal.domain.entity.RoleMaterials;
 import com.techmate.techmate.hexagonal.domain.entity.SubCategories;
-import com.techmate.techmate.event.MaterialLowStockEvent;
+// import com.techmate.techmate.hexagonal.infrastructure.event.MaterialLowStockEvent; // TODO: Event system
 import com.techmate.techmate.hexagonal.infrastructure.exception.BusinessException;
 import com.techmate.techmate.hexagonal.infrastructure.imageStorage.ImageStorageStrategy;
 import com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
 import com.techmate.techmate.hexagonal.domain.repository.RoleRepository;
 import com.techmate.techmate.hexagonal.domain.repository.SubCategoriesRepository;
-import com.techmate.techmate.service.materials.mapper.MaterialsMapper;
-import com.techmate.techmate.service.materials.validator.MaterialsValidator;
+import com.techmate.techmate.hexagonal.infrastructure.service.materials.mapper.MaterialsMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.materials.validator.MaterialsValidator;
 import com.techmate.techmate.hexagonal.infrastructure.validation.ImageValidationStrategy;
 
 import lombok.extern.slf4j.Slf4j;
@@ -165,8 +165,7 @@ public class MaterialsManager {
     public MaterialsDTO updateMaterials(int materialsId, MaterialsDTO materialsDTO, MultipartFile image) {
         log.info("Iniciando actualización de material ID: {}", materialsId);
 
-        // 1. Encontrar material
-        Materials existingMaterial = findMaterialById(materialsId);
+        // 1. Encontrar Materials materials existingMaterial = findMaterialById(materialsId);
 
         // 2. Actualizar atributos básicos
         updateMaterialAttributes(existingMaterial, materialsDTO);
@@ -215,8 +214,7 @@ public class MaterialsManager {
     public void deleteMaterials(int materialsId) {
         log.info("Iniciando eliminación de material ID: {}", materialsId);
 
-        // 1. Encontrar material
-        Materials materials = findMaterialById(materialsId);
+        // 1. Encontrar Materials materials materials = findMaterialById(materialsId);
 
         // 2. Intentar eliminar imagen (best-effort)
         String imagePath = materials.getImagePath();
@@ -355,5 +353,9 @@ public class MaterialsManager {
         }
     }
 }
+
+
+
+
 
 

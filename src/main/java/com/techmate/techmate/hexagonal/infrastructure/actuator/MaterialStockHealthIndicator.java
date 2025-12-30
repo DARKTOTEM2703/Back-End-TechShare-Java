@@ -1,6 +1,6 @@
 package com.techmate.techmate.hexagonal.infrastructure.actuator;
 
-import com.techmate.techmate.repository.MaterialsRepository;
+import com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -75,6 +75,11 @@ public class MaterialStockHealthIndicator implements HealthIndicator {
         }
     }
 }
+
+
+
+
+
 
 
 

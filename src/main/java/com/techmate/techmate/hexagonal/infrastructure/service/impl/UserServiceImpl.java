@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import com.techmate.techmate.hexagonal.infrastructure.dto.UsuarioDTO;
 import com.techmate.techmate.hexagonal.domain.entity.Role;
 import com.techmate.techmate.hexagonal.domain.entity.Usuario;
-import com.techmate.techmate.service.UserService;
-import com.techmate.techmate.service.User.manager.UserManager;
-import com.techmate.techmate.service.User.mapper.UserMapper;
-import com.techmate.techmate.service.User.query.UserQueryService;
+import com.techmate.techmate.hexagonal.infrastructure.service.UserService;
+import com.techmate.techmate.hexagonal.infrastructure.service.User.manager.UserManager;
+import com.techmate.techmate.hexagonal.infrastructure.service.User.mapper.UserMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.User.query.UserQueryService;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -60,5 +60,9 @@ public class UserServiceImpl implements UserService {
     }
 
 }
+
+
+
+
 
 

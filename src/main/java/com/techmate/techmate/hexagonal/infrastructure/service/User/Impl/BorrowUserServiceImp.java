@@ -16,19 +16,17 @@ import com.techmate.techmate.hexagonal.domain.entity.Status;
 import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 import com.techmate.techmate.hexagonal.domain.repository.*;
 import com.techmate.techmate.hexagonal.infrastructure.security.TokenUtils;
-import com.techmate.techmate.service.User.BorrowUserService;
-import com.techmate.techmate.service.borrow.mapper.BorrowMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.User.BorrowUserService;
+import com.techmate.techmate.hexagonal.infrastructure.service.borrow.mapper.BorrowMapper;
 
 @Service
 public class BorrowUserServiceImp implements BorrowUserService {
 
-    private final com.techmate.techmate.application.usecase.CreateBorrowUseCase createBorrowUseCase;
     private final BorrowMapper borrowMapper;
-    private final com.techmate.techmate.repository.BorrowRepository borrowRepository;
+    private final com.techmate.techmate.hexagonal.domain.repository.BorrowRepository borrowRepository;
 
-    public BorrowUserServiceImp(com.techmate.techmate.application.usecase.CreateBorrowUseCase createBorrowUseCase,
-            BorrowMapper borrowMapper, com.techmate.techmate.repository.BorrowRepository borrowRepository) {
-        this.createBorrowUseCase = createBorrowUseCase;
+    public BorrowUserServiceImp(BorrowMapper borrowMapper, 
+            com.techmate.techmate.hexagonal.domain.repository.BorrowRepository borrowRepository) {
         this.borrowMapper = borrowMapper;
         this.borrowRepository = borrowRepository;
     }
@@ -57,5 +55,9 @@ public class BorrowUserServiceImp implements BorrowUserService {
         return TokenUtils.getRolesFromToken(token);
     }
 }
+
+
+
+
 
 

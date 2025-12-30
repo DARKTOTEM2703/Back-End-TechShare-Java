@@ -36,3 +36,7 @@ public class UsuarioRepositoryAdapter implements UserRepositoryPort {
     }
 }
 
+
+
+
+

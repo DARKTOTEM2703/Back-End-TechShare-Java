@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.techmate.techmate.config.AppProperties;
+import com.techmate.techmate.hexagonal.infrastructure.config.AppProperties;
 import com.techmate.techmate.hexagonal.infrastructure.dto.CategoriesDTO;
 import com.techmate.techmate.hexagonal.infrastructure.dto.CategoryRequest;
 import com.techmate.techmate.hexagonal.infrastructure.dto.CategoryResponse;
@@ -166,5 +166,9 @@ public class CategoriesController {
                 .body(imageBytes);
     }
 }
+
+
+
+
 
 

@@ -7,9 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.techmate.techmate.hexagonal.infrastructure.dto.SubCategoriesDTO;
 import com.techmate.techmate.hexagonal.domain.repository.SubCategoriesRepository;
-import com.techmate.techmate.service.SubCategoriesService;
-import com.techmate.techmate.service.subcategories.manager.SubCategoriesManager;
-import com.techmate.techmate.service.subcategories.query.SubCategoriesQueryService;
+import com.techmate.techmate.hexagonal.infrastructure.service.SubCategoriesService;
+import com.techmate.techmate.hexagonal.infrastructure.service.subcategories.manager.SubCategoriesManager;
+import com.techmate.techmate.hexagonal.infrastructure.service.subcategories.query.SubCategoriesQueryService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -120,5 +120,9 @@ public class SubCategoriesServiceImpl implements SubCategoriesService {
         subCategoriesManager.deleteSubCategory(subCategoryID);
     }
 }
+
+
+
+
 
 

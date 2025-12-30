@@ -71,7 +71,7 @@ public class UserDetailsImpl implements UserDetails {
      * Constructor que acepta AuthUserDTO (RECOMENDADO).
      * Este es el enfoque más limpio y type-safe.
      */
-    public UserDetailsImpl(com.techmate.techmate.dto.AuthUserDTO authUser) {
+    public UserDetailsImpl(com.techmate.techmate.hexagonal.infrastructure.dto.AuthUserDTO authUser) {
         this.userId = authUser.getId();
         this.email = authUser.getEmail();
         this.password = authUser.getPassword();
@@ -235,5 +235,9 @@ public class UserDetailsImpl implements UserDetails {
         return this.enabled; // Usa el valor real del campo isEnabled del usuario
     }
 }
+
+
+
+
 
 

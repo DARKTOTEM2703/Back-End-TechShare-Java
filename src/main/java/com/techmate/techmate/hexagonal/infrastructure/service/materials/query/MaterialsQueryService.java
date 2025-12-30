@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import com.techmate.techmate.hexagonal.infrastructure.dto.MaterialsDTO;
 import com.techmate.techmate.hexagonal.domain.entity.Materials;
 import com.techmate.techmate.hexagonal.domain.repository.MaterialsRepository;
-import com.techmate.techmate.service.materials.mapper.MaterialsMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.materials.mapper.MaterialsMapper;
 
 /**
  * Servicio de consultas para Materials (SRP).
@@ -46,6 +46,10 @@ public class MaterialsQueryService {
         return materialsMapper.toDTO(m);
     }
 }
+
+
+
+
 
 
 

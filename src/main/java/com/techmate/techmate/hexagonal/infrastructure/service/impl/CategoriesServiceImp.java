@@ -7,9 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.techmate.techmate.hexagonal.infrastructure.dto.CategoriesDTO;
 import com.techmate.techmate.hexagonal.domain.repository.CategoriesRepository;
-import com.techmate.techmate.service.CategoriesService;
-import com.techmate.techmate.service.categories.manager.CategoriesManager;
-import com.techmate.techmate.service.categories.query.CategoriesQueryService;
+import com.techmate.techmate.hexagonal.infrastructure.service.CategoriesService;
+import com.techmate.techmate.hexagonal.infrastructure.service.categories.manager.CategoriesManager;
+import com.techmate.techmate.hexagonal.infrastructure.service.categories.query.CategoriesQueryService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,7 +90,7 @@ public class CategoriesServiceImp implements CategoriesService {
     @Override
     public String getCategoryNameById(int categoryId) {
         return categoriesRepository.findById(categoryId)
-                .map(com.techmate.techmate.entity.Categories::getName)
+                .map(com.techmate.techmate.hexagonal.domain.entity.Categories::getName)
                 .orElse(null);
     }
 
@@ -123,5 +123,9 @@ public class CategoriesServiceImp implements CategoriesService {
         categoriesManager.deleteCategory(categoryID);
     }
 }
+
+
+
+
 
 

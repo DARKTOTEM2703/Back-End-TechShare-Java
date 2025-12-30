@@ -12,8 +12,8 @@ import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 import com.techmate.techmate.hexagonal.infrastructure.exception.BusinessException;
 import com.techmate.techmate.hexagonal.domain.repository.BorrowRepository;
 import com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;
-import com.techmate.techmate.service.borrow.manager.BorrowStockManager;
-import com.techmate.techmate.service.borrow.validator.BorrowStateValidator;
+import com.techmate.techmate.hexagonal.infrastructure.service.borrow.manager.BorrowStockManager;
+import com.techmate.techmate.hexagonal.infrastructure.service.borrow.validator.BorrowStateValidator;
 
 /**
  * 🎯 Procesador de transiciones de estado para préstamos siguiendo SRP + Strategy Pattern.
@@ -170,6 +170,10 @@ public class BorrowStateProcessor {
         borrow.setEndDate(new Date());
     }
 }
+
+
+
+
 
 
 

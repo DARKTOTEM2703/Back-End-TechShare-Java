@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.techmate.techmate.config.AppProperties;
+import com.techmate.techmate.hexagonal.infrastructure.config.AppProperties;
 import com.techmate.techmate.hexagonal.infrastructure.dto.RegisterRequest;
 import com.techmate.techmate.hexagonal.domain.entity.Usuario;
 import com.techmate.techmate.hexagonal.domain.entity.UsuarioRole;
@@ -13,7 +13,7 @@ import com.techmate.techmate.hexagonal.domain.entity.Role;
 import com.techmate.techmate.hexagonal.domain.entity.VerificationToken;
 import com.techmate.techmate.hexagonal.domain.repository.UsuarioRepository;
 import com.techmate.techmate.hexagonal.domain.repository.VerificationTokenRepository;
-import com.techmate.techmate.service.mapper.AuthMapper;
+import com.techmate.techmate.hexagonal.infrastructure.service.mapper.AuthMapper;
 import com.techmate.techmate.hexagonal.domain.repository.RoleRepository;
 import com.techmate.techmate.hexagonal.domain.repository.UsuarioRoleRepository;
 
@@ -147,5 +147,9 @@ public class AuthService {
         return "Correo de verificación reenviado. Revisa tu bandeja de entrada.";
     }
 }
+
+
+
+
 
 
