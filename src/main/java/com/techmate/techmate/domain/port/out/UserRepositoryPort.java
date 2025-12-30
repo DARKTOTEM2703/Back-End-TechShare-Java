@@ -6,77 +6,85 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 🔌 OUTPUT PORT - UserRepositoryPort
+ * Output port for User persistence operations.
  * 
- * Define el contrato para persistencia de usuarios.
- * 
- * @author TechShare Team - Hexagonal Architecture
- * @version 2.0.0
+ * Defines the contract for user repository implementations.
+ * Isolates domain logic from infrastructure details.
  */
 public interface UserRepositoryPort {
 
     /**
-     * Guarda un nuevo usuario o actualiza uno existente
-     */
-    User save(User user);
-
-    /**
-     * Busca un usuario por su ID
+     * Find user by ID.
      */
     Optional<User> findById(Integer id);
 
     /**
-     * Busca un usuario por nombre de usuario
+     * Find user by username.
      */
     Optional<User> findByUsername(String username);
 
     /**
-     * Busca un usuario por email
+     * Find user by email.
      */
     Optional<User> findByEmail(String email);
 
     /**
-     * Obtiene todos los usuarios
+     * Find all users.
      */
     List<User> findAll();
 
     /**
-     * Obtiene usuarios habilitados
+     * Find all enabled users.
      */
     List<User> findEnabledUsers();
 
     /**
-     * Obtiene usuarios deshabilitados
+     * Find all disabled users.
      */
     List<User> findDisabledUsers();
 
     /**
-     * Busca usuarios por rol
+     * Find users by role name.
      */
     List<User> findByRole(String roleName);
 
     /**
-     * Elimina un usuario por su ID
+     * Find paginated users.
      */
-    void deleteById(Integer id);
+    List<User> findAllPaginated(int pageNumber, int pageSize);
 
     /**
-     * Verifica si existe un usuario por su ID
+     * Check if user exists by ID.
      */
     boolean existsById(Integer id);
 
     /**
-     * Verifica si existe un usuario con el nombre de usuario dado
+     * Check if user exists by username.
      */
     boolean existsByUsername(String username);
 
     /**
-     * Verifica si existe un usuario con el email dado
+     * Check if user exists by email.
      */
     boolean existsByEmail(String email);
 
     /**
-     * Obtiene el conteo total de usuarios
+     * Count total users.
      */
     long count();
+
+    /**
+     * Save or update user.
+     */
+    User save(User user);
+
+    /**
+     * Delete user by ID.
+     */
+    void delete(Integer id);
+
+    /**
+     * Update last login time for user.
+     */
+    void updateLastLoginTime(Integer userId);
 }

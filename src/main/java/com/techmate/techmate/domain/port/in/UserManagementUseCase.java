@@ -1,130 +1,126 @@
 package com.techmate.techmate.domain.port.in;
 
-import com.techmate.techmate.domain.model.user.User;
-
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 /**
- * 🎯 INPUT PORT - UserManagementUseCase
+ * Input port for user management use cases.
  * 
- * Caso de uso para gestión de usuarios.
- * Define operaciones de consulta y comando sobre usuarios.
- * 
- * @author TechShare Team - Hexagonal Architecture
- * @version 2.0.0
+ * Defines operations for user CRUD and profile management.
+ * Commands and queries separated following CQRS pattern.
  */
 public interface UserManagementUseCase {
 
-    // ═══ QUERIES ═══
-    
+    // ============= QUERIES =============
+
     /**
-     * Obtiene todos los usuarios
+     * Get user by ID.
      */
-    List<User> getAllUsers();
+    UserResponse getUserById(Integer id);
 
     /**
-     * Busca un usuario por su ID
+     * Get user by username.
      */
-    Optional<User> getUserById(Integer id);
+    UserResponse getUserByUsername(String username);
 
     /**
-     * Busca un usuario por nombre de usuario
+     * Get user by email.
      */
-    Optional<User> getUserByUsername(String username);
+    UserResponse getUserByEmail(String email);
 
     /**
-     * Busca un usuario por email
+     * Get all users.
      */
-    Optional<User> getUserByEmail(String email);
+    List<UserResponse> getAllUsers();
 
     /**
-     * Obtiene usuarios habilitados
+     * Get all enabled users.
      */
-    List<User> getEnabledUsers();
+    List<UserResponse> getEnabledUsers();
 
     /**
-     * Obtiene usuarios deshabilitados
+     * Get all disabled users.
      */
-    List<User> getDisabledUsers();
+    List<UserResponse> getDisabledUsers();
 
     /**
-     * Busca usuarios por rol
+     * Get users with specific role.
      */
-    List<User> getUsersByRole(String roleName);
+    List<UserResponse> getUsersByRole(String roleName);
 
-    // ═══ COMMANDS ═══
+    // ============= COMMANDS =============
 
     /**
-     * Registra un nuevo usuario (operación sin contraseña - la maneja AuthService)
+     * Register a new user.
      */
-    User registerUser(RegisterUserRequest request);
+    UserResponse registerUser(RegisterUserRequest request);
 
     /**
-     * Actualiza el perfil de un usuario (excepto contraseña)
+     * Update user profile.
      */
-    User updateUserProfile(Integer userId, UpdateUserProfileRequest request);
+    UserResponse updateUserProfile(UpdateUserProfileRequest request);
 
     /**
-     * Habilita un usuario
+     * Enable user account.
      */
-    User enableUser(Integer userId);
+    void enableUser(Integer userId);
 
     /**
-     * Deshabilita un usuario
+     * Disable user account.
      */
-    User disableUser(Integer userId);
+    void disableUser(Integer userId);
 
     /**
-     * Asigna un rol a un usuario
+     * Assign role to user.
      */
-    User assignRoleToUser(Integer userId, String roleName);
+    void assignRoleToUser(Integer userId, Integer roleId);
 
     /**
-     * Elimina un usuario
+     * Delete user account.
      */
     void deleteUser(Integer userId);
 
-    // ═══ DTOs ═══
+    // ============= DTOs =============
 
+    /**
+     * User response DTO.
+     */
+    record UserResponse(
+            Integer id,
+            String username,
+            String firstName,
+            String lastName,
+            String email,
+            LocalDate birthDate,
+            String gender,
+            boolean enabled,
+            String profileImageUrl,
+            Set<String> roleNames
+    ) {}
+
+    /**
+     * User registration request DTO.
+     */
     record RegisterUserRequest(
-        String username,
-        String email,
-        String firstName,
-        String lastName,
-        LocalDate birthDate
-    ) {
-        public RegisterUserRequest {
-            if (username == null || username.trim().isEmpty()) {
-                throw new IllegalArgumentException("El nombre de usuario es obligatorio");
-            }
-            if (email == null || email.trim().isEmpty()) {
-                throw new IllegalArgumentException("El email es obligatorio");
-            }
-            if (firstName == null || firstName.trim().isEmpty()) {
-                throw new IllegalArgumentException("El nombre es obligatorio");
-            }
-            if (lastName == null || lastName.trim().isEmpty()) {
-                throw new IllegalArgumentException("El apellido es obligatorio");
-            }
-        }
-    }
+            String username,
+            String email,
+            String plainPassword,
+            String firstName,
+            String lastName,
+            LocalDate birthDate,
+            String gender
+    ) {}
 
+    /**
+     * User profile update request DTO.
+     */
     record UpdateUserProfileRequest(
-        String firstName,
-        String lastName,
-        LocalDate birthDate,
-        String gender,
-        String profileImageUrl
-    ) {
-        public UpdateUserProfileRequest {
-            if (firstName == null || firstName.trim().isEmpty()) {
-                throw new IllegalArgumentException("El nombre no puede estar vacío");
-            }
-            if (lastName == null || lastName.trim().isEmpty()) {
-                throw new IllegalArgumentException("El apellido no puede estar vacío");
-            }
-        }
-    }
+            Integer userId,
+            String firstName,
+            String lastName,
+            LocalDate birthDate,
+            String gender,
+            String profileImageUrl
+    ) {}
 }

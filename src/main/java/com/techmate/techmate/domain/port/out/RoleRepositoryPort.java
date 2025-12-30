@@ -6,52 +6,50 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 🔌 OUTPUT PORT - RoleRepositoryPort
+ * Output port for Role persistence operations.
  * 
- * Define el contrato para persistencia de roles.
- * 
- * @author TechShare Team - Hexagonal Architecture
- * @version 2.0.0
+ * Defines the contract for role repository implementations.
+ * Isolates domain logic from infrastructure details.
  */
 public interface RoleRepositoryPort {
 
     /**
-     * Guarda un nuevo rol o actualiza uno existente
-     */
-    Role save(Role role);
-
-    /**
-     * Busca un rol por su ID
+     * Find role by ID.
      */
     Optional<Role> findById(Integer id);
 
     /**
-     * Busca un rol por nombre
+     * Find role by name.
      */
     Optional<Role> findByName(String name);
 
     /**
-     * Obtiene todos los roles
+     * Find all roles.
      */
     List<Role> findAll();
 
     /**
-     * Elimina un rol por su ID
-     */
-    void deleteById(Integer id);
-
-    /**
-     * Verifica si existe un rol por su ID
+     * Check if role exists by ID.
      */
     boolean existsById(Integer id);
 
     /**
-     * Verifica si existe un rol con el nombre dado
+     * Check if role exists by name.
      */
     boolean existsByName(String name);
 
     /**
-     * Obtiene el conteo total de roles
+     * Count total roles.
      */
     long count();
+
+    /**
+     * Save or update role.
+     */
+    Role save(Role role);
+
+    /**
+     * Delete role by ID.
+     */
+    void delete(Integer id);
 }

@@ -1,50 +1,55 @@
 package com.techmate.techmate.domain.port.out;
 
+import java.util.List;
+
 /**
- * 🔌 OUTPUT PORT - TokenGeneratorPort
+ * Output port for JWT token generation and validation.
  * 
- * Define el contrato para generación y validación de tokens JWT.
- * 
- * @author TechShare Team - Hexagonal Architecture
- * @version 2.0.0
+ * Defines the contract for token generator implementations.
+ * Isolates domain logic from authentication infrastructure (JWT, OAuth, etc.).
  */
 public interface TokenGeneratorPort {
 
     /**
-     * Genera un token JWT para un usuario
+     * Generate JWT token for user.
      * 
-     * @param userId ID del usuario
-     * @param username Nombre de usuario
-     * @param roles Roles del usuario (comma-separated o lista)
-     * @return Token JWT
+     * @param userId user ID
+     * @param username username
+     * @param email user email
+     * @param roles list of role names
+     * @return JWT token string
      */
-    String generateToken(Integer userId, String username, String roles);
+    String generateToken(Integer userId, String username, String email, List<String> roles);
 
     /**
-     * Extrae el usuario ID de un token JWT
+     * Extract user ID from token.
      * 
-     * @throws IllegalArgumentException si el token es inválido
+     * @param token JWT token
+     * @return user ID or null if invalid
      */
     Integer extractUserId(String token);
 
     /**
-     * Extrae el nombre de usuario de un token JWT
+     * Extract username from token.
      * 
-     * @throws IllegalArgumentException si el token es inválido
+     * @param token JWT token
+     * @return username or null if invalid
      */
     String extractUsername(String token);
 
     /**
-     * Extrae los roles de un token JWT
+     * Extract role names from token.
      * 
-     * @throws IllegalArgumentException si el token es inválido
+     * @param token JWT token
+     * @return list of role names
      */
-    String extractRoles(String token);
+    List<String> extractRoles(String token);
 
     /**
-     * Verifica si un token es válido
+     * Validate token signature and expiration.
      * 
-     * @return true si es válido, false si ha expirado o es malformado
+     * @param token JWT token
+     * @return true if valid, false otherwise
      */
     boolean isValid(String token);
 }

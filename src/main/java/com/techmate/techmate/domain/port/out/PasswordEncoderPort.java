@@ -1,30 +1,27 @@
 package com.techmate.techmate.domain.port.out;
 
 /**
- * 🔌 OUTPUT PORT - PasswordEncoderPort
+ * Output port for password encoding operations.
  * 
- * Define el contrato para encriptación de contraseñas.
- * Abstrae la lógica de encriptación (BCrypt, etc.)
- * 
- * @author TechShare Team - Hexagonal Architecture
- * @version 2.0.0
+ * Defines the contract for password encoder implementations.
+ * Isolates domain logic from cryptography infrastructure.
  */
 public interface PasswordEncoderPort {
 
     /**
-     * Encripta una contraseña en plain text
+     * Encode a plaintext password.
      * 
-     * @param plainPassword Contraseña sin encriptar
-     * @return Contraseña hasheada
+     * @param plainPassword plaintext password to encode
+     * @return encoded password hash
      */
     String encode(String plainPassword);
 
     /**
-     * Verifica si una contraseña en plain text coincide con el hash
+     * Check if plaintext password matches encoded password.
      * 
-     * @param plainPassword Contraseña sin encriptar
-     * @param encodedPassword Contraseña hasheada
-     * @return true si coinciden, false en caso contrario
+     * @param plainPassword plaintext password to check
+     * @param encodedPassword encoded password hash to compare against
+     * @return true if passwords match, false otherwise
      */
     boolean matches(String plainPassword, String encodedPassword);
 }

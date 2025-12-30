@@ -1,8 +1,8 @@
 package com.techmate.techmate.mapper;
 
-import com.techmate.techmate.hexagonal.infrastructure.dto.UsuarioDTO;
-import com.techmate.techmate.hexagonal.domain.entity.Usuario;
-import com.techmate.techmate.hexagonal.domain.entity.Role;
+import com.techmate.techmate.infrastructure.dto.UsuarioDTO;
+import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.domain.entity.Role;
 import org.mapstruct.*;
 
 import java.util.List;

@@ -1,53 +1,50 @@
 package com.techmate.techmate.domain.port.in;
 
-import com.techmate.techmate.domain.model.user.User;
+import java.util.List;
 
 /**
- * 🎯 INPUT PORT - AuthenticationUseCase
+ * Input port for authentication use cases.
  * 
- * Caso de uso para autenticación de usuarios.
- * Maneja login, logout, validación de credenciales, etc.
- * 
- * @author TechShare Team - Hexagonal Architecture
- * @version 2.0.0
+ * Defines operations for user login, token generation, and validation.
  */
 public interface AuthenticationUseCase {
 
     /**
-     * Autentica un usuario con usuario/email y contraseña
-     * Retorna un token JWT en caso de éxito
-     * 
-     * @throws IllegalArgumentException si las credenciales son inválidas
+     * Authenticate user with credentials.
      */
-    AuthenticationResponse authenticate(String usernameOrEmail, String password);
+    AuthenticationResponse authenticate(String email, String plainPassword);
 
     /**
-     * Valida un token JWT y retorna la información del usuario
-     * 
-     * @throws IllegalArgumentException si el token es inválido o ha expirado
+     * Validate token and extract claims.
      */
-    User validateToken(String token);
+    boolean validateToken(String token);
 
     /**
-     * Genera un token JWT para un usuario (uso interno)
+     * Generate JWT token for user.
      */
-    String generateToken(User user);
+    String generateToken(Integer userId, String username, String email, List<String> roles);
 
     /**
-     * Verifica si un token es válido
+     * Check if token is still valid.
      */
     boolean isTokenValid(String token);
 
     /**
-     * Invalida un token (logout)
+     * Invalidate token (logout).
      */
     void invalidateToken(String token);
 
-    // ═══ DTOs ═══
+    // ============= DTOs =============
 
+    /**
+     * Authentication response DTO.
+     */
     record AuthenticationResponse(
-        String token,
-        User user,
-        String tokenType
+            Integer userId,
+            String username,
+            String email,
+            String token,
+            List<String> roles,
+            long expiresIn
     ) {}
 }

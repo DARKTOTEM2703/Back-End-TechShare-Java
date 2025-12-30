@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.techmate.techmate.hexagonal.infrastructure.config.AppProperties;
+import com.techmate.techmate.infrastructure.config.AppProperties;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

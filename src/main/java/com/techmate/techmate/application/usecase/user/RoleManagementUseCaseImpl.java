@@ -1,29 +1,27 @@
 package com.techmate.techmate.application.usecase.user;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.techmate.techmate.domain.model.user.Role;
 import com.techmate.techmate.domain.port.in.RoleManagementUseCase;
 import com.techmate.techmate.domain.port.out.RoleRepositoryPort;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
- * 🎯 USE CASE - RoleManagementUseCaseImpl
+ * Implementation of role management use cases.
  * 
- * Implementa la gestión de roles.
- * 
- * @author TechShare Team - Hexagonal Architecture
- * @version 2.0.0
+ * Handles role CRUD operations.
+ * Coordinates with role repository port.
  */
 @Service
 @Transactional
 public class RoleManagementUseCaseImpl implements RoleManagementUseCase {
 
-    private static final Logger log = LoggerFactory.getLogger(RoleManagementUseCaseImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(RoleManagementUseCaseImpl.class);
 
     private final RoleRepositoryPort roleRepository;
 
@@ -31,59 +29,74 @@ public class RoleManagementUseCaseImpl implements RoleManagementUseCase {
         this.roleRepository = roleRepository;
     }
 
+    // ============= QUERIES =============
+
     @Override
     @Transactional(readOnly = true)
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+    public List<RoleResponse> getAllRoles() {
+        logger.debug("Getting all roles");
+        return roleRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Role> getRoleById(Integer id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("El ID del rol debe ser válido");
-        }
-        return roleRepository.findById(id);
+    public RoleResponse getRoleById(Integer id) {
+        logger.debug("Getting role by ID: {}", id);
+        return roleRepository.findById(id)
+                .map(this::toResponse)
+                .orElseThrow(() -> new RuntimeException("Role not found with ID: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Role> getRoleByName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre del rol no puede estar vacío");
-        }
-        return roleRepository.findByName(name.trim());
+    public RoleResponse getRoleByName(String name) {
+        logger.debug("Getting role by name: {}", name);
+        return roleRepository.findByName(name)
+                .map(this::toResponse)
+                .orElseThrow(() -> new RuntimeException("Role not found with name: " + name));
     }
 
-    @Override
-    public Role createRole(CreateRoleRequest request) {
-        log.info("🔐 Creando nuevo rol: {}", request.name());
+    // ============= COMMANDS =============
 
-        // Validar que el rol no existe
+    @Override
+    public RoleResponse createRole(CreateRoleRequest request) {
+        logger.info("Creating new role: {}", request.name());
+
+        // Check if role already exists
         if (roleRepository.existsByName(request.name())) {
-            throw new IllegalArgumentException(
-                String.format("Ya existe un rol con el nombre '%s'", request.name()));
+            throw new RuntimeException("Role already exists: " + request.name());
         }
 
-        Role role = Role.builder()
-            .name(request.name())
-            .build();
+        // Create role domain object
+        Role newRole = Role.builder()
+                .name(request.name().toUpperCase())
+                .build();
 
-        Role saved = roleRepository.save(role);
-        log.info("✅ Rol creado con ID: {}", saved.getId());
-        return saved;
+        Role savedRole = roleRepository.save(newRole);
+        logger.info("Role created successfully: {}", savedRole.getName());
+        return toResponse(savedRole);
     }
 
     @Override
-    public void deleteRole(Integer roleId) {
-        log.info("🗑️ Eliminando rol: {}", roleId);
+    public void deleteRole(Integer id) {
+        logger.info("Deleting role: {}", id);
 
-        if (!roleRepository.existsById(roleId)) {
-            throw new IllegalArgumentException(
-                String.format("Rol con ID %d no existe", roleId));
+        if (!roleRepository.existsById(id)) {
+            throw new RuntimeException("Role not found with ID: " + id);
         }
 
-        roleRepository.deleteById(roleId);
-        log.info("✅ Rol eliminado: {}", roleId);
+        roleRepository.delete(id);
+        logger.info("Role deleted successfully: {}", id);
+    }
+
+    // ============= HELPERS =============
+
+    private RoleResponse toResponse(Role role) {
+        return new RoleResponse(
+                role.getId(),
+                role.getName()
+        );
     }
 }

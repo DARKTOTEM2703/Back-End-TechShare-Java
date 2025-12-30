@@ -1,29 +1,31 @@
 package com.techmate.techmate.application.usecase.user;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.techmate.techmate.domain.model.user.User;
 import com.techmate.techmate.domain.port.in.AuthenticationUseCase;
 import com.techmate.techmate.domain.port.out.UserRepositoryPort;
 import com.techmate.techmate.domain.port.out.PasswordEncoderPort;
 import com.techmate.techmate.domain.port.out.TokenGeneratorPort;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 🎯 USE CASE - AuthenticationUseCaseImpl
+ * Implementation of authentication use cases.
  * 
- * Implementa la autenticación de usuarios.
- * Valida credenciales y genera tokens JWT.
- * 
- * @author TechShare Team - Hexagonal Architecture
- * @version 2.0.0
+ * Handles user login and token generation/validation.
+ * Coordinates with user repository, password encoder, and token generator ports.
  */
-@Service
+@Service("authenticationUseCaseHex")
 @Transactional
 public class AuthenticationUseCaseImpl implements AuthenticationUseCase {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthenticationUseCaseImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationUseCaseImpl.class);
+    private static final long TOKEN_EXPIRATION_SECONDS = 3600;  // 1 hour
 
     private final UserRepositoryPort userRepository;
     private final PasswordEncoderPort passwordEncoder;
@@ -39,81 +41,69 @@ public class AuthenticationUseCaseImpl implements AuthenticationUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public AuthenticationResponse authenticate(String usernameOrEmail, String password) {
-        log.info("🔐 Intentando autenticar: {}", usernameOrEmail);
+    public AuthenticationResponse authenticate(String email, String plainPassword) {
+        logger.info("Authenticating user: {}", email);
 
-        if (usernameOrEmail == null || usernameOrEmail.trim().isEmpty()) {
-            throw new IllegalArgumentException("Usuario o email no puede estar vacío");
-        }
-        if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
-        }
+        // Find user by email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.warn("User not found: {}", email);
+                    return new RuntimeException("Invalid credentials");
+                });
 
-        // Buscar usuario por username o email
-        User user = userRepository.findByUsername(usernameOrEmail)
-            .or(() -> userRepository.findByEmail(usernameOrEmail))
-            .orElseThrow(() -> new IllegalArgumentException("Usuario o email no encontrado"));
-
-        // Validar que el usuario está habilitado
+        // Check if user is enabled
         if (!user.isEnabled()) {
-            log.warn("❌ Usuario deshabilitado intentó autenticarse: {}", usernameOrEmail);
-            throw new IllegalArgumentException("El usuario está deshabilitado");
+            logger.warn("Attempt to authenticate disabled user: {}", email);
+            throw new RuntimeException("User account is disabled");
         }
 
-        // Validar contraseña
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            log.warn("❌ Contraseña incorrecta para: {}", usernameOrEmail);
-            throw new IllegalArgumentException("Contraseña incorrecta");
+        // Verify password
+        if (!passwordEncoder.matches(plainPassword, user.getPasswordHash())) {
+            logger.warn("Invalid password for user: {}", email);
+            throw new RuntimeException("Invalid credentials");
         }
 
-        // Generar token
-        String roles = String.join(",", user.getRoleNames());
-        String token = tokenGenerator.generateToken(user.getId(), user.getUsername(), roles);
+        // Generate token
+        List<String> roles = new ArrayList<>(user.getRoleNames());
+        String token = tokenGenerator.generateToken(user.getId(), user.getUsername(), user.getEmail(), roles);
 
-        log.info("✅ Usuario autenticado exitosamente: {}", user.getId());
-        return new AuthenticationResponse(token, user, "Bearer");
+        // Update last login time
+        userRepository.updateLastLoginTime(user.getId());
+
+        logger.info("User authenticated successfully: {}", email);
+        return new AuthenticationResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                token,
+                roles,
+                TOKEN_EXPIRATION_SECONDS
+        );
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public User validateToken(String token) {
-        if (token == null || token.trim().isEmpty()) {
-            throw new IllegalArgumentException("Token no puede estar vacío");
-        }
-
-        if (!tokenGenerator.isValid(token)) {
-            throw new IllegalArgumentException("Token inválido o expirado");
-        }
-
-        Integer userId = tokenGenerator.extractUserId(token);
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+    public boolean validateToken(String token) {
+        logger.debug("Validating token");
+        return tokenGenerator.isValid(token);
     }
 
     @Override
-    public String generateToken(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("Usuario no puede ser null");
-        }
-
-        String roles = String.join(",", user.getRoleNames());
-        return tokenGenerator.generateToken(user.getId(), user.getUsername(), roles);
+    public String generateToken(Integer userId, String username, String email, List<String> roles) {
+        logger.debug("Generating token for user: {}", username);
+        return tokenGenerator.generateToken(userId, username, email, roles);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public boolean isTokenValid(String token) {
-        if (token == null || token.trim().isEmpty()) {
-            return false;
-        }
+        logger.debug("Checking token validity");
         return tokenGenerator.isValid(token);
     }
 
     @Override
     public void invalidateToken(String token) {
-        log.info("🚪 Invalidando token (logout)");
-        // En una implementación real, guardaríamos el token en una lista negra
-        // Por ahora, solo registramos el logout
+        logger.debug("Invalidating token");
+        // Implementation depends on token invalidation strategy
+        // For JWT, tokens are self-contained and cannot be revoked
+        // Could implement a blacklist mechanism if needed
     }
 }
