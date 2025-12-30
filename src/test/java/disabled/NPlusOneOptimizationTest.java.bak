@@ -1,0 +1,331 @@
+package com.techmate.techmate.repository;
+
+import com.techmate.techmate.entity.*;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import jakarta.persistence.EntityManager;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * 🎯 TEST DE VALIDACIÓN N+1 QUERY OPTIMIZATION (PASO 2)
+ * 
+ * OBJETIVO:
+ * Verificar que las optimizaciones implementadas en PASO 2 efectivamente
+ * previenen el problema N+1 queries en los repositorios críticos.
+ * 
+ * METODOLOGÍA:
+ * 1. Activar Hibernate Statistics
+ * 2. Ejecutar query del repository
+ * 3. Validar que el número de queries sea CONSTANTE (no N)
+ * 
+ * REPOSITORIOS TESTEADOS:
+ * - BorrowRepository: findAll() con JOIN FETCH de usuario/admin/details
+ * - MaterialsRepository: findAll() con @EntityGraph de subCategory/category
+ * - CategoriesRepository: findAll() con @EntityGraph de subCategories
+ * - SubCategoriesRepository: findAll() con @EntityGraph de category
+ * 
+ * MÉTRICA DE ÉXITO:
+ * ✅ ANTES: 1 query inicial + N queries (N = número de registros)
+ * ✅ AHORA: 1-2 queries fijas (independiente de N)
+ * 
+ * @author TechShare Team - PASO 2 Validation
+ * @version 2.0.0 - Production-Ready Testing
+ */
+@DataJpaTest
+@ActiveProfiles("test")
+@DisplayName("🔍 N+1 Query Optimization Validation Tests")
+class NPlusOneOptimizationTest {
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private BorrowRepository borrowRepository;
+
+    @Autowired
+    private MaterialsRepository materialsRepository;
+
+    @Autowired
+    private CategoriesRepository categoriesRepository;
+
+    @Autowired
+    private SubCategoriesRepository subCategoriesRepository;
+
+    private Statistics statistics;
+
+    @BeforeEach
+    void setUp() {
+        // Obtener Hibernate Statistics
+        SessionFactory sessionFactory = entityManager.getEntityManagerFactory()
+                .unwrap(SessionFactory.class);
+        statistics = sessionFactory.getStatistics();
+        statistics.setStatisticsEnabled(true);
+        statistics.clear();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // BORROW REPOSITORY TESTS
+    // ═══════════════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("✅ BorrowRepository.findAll() - NO debe causar N+1")
+    void testBorrowRepositoryFindAllNoNPlusOne() {
+        // ACT: Ejecutar query optimizada
+        statistics.clear();
+        List<Borrow> borrows = borrowRepository.findAll();
+
+        // ASSERT: Verificar que hay registros para testear
+        assertThat(borrows).isNotEmpty();
+
+        // CRITICAL: Validar número de queries
+        long queryCount = statistics.getPrepareStatementCount();
+        
+        System.out.println("📊 BorrowRepository.findAll() Stats:");
+        System.out.println("   - Registros obtenidos: " + borrows.size());
+        System.out.println("   - Queries ejecutadas: " + queryCount);
+        System.out.println("   - Entity fetch count: " + statistics.getEntityFetchCount());
+        
+        // ✅ ÉXITO: Debe ser 1-2 queries (JOIN FETCH carga todo en 1 query)
+        // Tolerancia: 2 queries si hay subquery de count o similar
+        assertThat(queryCount)
+                .as("BorrowRepository debe usar JOIN FETCH para prevenir N+1")
+                .isLessThanOrEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("✅ BorrowRepository.findById() - Debe cargar relaciones en 1 query")
+    void testBorrowRepositoryFindByIdOptimized() {
+        // ARRANGE: Obtener un ID válido
+        List<Borrow> allBorrows = borrowRepository.findAll();
+        if (allBorrows.isEmpty()) {
+            System.out.println("⚠️ No hay borrows para testear");
+            return;
+        }
+        Integer borrowId = allBorrows.get(0).getId();
+
+        // ACT: Query optimizada con JOIN FETCH
+        statistics.clear();
+        borrowRepository.findById(borrowId);
+
+        // ASSERT
+        long queryCount = statistics.getPrepareStatementCount();
+        System.out.println("📊 BorrowRepository.findById() Stats:");
+        System.out.println("   - Queries ejecutadas: " + queryCount);
+
+        assertThat(queryCount)
+                .as("findById debe cargar todas las relaciones en 1-2 queries")
+                .isLessThanOrEqualTo(2);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MATERIALS REPOSITORY TESTS
+    // ═══════════════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("✅ MaterialsRepository.findAll() - @EntityGraph debe prevenir N+1")
+    void testMaterialsRepositoryFindAllNoNPlusOne() {
+        // ACT
+        statistics.clear();
+        List<Materials> materials = materialsRepository.findAll();
+
+        // ASSERT
+        assertThat(materials).isNotEmpty();
+
+        long queryCount = statistics.getPrepareStatementCount();
+        System.out.println("📊 MaterialsRepository.findAll() Stats:");
+        System.out.println("   - Registros obtenidos: " + materials.size());
+        System.out.println("   - Queries ejecutadas: " + queryCount);
+
+        // ✅ @EntityGraph carga subCategory en 1 query
+        assertThat(queryCount)
+                .as("MaterialsRepository debe usar @EntityGraph para prevenir N+1")
+                .isLessThanOrEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("✅ MaterialsRepository.findByName() - Debe cargar subCategory")
+    void testMaterialsRepositoryFindByNameOptimized() {
+        // ARRANGE: Obtener un material válido
+        List<Materials> allMaterials = materialsRepository.findAll();
+        if (allMaterials.isEmpty()) {
+            System.out.println("⚠️ No hay materiales para testear");
+            return;
+        }
+        String materialName = allMaterials.get(0).getName();
+
+        // ACT
+        statistics.clear();
+        Materials material = materialsRepository.findByName(materialName);
+
+        // ASSERT
+        assertThat(material).isNotNull();
+        
+        long queryCount = statistics.getPrepareStatementCount();
+        System.out.println("📊 MaterialsRepository.findByName() Stats:");
+        System.out.println("   - Queries ejecutadas: " + queryCount);
+
+        assertThat(queryCount)
+                .as("findByName con @EntityGraph debe cargar subCategory en 1 query")
+                .isLessThanOrEqualTo(2);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CATEGORIES REPOSITORY TESTS (PASO 2 NEW)
+    // ═══════════════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("✅ CategoriesRepository.findAll() - @EntityGraph previene N+1 con subCategories")
+    void testCategoriesRepositoryFindAllNoNPlusOne() {
+        // ACT
+        statistics.clear();
+        List<Categories> categories = categoriesRepository.findAll();
+
+        // ASSERT
+        long queryCount = statistics.getPrepareStatementCount();
+        System.out.println("📊 CategoriesRepository.findAll() Stats:");
+        System.out.println("   - Categorías obtenidas: " + categories.size());
+        System.out.println("   - Queries ejecutadas: " + queryCount);
+
+        // ✅ @EntityGraph carga subCategories en 1-2 queries (JOIN)
+        assertThat(queryCount)
+                .as("CategoriesRepository debe usar @EntityGraph para subCategories")
+                .isLessThanOrEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("✅ CategoriesRepository.findById() - Debe cargar subCategories")
+    void testCategoriesRepositoryFindByIdOptimized() {
+        // ARRANGE
+        List<Categories> allCategories = categoriesRepository.findAll();
+        if (allCategories.isEmpty()) {
+            System.out.println("⚠️ No hay categorías para testear");
+            return;
+        }
+        Integer categoryId = allCategories.get(0).getId();
+
+        // ACT
+        statistics.clear();
+        categoriesRepository.findById(categoryId);
+
+        // ASSERT
+        long queryCount = statistics.getPrepareStatementCount();
+        System.out.println("📊 CategoriesRepository.findById() Stats:");
+        System.out.println("   - Queries ejecutadas: " + queryCount);
+
+        assertThat(queryCount)
+                .as("findById debe cargar subCategories en 1-2 queries")
+                .isLessThanOrEqualTo(2);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // SUBCATEGORIES REPOSITORY TESTS (PASO 2 NEW)
+    // ═══════════════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("✅ SubCategoriesRepository.findAll() - @EntityGraph previene N+1 con category")
+    void testSubCategoriesRepositoryFindAllNoNPlusOne() {
+        // ACT
+        statistics.clear();
+        List<SubCategories> subCategories = subCategoriesRepository.findAll();
+
+        // ASSERT
+        long queryCount = statistics.getPrepareStatementCount();
+        System.out.println("📊 SubCategoriesRepository.findAll() Stats:");
+        System.out.println("   - Subcategorías obtenidas: " + subCategories.size());
+        System.out.println("   - Queries ejecutadas: " + queryCount);
+
+        // ✅ @EntityGraph carga category padre en 1 query
+        assertThat(queryCount)
+                .as("SubCategoriesRepository debe usar @EntityGraph para category")
+                .isLessThanOrEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("✅ SubCategoriesRepository.findByCategoryIdOptimized() - JOIN FETCH test")
+    void testSubCategoriesFindByCategoryOptimized() {
+        // ARRANGE
+        List<Categories> categories = categoriesRepository.findAll();
+        if (categories.isEmpty()) {
+            System.out.println("⚠️ No hay categorías para testear");
+            return;
+        }
+        Integer categoryId = categories.get(0).getId();
+
+        // ACT
+        statistics.clear();
+        List<SubCategories> subCategories = subCategoriesRepository
+                .findByCategoryIdOptimized(categoryId);
+
+        // ASSERT
+        long queryCount = statistics.getPrepareStatementCount();
+        System.out.println("📊 SubCategoriesRepository.findByCategoryIdOptimized() Stats:");
+        System.out.println("   - Subcategorías obtenidas: " + subCategories.size());
+        System.out.println("   - Queries ejecutadas: " + queryCount);
+
+        // ✅ JOIN FETCH carga todo en 1 query
+        assertThat(queryCount)
+                .as("findByCategoryIdOptimized debe usar JOIN FETCH (1 query)")
+                .isEqualTo(1);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // COMPARATIVE TEST: N+1 vs. OPTIMIZED
+    // ═══════════════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("📊 Comparative: N+1 Problem Demonstration vs. Optimized")
+    void demonstrateNPlusOneProblemVsOptimized() {
+        System.out.println("\n╔══════════════════════════════════════════════════════════╗");
+        System.out.println("║  📊 N+1 OPTIMIZATION COMPARISON REPORT (PASO 2)        ║");
+        System.out.println("╚══════════════════════════════════════════════════════════╝\n");
+
+        // Test 1: BorrowRepository
+        statistics.clear();
+        List<Borrow> borrows = borrowRepository.findAll();
+        long borrowQueries = statistics.getPrepareStatementCount();
+        System.out.printf("🔹 BorrowRepository.findAll():%n");
+        System.out.printf("   Registros: %d | Queries: %d | Ratio: %.2f queries/registro%n%n",
+                borrows.size(), borrowQueries, (double) borrowQueries / Math.max(1, borrows.size()));
+
+        // Test 2: MaterialsRepository
+        statistics.clear();
+        List<Materials> materials = materialsRepository.findAll();
+        long materialQueries = statistics.getPrepareStatementCount();
+        System.out.printf("🔹 MaterialsRepository.findAll():%n");
+        System.out.printf("   Registros: %d | Queries: %d | Ratio: %.2f queries/registro%n%n",
+                materials.size(), materialQueries, (double) materialQueries / Math.max(1, materials.size()));
+
+        // Test 3: CategoriesRepository
+        statistics.clear();
+        List<Categories> categories = categoriesRepository.findAll();
+        long categoryQueries = statistics.getPrepareStatementCount();
+        System.out.printf("🔹 CategoriesRepository.findAll():%n");
+        System.out.printf("   Registros: %d | Queries: %d | Ratio: %.2f queries/registro%n%n",
+                categories.size(), categoryQueries, (double) categoryQueries / Math.max(1, categories.size()));
+
+        // Test 4: SubCategoriesRepository
+        statistics.clear();
+        List<SubCategories> subCategories = subCategoriesRepository.findAll();
+        long subCategoryQueries = statistics.getPrepareStatementCount();
+        System.out.printf("🔹 SubCategoriesRepository.findAll():%n");
+        System.out.printf("   Registros: %d | Queries: %d | Ratio: %.2f queries/registro%n%n",
+                subCategories.size(), subCategoryQueries, (double) subCategoryQueries / Math.max(1, subCategories.size()));
+
+        // Final validation
+        System.out.println("╔══════════════════════════════════════════════════════════╗");
+        System.out.println("║  ✅ VALIDATION SUMMARY                                  ║");
+        System.out.println("╚══════════════════════════════════════════════════════════╝");
+        System.out.println("Expected: ALL ratios should be < 0.1 (optimized)");
+        System.out.println("If ratio ≈ 1.0, it means N+1 problem exists (1 query per record)");
+        System.out.println("\n✅ Test completed. Check ratios above.\n");
+    }
+}
