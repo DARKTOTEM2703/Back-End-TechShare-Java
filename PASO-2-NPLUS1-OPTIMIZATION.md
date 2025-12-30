@@ -5,7 +5,7 @@
 **Estado**: ✅ **COMPLETO Y VALIDADO**  
 **Nivel de Calidad**: 🏆 Production-Ready (Senior Level Performance Engineering)  
 **Fecha**: 28 Diciembre 2025  
-**Técnica**: @EntityGraph + JOIN FETCH + Hibernate Statistics Validation  
+**Técnica**: @EntityGraph + JOIN FETCH + Hibernate Statistics Validation
 
 ---
 
@@ -47,6 +47,7 @@ List<Borrow> findAll(); // 1 query única que carga TODO
 ### 1. BorrowRepository ✅ (Ya optimizado)
 
 #### Estado Inicial
+
 ```java
 // ❌ ANTES: findAll() sin optimización
 List<Borrow> findAll(); // Hereda de JpaRepository (lazy loading)
@@ -54,6 +55,7 @@ List<Borrow> findAll(); // Hereda de JpaRepository (lazy loading)
 ```
 
 #### Estado Final (Production-Ready)
+
 ```java
 // ✅ AHORA: JOIN FETCH explícito
 @Query("SELECT DISTINCT b FROM Borrow b " +
@@ -66,6 +68,7 @@ List<Borrow> findAll();
 ```
 
 **Relaciones cargadas en 1 query**:
+
 - ✅ `b.usuario` (Usuario que pidió préstamo)
 - ✅ `b.admin` (Admin que gestionó)
 - ✅ `b.details` (Detalles de materiales prestados)
@@ -80,6 +83,7 @@ List<Borrow> findAll();
 ### 2. MaterialsRepository ✅ (Ya optimizado)
 
 #### Patrón: @EntityGraph
+
 ```java
 // ✅ @EntityGraph automático
 @EntityGraph(attributePaths = {"subCategory", "subCategory.category"})
@@ -91,11 +95,13 @@ Materials findByName(String name);
 ```
 
 **Ventajas de @EntityGraph**:
+
 - ✅ Sintaxis más limpia que JOIN FETCH
 - ✅ Spring Data JPA automáticamente genera LEFT JOIN
 - ✅ Reutilizable en múltiples métodos
 
 **Relaciones cargadas**:
+
 - ✅ `subCategory` (Subcategoría del material)
 - ✅ `subCategory.category` (Categoría padre navegable)
 
@@ -107,6 +113,7 @@ Materials findByName(String name);
 ### 3. CategoriesRepository ✅ (NUEVO - PASO 2)
 
 #### Antes (❌ N+1 Problem)
+
 ```java
 // ❌ ANTES: Sin optimización
 @Repository
@@ -117,6 +124,7 @@ public interface CategoriesRepository extends JpaRepository<Categories, Integer>
 ```
 
 **Problema**:
+
 ```java
 List<Categories> categories = categoriesRepository.findAll(); // 1 query
 for (Category cat : categories) {
@@ -126,6 +134,7 @@ for (Category cat : categories) {
 ```
 
 #### Después (✅ Optimized)
+
 ```java
 // ✅ AHORA: @EntityGraph carga subCategories
 @EntityGraph(attributePaths = {"subCategories"})
@@ -140,6 +149,7 @@ Optional<Categories> findById(@NonNull Integer id);
 ```
 
 **Relaciones cargadas**:
+
 - ✅ `subCategories` (OneToMany hacia SubCategories)
 
 **Queries**: 1-2 (JOIN optimizado)  
@@ -150,6 +160,7 @@ Optional<Categories> findById(@NonNull Integer id);
 ### 4. SubCategoriesRepository ✅ (NUEVO - PASO 2)
 
 #### Antes (❌ N+1 Problem)
+
 ```java
 // ❌ ANTES: Sin optimización
 @Repository
@@ -160,6 +171,7 @@ public interface SubCategoriesRepository extends JpaRepository<SubCategories, In
 ```
 
 **Problema**:
+
 ```java
 List<SubCategories> subs = subCategoriesRepository.findAll(); // 1 query
 for (SubCategory sub : subs) {
@@ -169,6 +181,7 @@ for (SubCategory sub : subs) {
 ```
 
 #### Después (✅ Optimized)
+
 ```java
 // ✅ AHORA: @EntityGraph carga category padre
 @EntityGraph(attributePaths = {"category"})
@@ -192,6 +205,7 @@ List<SubCategories> findByCategoryIdOptimized(@Param("categoryId") Integer categ
 ```
 
 **Relaciones cargadas**:
+
 - ✅ `category` (ManyToOne hacia Categories)
 
 **Queries**: 1 (JOIN FETCH)  
@@ -204,6 +218,7 @@ List<SubCategories> findByCategoryIdOptimized(@Param("categoryId") Integer categ
 ### Escenario Real: Endpoint `/admin/borrow/all`
 
 #### ❌ ANTES (Sin optimización)
+
 ```
 Base de datos con 100 préstamos:
 - 1 query: SELECT * FROM borrow
@@ -216,6 +231,7 @@ TIEMPO: ~3000ms (10ms promedio por query)
 ```
 
 #### ✅ AHORA (Con JOIN FETCH)
+
 ```
 Base de datos con 100 préstamos:
 - 1 query: SELECT b, u, a, d FROM borrow b
@@ -230,14 +246,15 @@ MEJORA: 37.5x más rápido 🚀
 
 ### Tabla Comparativa
 
-| Endpoint | Registros | Queries (Antes) | Queries (Ahora) | Mejora |
-|----------|-----------|-----------------|-----------------|--------|
-| `/admin/borrow/all` | 100 | 301 | 1 | **300x** menos queries |
-| `/materials/all` | 50 | 101 | 1 | **100x** menos queries |
-| `/categories/all` | 10 | 21 | 1 | **20x** menos queries |
-| `/subcategories/all` | 30 | 31 | 1 | **30x** menos queries |
+| Endpoint             | Registros | Queries (Antes) | Queries (Ahora) | Mejora                 |
+| -------------------- | --------- | --------------- | --------------- | ---------------------- |
+| `/admin/borrow/all`  | 100       | 301             | 1               | **300x** menos queries |
+| `/materials/all`     | 50        | 101             | 1               | **100x** menos queries |
+| `/categories/all`    | 10        | 21              | 1               | **20x** menos queries  |
+| `/subcategories/all` | 30        | 31              | 1               | **30x** menos queries  |
 
 **Impacto en producción con tráfico alto**:
+
 - Menos carga en base de datos → menos uso de CPU/RAM
 - Menos latencia → mejor UX
 - Menos timeouts → menos errores 500
@@ -249,16 +266,17 @@ MEJORA: 37.5x más rápido 🚀
 ### Test Suite: NPlusOneOptimizationTest.java
 
 #### Características del Test
+
 ```java
 @DataJpaTest
 @ActiveProfiles("test")
 class NPlusOneOptimizationTest {
-    
+
     @Autowired
     private EntityManager entityManager;
-    
+
     private Statistics statistics; // Hibernate Stats
-    
+
     @BeforeEach
     void setUp() {
         SessionFactory factory = entityManager.getEntityManagerFactory()
@@ -273,56 +291,60 @@ class NPlusOneOptimizationTest {
 #### Tests Implementados
 
 1. **BorrowRepository Validation** ✅
+
    ```java
    @Test
    void testBorrowRepositoryFindAllNoNPlusOne() {
        statistics.clear();
        List<Borrow> borrows = borrowRepository.findAll();
-       
+
        long queryCount = statistics.getPrepareStatementCount();
-       
+
        // ✅ ÉXITO: Debe ser 1-2 queries (no N)
        assertThat(queryCount).isLessThanOrEqualTo(2);
    }
    ```
 
 2. **MaterialsRepository Validation** ✅
+
    ```java
    @Test
    void testMaterialsRepositoryFindAllNoNPlusOne() {
        statistics.clear();
        List<Materials> materials = materialsRepository.findAll();
-       
+
        long queryCount = statistics.getPrepareStatementCount();
-       
+
        // ✅ @EntityGraph previene N+1
        assertThat(queryCount).isLessThanOrEqualTo(2);
    }
    ```
 
 3. **CategoriesRepository Validation** ✅
+
    ```java
    @Test
    void testCategoriesRepositoryFindAllNoNPlusOne() {
        statistics.clear();
        List<Categories> categories = categoriesRepository.findAll();
-       
+
        long queryCount = statistics.getPrepareStatementCount();
-       
+
        // ✅ @EntityGraph carga subCategories
        assertThat(queryCount).isLessThanOrEqualTo(2);
    }
    ```
 
 4. **SubCategoriesRepository Validation** ✅
+
    ```java
    @Test
    void testSubCategoriesRepositoryFindAllNoNPlusOne() {
        statistics.clear();
        List<SubCategories> subs = subCategoriesRepository.findAll();
-       
+
        long queryCount = statistics.getPrepareStatementCount();
-       
+
        // ✅ @EntityGraph carga category padre
        assertThat(queryCount).isLessThanOrEqualTo(2);
    }
@@ -339,6 +361,7 @@ class NPlusOneOptimizationTest {
    ```
 
 #### Ejecutar Tests
+
 ```powershell
 # Run PASO 2 validation tests
 cd Back-End-TechShare-Java
@@ -358,11 +381,13 @@ mvn test -Dtest=NPlusOneOptimizationTest
 ### 1. JOIN FETCH (JPQL)
 
 **Cuándo usar**:
+
 - ✅ Queries complejas con múltiples relaciones
 - ✅ Necesitas DISTINCT para evitar duplicados
 - ✅ Control fino sobre qué cargar
 
 **Sintaxis**:
+
 ```java
 @Query("SELECT DISTINCT e FROM Entity e " +
        "LEFT JOIN FETCH e.relation1 r1 " +
@@ -371,11 +396,13 @@ List<Entity> findAllOptimized();
 ```
 
 **Ventajas**:
+
 - Control total sobre la query
 - Puede combinar múltiples joins en 1 query
 - DISTINCT elimina duplicados de collections
 
 **Desventajas**:
+
 - Sintaxis más verbosa
 - Query string hardcoded
 
@@ -384,22 +411,26 @@ List<Entity> findAllOptimized();
 ### 2. @EntityGraph (JPA 2.1)
 
 **Cuándo usar**:
+
 - ✅ Queries simples (1-2 relaciones)
 - ✅ Prefieres anotaciones sobre query strings
 - ✅ Quieres reutilizar el mismo patrón
 
 **Sintaxis**:
+
 ```java
 @EntityGraph(attributePaths = {"relation1", "relation1.nested"})
 List<Entity> findAll();
 ```
 
 **Ventajas**:
+
 - ✅ Sintaxis limpia y legible
 - ✅ Autocomplete de IDEs funciona bien
 - ✅ Spring Data genera query automáticamente
 
 **Desventajas**:
+
 - Menos control que JOIN FETCH
 - No soporta DISTINCT directo (JPA lo maneja)
 
@@ -408,11 +439,13 @@ List<Entity> findAll();
 ### 3. Hibernate Statistics (Testing)
 
 **Por qué es crítico**:
+
 - ✅ Valida que las optimizaciones funcionan
 - ✅ Detecta N+1 ocultos en tests
 - ✅ Métricas objetivas de performance
 
 **Configuración**:
+
 ```yaml
 # application-test.yml
 spring:
@@ -423,6 +456,7 @@ spring:
 ```
 
 **Métricas clave**:
+
 - `getPrepareStatementCount()`: Número de queries SQL
 - `getEntityFetchCount()`: Entidades cargadas
 - Ratio: queries / registros (debe ser < 0.1)
@@ -432,6 +466,7 @@ spring:
 ## 📁 Archivos Modificados/Creados
 
 ### Modificados (Optimizaciones PASO 2)
+
 ```
 Back-End-TechShare-Java/
 └── src/main/java/com/techmate/techmate/repository/
@@ -440,6 +475,7 @@ Back-End-TechShare-Java/
 ```
 
 ### Creados (Validación)
+
 ```
 Back-End-TechShare-Java/
 ├── src/test/java/com/techmate/techmate/repository/
@@ -448,6 +484,7 @@ Back-End-TechShare-Java/
 ```
 
 ### Ya Optimizados (Previo a PASO 2)
+
 ```
 Back-End-TechShare-Java/
 └── src/main/java/com/techmate/techmate/repository/
@@ -475,11 +512,13 @@ Back-End-TechShare-Java/
 ### Objetivos del PASO 3: Security & Configuration Review
 
 1. **Environment Variables Validation**
+
    - ✅ Verificar que NO haya secrets hardcoded en `application.yml`
    - ✅ Validar que todas las credenciales usen `${VAR_NAME}`
    - ✅ Completar `.env.example` con TODAS las variables requeridas
 
 2. **Exposed IDs Evaluation**
+
    - 🔍 Analizar si los IDs secuenciales (1, 2, 3) exponen información
    - 🔍 Opciones: UUID, ID encryption, u obfuscation
    - 🔍 Trade-off: seguridad vs. performance de lookups
@@ -494,13 +533,13 @@ Back-End-TechShare-Java/
 
 ## 📊 Métricas Finales del PASO 2
 
-| Métrica | Valor | Estándar |
-|---------|-------|----------|
-| **Repositorios optimizados** | 4/4 (100%) | ✅ Excellent |
-| **Queries reducidas** | ~300 → 4 (promedio) | ✅ 75x mejora |
-| **Tests de validación** | 9 tests | ✅ Production-Ready |
-| **Cobertura de N+1** | 100% (todos los repositories críticos) | ✅ Complete |
-| **Performance gain** | 30-40x faster | ✅ Senior-level |
+| Métrica                      | Valor                                  | Estándar            |
+| ---------------------------- | -------------------------------------- | ------------------- |
+| **Repositorios optimizados** | 4/4 (100%)                             | ✅ Excellent        |
+| **Queries reducidas**        | ~300 → 4 (promedio)                    | ✅ 75x mejora       |
+| **Tests de validación**      | 9 tests                                | ✅ Production-Ready |
+| **Cobertura de N+1**         | 100% (todos los repositories críticos) | ✅ Complete         |
+| **Performance gain**         | 30-40x faster                          | ✅ Senior-level     |
 
 ---
 
@@ -509,6 +548,7 @@ Back-End-TechShare-Java/
 **Status**: ✅ **COMPLETO Y VALIDADO**
 
 **Nivel de Calidad Alcanzado**:
+
 - 🏆 Production-Ready Performance Engineering
 - 🏆 Senior-Level Database Optimization
 - 🏆 Test-Driven Validation (TDD)
@@ -516,6 +556,7 @@ Back-End-TechShare-Java/
 - 🏆 Zero N+1 Queries en repositorios críticos
 
 **Impacto Real**:
+
 - 🚀 **30-40x faster** en endpoints de listado
 - 🚀 **75% menos** carga en base de datos
 - 🚀 **300+ queries eliminadas** en escenarios típicos

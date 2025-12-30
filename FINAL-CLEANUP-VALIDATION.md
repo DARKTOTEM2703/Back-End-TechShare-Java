@@ -54,6 +54,7 @@ LOCATION 2: src/main/java/com/techmate/techmate/mapper/UserMapper.java
 ```
 
 **Why Both Exist:**
+
 - UserServiceImpl is LEGACY code (not yet hexagonal)
 - UserController is REFACTORED (hexagonal)
 - They use different mapper implementations for now
@@ -125,6 +126,7 @@ DO NOT DELETE (During Transition):
 ## 🎯 ACTION ITEMS
 
 ### ✅ STEP 1: Delete Dead Code
+
 ```
 DELETE: src/main/java/com/techmate/techmate/mapper/BorrowMapperV2.java
 
@@ -134,20 +136,22 @@ Impact: Code cleanup only, no functionality changes
 ```
 
 ### ✅ STEP 2: Verify Again
+
 ```
 After deletion:
 1. mvnw clean compile -DskipTests
    Expected: BUILD SUCCESS
-   
+
 2. mvnw test
    Expected: 343/343 tests pass
 ```
 
 ### 📋 STEP 3: Plan Future Cleanup (NEXT SPRINT)
+
 ```
 When UserQueryService and UserServiceImpl are hexagonal-refactored:
   DELETE: src/main/java/com/techmate/techmate/service/User/mapper/UserMapper.java
-  
+
 This will consolidate to single UserMapper in mapper/ folder
 ```
 
@@ -156,6 +160,7 @@ This will consolidate to single UserMapper in mapper/ folder
 ## ✅ FINAL ASSESSMENT
 
 **Current State:**
+
 - BUILD: ✅ SUCCESS (14.677s)
 - TESTS: ✅ 343/343 PASSING (01:19m)
 - CODE QUALITY: 🟢 GOOD (with minor dead code)
@@ -164,7 +169,8 @@ This will consolidate to single UserMapper in mapper/ folder
 
 **Dead Code Found:** 1 file (BorrowMapperV2.java)
 
-**Safe to Delete:** 
+**Safe to Delete:**
+
 - ✅ BorrowMapperV2.java (immediate)
 - ✅ Legacy UserMapper.java (future refactor)
 

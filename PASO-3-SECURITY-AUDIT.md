@@ -5,7 +5,7 @@
 **Estado**: ✅ **COMPLETO Y VALIDADO**  
 **Nivel de Calidad**: 🏆 Production-Ready Security (Senior-Level DevSecOps)  
 **Fecha**: 28 Diciembre 2025  
-**Scope**: Environment Variables, CORS, JWT, ID Exposure, Configuration Hardening  
+**Scope**: Environment Variables, CORS, JWT, ID Exposure, Configuration Hardening
 
 ---
 
@@ -14,6 +14,7 @@
 ### 1. Environment Variables ✅
 
 #### Estado de Secretos Hardcoded
+
 ```bash
 ✅ VERIFICADO: application.properties
    - JWT_SECRET:    ${JWT_SECRET} ✅
@@ -27,13 +28,14 @@
 ```
 
 #### Archivo application.properties - AUDIT RESULT
-| Variable | Estado | Valor |
-|----------|--------|-------|
-| `JWT_SECRET` | ✅ Seguro | `${JWT_SECRET}` (variable de entorno) |
-| `SPRING_DATASOURCE_PASSWORD` | ✅ Seguro | `${SPRING_DATASOURCE_PASSWORD}` |
-| `MAIL_PASSWORD` | ✅ Seguro | `${MAIL_PASSWORD}` |
-| `REDIS_PASSWORD` | ✅ Seguro | `${REDIS_PASSWORD}` |
-| `MINIO_SECRET_KEY` | ✅ Seguro | `${MINIO_SECRET_KEY}` |
+
+| Variable                     | Estado    | Valor                                 |
+| ---------------------------- | --------- | ------------------------------------- |
+| `JWT_SECRET`                 | ✅ Seguro | `${JWT_SECRET}` (variable de entorno) |
+| `SPRING_DATASOURCE_PASSWORD` | ✅ Seguro | `${SPRING_DATASOURCE_PASSWORD}`       |
+| `MAIL_PASSWORD`              | ✅ Seguro | `${MAIL_PASSWORD}`                    |
+| `REDIS_PASSWORD`             | ✅ Seguro | `${REDIS_PASSWORD}`                   |
+| `MINIO_SECRET_KEY`           | ✅ Seguro | `${MINIO_SECRET_KEY}`                 |
 
 **Conclusión**: ✅ **SIN SECRETS HARDCODED**
 
@@ -44,6 +46,7 @@
 #### Mejoras Implementadas (PASO 3)
 
 **ANTES (v1.0)**:
+
 - ❌ Contenido duplicado (2 secciones iguales)
 - ❌ Sin instrucciones de generación de secretos
 - ❌ Sin AWS S3 configuration
@@ -51,6 +54,7 @@
 - ❌ Sin contexto de observability
 
 **AHORA (v2.0 - Production-Ready)**:
+
 - ✅ Template limpio y organizado (140 líneas)
 - ✅ Instrucciones de generación de secretos con `openssl`
 - ✅ AWS S3 configuration (comentada, lista para producción)
@@ -60,6 +64,7 @@
 - ✅ Separación clara de secciones (DB, JWT, CORS, Email, Storage, Redis)
 
 #### Comandos para Generar Secrets (Incluidos en .env.example)
+
 ```bash
 # JWT Secret (256-bit)
 openssl rand -base64 64
@@ -75,6 +80,7 @@ openssl rand -base64 32
 ```
 
 #### Checklist de Seguridad en .env.example
+
 ```plaintext
 [ ] Todos los YOUR_* reemplazados con valores reales
 [ ] JWT_SECRET generado con openssl rand -base64 64 (mínimo 64 chars)
@@ -104,40 +110,41 @@ private String corsAllowedOriginsRaw;
 @Bean
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    
+
     // ✅ DESARROLLO: Patrones localhost flexibles
     configuration.setAllowedOriginPatterns(
         Arrays.asList("http://localhost:*", "https://localhost:*", "http://127.0.0.1:*", "*"));
-    
+
     // ✅ PRODUCCIÓN: Orígenes específicos desde ENV
     List<String> allowedOrigins = parseFromEnv(corsAllowedOriginsRaw);
     configuration.setAllowedOrigins(allowedOrigins);
-    
+
     // ✅ Métodos HTTP permitidos
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-    
+
     // ✅ Headers expuestos para JWT
     configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type", "Access-Control-Allow-Origin"));
-    
+
     // ✅ Credentials habilitadas (necesario para JWT en headers)
     configuration.setAllowCredentials(true);
-    
+
     return source;
 }
 ```
 
 #### Análisis de Seguridad CORS
 
-| Aspecto | Configuración | Evaluación |
-|---------|---------------|------------|
-| **Origen dinámico** | `${CORS_ALLOWED_ORIGINS}` | ✅ Configurable por entorno |
-| **Patrones localhost** | `localhost:*` (dev only) | ✅ Flexible en desarrollo |
-| **Producción** | Orígenes específicos | ✅ Restrictivo y seguro |
-| **Credentials** | `allowCredentials: true` | ✅ Necesario para JWT |
-| **Métodos HTTP** | GET, POST, PUT, DELETE | ✅ Standard REST |
-| **Exposed Headers** | Authorization | ✅ Necesario para JWT refresh |
+| Aspecto                | Configuración             | Evaluación                    |
+| ---------------------- | ------------------------- | ----------------------------- |
+| **Origen dinámico**    | `${CORS_ALLOWED_ORIGINS}` | ✅ Configurable por entorno   |
+| **Patrones localhost** | `localhost:*` (dev only)  | ✅ Flexible en desarrollo     |
+| **Producción**         | Orígenes específicos      | ✅ Restrictivo y seguro       |
+| **Credentials**        | `allowCredentials: true`  | ✅ Necesario para JWT         |
+| **Métodos HTTP**       | GET, POST, PUT, DELETE    | ✅ Standard REST              |
+| **Exposed Headers**    | Authorization             | ✅ Necesario para JWT refresh |
 
 **Recomendación para Producción**:
+
 ```properties
 # ❌ NO USAR EN PROD:
 CORS_ALLOWED_ORIGINS=*
@@ -160,21 +167,23 @@ jwt.refresh-expiration=${JWT_REFRESH_EXPIRATION:604800000}  # 7 days
 
 #### Análisis de Seguridad JWT
 
-| Aspecto | Configuración | Evaluación |
-|---------|---------------|------------|
-| **Secret Storage** | `${JWT_SECRET}` (env var) | ✅ NO hardcoded |
-| **Secret Length** | Recomendado: 64 chars (512 bits) | ✅ Documentado en .env.example |
-| **Token Expiration** | 24 hours | ✅ Balance seguridad/UX |
-| **Refresh Token** | 7 days | ✅ Standard practice |
-| **Algorithm** | HS256 (HMAC-SHA256) | ✅ Seguro para symmetric key |
+| Aspecto              | Configuración                    | Evaluación                     |
+| -------------------- | -------------------------------- | ------------------------------ |
+| **Secret Storage**   | `${JWT_SECRET}` (env var)        | ✅ NO hardcoded                |
+| **Secret Length**    | Recomendado: 64 chars (512 bits) | ✅ Documentado en .env.example |
+| **Token Expiration** | 24 hours                         | ✅ Balance seguridad/UX        |
+| **Refresh Token**    | 7 days                           | ✅ Standard practice           |
+| **Algorithm**        | HS256 (HMAC-SHA256)              | ✅ Seguro para symmetric key   |
 
 **Best Practices Aplicadas**:
+
 1. ✅ Secret en variable de entorno (NO hardcoded)
 2. ✅ Expiration time razonable (24h access, 7d refresh)
 3. ✅ Instrucciones de generación en .env.example
 4. ✅ Token rotation mediante refresh tokens
 
 **Recomendaciones Adicionales**:
+
 ```java
 // Consideración futura: Migrar a RS256 (asymmetric) en producción
 // Permite: backend firma con private key, frontend verifica con public key
@@ -188,6 +197,7 @@ jwt.refresh-expiration=${JWT_REFRESH_EXPIRATION:604800000}  # 7 days
 #### Estado Actual: Sequential IDs en DTOs
 
 **Archivos con IDs Integer expuestos**:
+
 ```java
 // DTO examples con Sequential IDs
 UsuarioDTO.java:           private Integer id;
@@ -200,29 +210,32 @@ AuthUserDTO.java:          private Integer id;
 
 #### Análisis de Riesgo
 
-| Riesgo | Severidad | Impacto | Probabilidad |
-|--------|-----------|---------|--------------|
-| **Enumeración de usuarios** | 🟡 Media | Un atacante puede iterar IDs (1,2,3...) para descubrir usuarios | Alta |
-| **IDOR (Insecure Direct Object Reference)** | 🔴 Alta | Cambiar ID en request para acceder a recursos de otros usuarios | Media (depende de autorización) |
-| **Predicción de nuevos recursos** | 🟡 Media | Predecir IDs de préstamos/materiales futuros | Baja |
-| **Information leakage** | 🟢 Baja | Revelar volumen de negocio (ID 10,000 = 10k usuarios) | Alta |
+| Riesgo                                      | Severidad | Impacto                                                         | Probabilidad                    |
+| ------------------------------------------- | --------- | --------------------------------------------------------------- | ------------------------------- |
+| **Enumeración de usuarios**                 | 🟡 Media  | Un atacante puede iterar IDs (1,2,3...) para descubrir usuarios | Alta                            |
+| **IDOR (Insecure Direct Object Reference)** | 🔴 Alta   | Cambiar ID en request para acceder a recursos de otros usuarios | Media (depende de autorización) |
+| **Predicción de nuevos recursos**           | 🟡 Media  | Predecir IDs de préstamos/materiales futuros                    | Baja                            |
+| **Information leakage**                     | 🟢 Baja   | Revelar volumen de negocio (ID 10,000 = 10k usuarios)           | Alta                            |
 
 #### Opciones de Mitigación
 
 ##### Opción 1: UUID (Universally Unique Identifier) ⭐ RECOMENDADO
 
 **Ventajas**:
+
 - ✅ No predecible (random)
 - ✅ No revela información de negocio
 - ✅ Fácil de implementar
 - ✅ Standard en microservicios
 
 **Desventajas**:
+
 - ❌ 36 chars vs. 4-8 chars (Integer)
 - ❌ Índices DB más grandes (~3x)
 - ❌ Menos legible en logs
 
 **Implementación**:
+
 ```java
 // Entity
 @Id
@@ -240,16 +253,19 @@ private String id; // UUID.toString()
 ##### Opción 2: Hashids (Obfuscation) ⭐⭐ BALANCE
 
 **Ventajas**:
+
 - ✅ IDs cortos (8-12 chars)
 - ✅ No predecible
 - ✅ Reversible (decode para lookup en DB)
 - ✅ No requiere migrar DB (Integer interno)
 
 **Desventajas**:
+
 - ❌ Requiere librería externa (Hashids)
 - ❌ Encode/decode overhead (mínimo)
 
 **Implementación**:
+
 ```java
 // pom.xml
 <dependency>
@@ -274,32 +290,36 @@ Integer realId = hashids.decode(hashedId)[0];
 
 ##### Opción 3: Authorization-First (No cambiar IDs) ⭐⭐⭐
 
-**Filosofía**: 
+**Filosofía**:
+
 > "Security through proper authorization, not obscurity"
 
 **Implementación**:
+
 ```java
 // Service layer: SIEMPRE validar ownership
 public BorrowDTO getBorrow(Integer borrowId, Integer requestingUserId) {
     Borrow borrow = borrowRepository.findById(borrowId)
         .orElseThrow(() -> new NotFoundException("Borrow not found"));
-    
+
     // ✅ CRÍTICO: Validar que el usuario tiene permiso
-    if (!borrow.getUsuario().getId().equals(requestingUserId) 
+    if (!borrow.getUsuario().getId().equals(requestingUserId)
         && !isAdmin(requestingUserId)) {
         throw new UnauthorizedException("Access denied");
     }
-    
+
     return mapper.toDTO(borrow);
 }
 ```
 
 **Ventajas**:
+
 - ✅ Zero code change en entities/DTOs
 - ✅ Standard security practice
 - ✅ Performance óptimo
 
 **Desventajas**:
+
 - ❌ No oculta volumen de negocio
 - ❌ IDs predecibles (enumeración posible)
 
@@ -310,12 +330,15 @@ public BorrowDTO getBorrow(Integer borrowId, Integer requestingUserId) {
 #### 🎯 Recomendación Final: Enfoque Híbrido
 
 **Para TechShare (Producción Inmediata)**:
+
 1. ✅ **PASO 1 (Inmediato)**: Authorization-First
+
    - Auditar TODOS los endpoints
    - Validar ownership en cada service method
    - Tests de seguridad para IDOR
 
 2. ✅ **PASO 2 (Corto plazo)**: Hashids en endpoints públicos
+
    - Users: `GET /api/users/{hashedId}`
    - Borrows: `GET /admin/borrows/{hashedId}`
    - Materials: Mantener Integer (recursos públicos, OK exponer)
@@ -326,31 +349,32 @@ public BorrowDTO getBorrow(Integer borrowId, Integer requestingUserId) {
    - Backward compatibility con hashids durante transición
 
 **Ejemplo de Implementación Híbrida**:
+
 ```java
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    
+
     private final Hashids hashids = new Hashids("techshare-salt-v1", 8);
-    
+
     @GetMapping("/{hashedId}")
     public ResponseEntity<UsuarioDTO> getUser(
             @PathVariable String hashedId,
             Authentication auth) {
-        
+
         // Decode hashedId → Integer
         Integer userId = decodeId(hashedId);
         Integer requestingUserId = extractUserId(auth);
-        
+
         // Authorization check
         if (!userId.equals(requestingUserId) && !isAdmin(requestingUserId)) {
             throw new UnauthorizedException("Access denied");
         }
-        
+
         // Fetch & return
         Usuario user = userService.findById(userId);
         UsuarioDTO dto = mapper.toDTO(user);
-        
+
         // Encode ID in response
         dto.setId(hashids.encode(userId)); // "a3bF9xK2"
         return ResponseEntity.ok(dto);
@@ -380,15 +404,16 @@ http.headers(headers -> headers
 
 #### Análisis de Security Headers
 
-| Header | Configuración | Status | Notas |
-|--------|---------------|--------|-------|
-| **X-Frame-Options** | DENY | ✅ | Previene clickjacking |
-| **X-XSS-Protection** | 1; mode=block | ✅ | XSS filter activo |
-| **Content-Security-Policy** | Restrictivo | ⚠️ | `unsafe-inline` puede ser riesgoso |
-| **X-Content-Type-Options** | nosniff | ✅ | MIME sniffing disabled |
-| **Cache-Control** | Disabled | ⚠️ | Considerar habilitar para assets |
+| Header                      | Configuración | Status | Notas                              |
+| --------------------------- | ------------- | ------ | ---------------------------------- |
+| **X-Frame-Options**         | DENY          | ✅     | Previene clickjacking              |
+| **X-XSS-Protection**        | 1; mode=block | ✅     | XSS filter activo                  |
+| **Content-Security-Policy** | Restrictivo   | ⚠️     | `unsafe-inline` puede ser riesgoso |
+| **X-Content-Type-Options**  | nosniff       | ✅     | MIME sniffing disabled             |
+| **Cache-Control**           | Disabled      | ⚠️     | Considerar habilitar para assets   |
 
 **Mejoras Recomendadas**:
+
 ```java
 // CSP más estricto (considerar para v2.0)
 .contentSecurityPolicy(csp -> csp.policyDirectives(
@@ -406,13 +431,14 @@ http.headers(headers -> headers
 ### 7. Session Management ✅
 
 ```java
-http.sessionManagement(session -> 
+http.sessionManagement(session ->
     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 );
 ```
 
 **Estado**: ✅ **STATELESS (JWT-based)**  
 **Ventajas**:
+
 - ✅ No server-side sessions (escalable horizontalmente)
 - ✅ Compatible con microservicios
 - ✅ Reduce carga de memoria en servidor
@@ -438,6 +464,7 @@ springdoc.swagger-ui.enabled=false
 **Estado**: ✅ **CORRECTO (disabled en prod)**
 
 **Validación**:
+
 ```bash
 # Development
 curl http://localhost:8080/swagger-ui.html
@@ -492,16 +519,16 @@ curl https://api.techshare.com/swagger-ui.html
 
 ## 📊 Métricas de Seguridad
 
-| Métrica | Valor | Estándar Industria | Status |
-|---------|-------|-------------------|--------|
-| **Secrets hardcoded** | 0 | 0 | ✅ Excellent |
-| **Environment variables** | 100% | 100% | ✅ Excellent |
-| **CORS configuration** | Dynamic | Dynamic | ✅ Excellent |
-| **JWT secret strength** | 512 bits | ≥256 bits | ✅ Excellent |
-| **Token expiration** | 24h / 7d | 15min-24h | ✅ Good |
-| **Security headers** | 5/6 | ≥4 | ✅ Good |
-| **ID exposure mitigation** | Authorization-first | UUID/Hashids | ⚠️ Medium |
-| **Swagger in prod** | Disabled | Disabled | ✅ Excellent |
+| Métrica                    | Valor               | Estándar Industria | Status       |
+| -------------------------- | ------------------- | ------------------ | ------------ |
+| **Secrets hardcoded**      | 0                   | 0                  | ✅ Excellent |
+| **Environment variables**  | 100%                | 100%               | ✅ Excellent |
+| **CORS configuration**     | Dynamic             | Dynamic            | ✅ Excellent |
+| **JWT secret strength**    | 512 bits            | ≥256 bits          | ✅ Excellent |
+| **Token expiration**       | 24h / 7d            | 15min-24h          | ✅ Good      |
+| **Security headers**       | 5/6                 | ≥4                 | ✅ Good      |
+| **ID exposure mitigation** | Authorization-first | UUID/Hashids       | ⚠️ Medium    |
+| **Swagger in prod**        | Disabled            | Disabled           | ✅ Excellent |
 
 **Security Score**: 🏆 **85/100** (Production-Ready con mejoras identificadas)
 
@@ -514,6 +541,7 @@ curl https://api.techshare.com/swagger-ui.html
 **Prioridad**: 🔴 **CRÍTICA**
 
 Auditar estos controladores para IDOR:
+
 ```java
 // ❌ PELIGRO: Sin validación de ownership
 @GetMapping("/borrows/{id}")
@@ -530,6 +558,7 @@ public BorrowDTO getBorrow(@PathVariable Integer id, Authentication auth) {
 ```
 
 **Endpoints a auditar**:
+
 - `BorrowController`: GET /admin/borrow/{id}
 - `BorrowUserController`: GET /user/borrows/{id}
 - `MaterialsController`: PUT /admin/materials/{id} (solo admins)
@@ -581,6 +610,7 @@ pre-commit run --all-files
 ## 🎓 Lecciones Aprendidas (Senior-Level Security)
 
 ### 1. Defense in Depth
+
 > "No confíes solo en obscurity de IDs. Valida autorización SIEMPRE."
 
 - ✅ Sequential IDs no son inseguros per se
@@ -588,6 +618,7 @@ pre-commit run --all-files
 - ✅ Hashids/UUID son **defense in depth**, no la única defensa
 
 ### 2. Configuration as Code
+
 > "Secretos en variables de entorno, configuración en Git."
 
 - ✅ application.properties puede ir a Git (sin secretos)
@@ -595,6 +626,7 @@ pre-commit run --all-files
 - ✅ .env.example SÍ va a Git (guía para el equipo)
 
 ### 3. Security by Default
+
 > "Swagger OFF en producción por default, no opt-out."
 
 ```properties
@@ -606,6 +638,7 @@ SWAGGER_ENABLED=true  # Requiere recordar desactivar en prod
 ```
 
 ### 4. Progressive Disclosure
+
 > "No expongas todo en DTOs. Solo lo necesario."
 
 ```java
@@ -631,18 +664,21 @@ public class UsuarioPublicDTO {
 ## 📁 Archivos Modificados/Creados
 
 ### Modificados (PASO 3)
+
 ```
 TechShare/
 └── .env.example                              ♻️ MEJORADO (v2.0 Production-Ready)
 ```
 
 ### Creados (Documentación)
+
 ```
 Back-End-TechShare-Java/
 └── PASO-3-SECURITY-AUDIT.md                  ✨ ESTE DOCUMENTO
 ```
 
 ### Para Revisión (Acción Pendiente)
+
 ```
 Back-End-TechShare-Java/src/main/java/com/techmate/techmate/
 ├── controller/
@@ -661,6 +697,7 @@ Back-End-TechShare-Java/src/main/java/com/techmate/techmate/
 **Status**: ✅ **COMPLETO Y VALIDADO**
 
 **Nivel de Calidad Alcanzado**:
+
 - 🏆 Production-Ready Security Configuration
 - 🏆 Senior-Level DevSecOps Standards
 - 🏆 Zero Secrets Hardcoded

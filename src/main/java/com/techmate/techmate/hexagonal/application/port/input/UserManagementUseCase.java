@@ -6,7 +6,10 @@ import com.techmate.techmate.dto.UsuarioDTO;
 
 public interface UserManagementUseCase {
     UsuarioDTO register(RegisterRequest request);
+
     UsuarioDTO login(AuthUserDTO request);
+
     UsuarioDTO getUserById(Long id);
+
     UsuarioDTO updateUser(Long id, UsuarioDTO userDto);
 }

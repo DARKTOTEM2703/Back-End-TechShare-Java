@@ -38,6 +38,7 @@ FILE 4: src/main/java/com/techmate/techmate/infra/mapper/DomainBorrowMapper.java
 ```
 
 **CONCLUSION**: BorrowMapperV2 was an attempted consolidation but:
+
 1. ✅ Never got integrated into the codebase
 2. ✅ Other mappers (BorrowMapper, BorrowDtoMapper) are ACTIVE
 3. ✅ DomainBorrowMapper is the new hexagonal approach
@@ -74,7 +75,7 @@ FILE 2: src/main/java/com/techmate/techmate/service/User/mapper/UserMapper.java
 1. ✅ src/main/java/com/techmate/techmate/mapper/BorrowMapperV2.java
    └─ Reason: Dead code, never integrated, 0 references
    └─ Risk: ZERO
-   
+
 2. ⚠️  src/main/java/com/techmate/techmate/service/User/mapper/UserMapper.java
    └─ Reason: Potentially replaced by UserMapper.java (renamed from V2)
    └─ Risk: MEDIUM - Need to verify no other imports exist
@@ -86,13 +87,13 @@ FILE 2: src/main/java/com/techmate/techmate/service/User/mapper/UserMapper.java
 ```
 1. BorrowMapper.java (service/borrow/mapper/)
    └─ Used by: BorrowUserServiceImp, BorrowQueryService, CreateBorrowUseCase
-   
+
 2. BorrowDtoMapper.java (service/borrow/mapper/)
    └─ Used by: GetBorrowsUseCase, tests
-   
+
 3. DomainBorrowMapper.java (infra/mapper/)
    └─ Used by: JpaBorrowRepositoryAdapter (Hexagonal)
-   
+
 4. UserMapper.java (mapper/) - the renamed one
    └─ Used by: UserController
 ```

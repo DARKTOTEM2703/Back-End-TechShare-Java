@@ -5,7 +5,7 @@
 **Objetivo**: Migrar todo el backend TechShare a arquitectura hexagonal (Onion Architecture)  
 **Estado Actual**: Hexagonal parcial (solo módulo Borrow)  
 **Estado Objetivo**: 100% hexagonal en todos los módulos  
-**Fecha Inicio**: 28 Diciembre 2025  
+**Fecha Inicio**: 28 Diciembre 2025
 
 ---
 
@@ -153,6 +153,7 @@ src/main/java/com/techmate/techmate/
 ## 🔄 Plan de Migración por Módulos
 
 ### ✅ COMPLETADO: Módulo Borrow
+
 - [x] Domain models (Borrow, DetailsBorrow, Material)
 - [x] Ports (BorrowRepositoryPort, etc.)
 - [x] Use Cases (Create, Get, UpdateStatus)
@@ -162,6 +163,7 @@ src/main/java/com/techmate/techmate/
 ### 🔄 EN PROGRESO: Módulo Materials
 
 #### Paso 1: Domain Layer
+
 - [ ] Crear `domain/model/material/Material.java` (domain model puro)
 - [ ] Crear `domain/model/material/Category.java`
 - [ ] Crear `domain/model/material/SubCategory.java`
@@ -169,6 +171,7 @@ src/main/java/com/techmate/techmate/
 - [ ] Crear `domain/service/MaterialStockService.java` (business rules)
 
 #### Paso 2: Ports
+
 - [ ] `domain/port/in/CreateMaterialUseCase.java` (interface)
 - [ ] `domain/port/in/GetMaterialsUseCase.java` (interface)
 - [ ] `domain/port/in/UpdateMaterialUseCase.java` (interface)
@@ -176,11 +179,13 @@ src/main/java/com/techmate/techmate/
 - [ ] `domain/port/out/CategoryRepositoryPort.java` (interface)
 
 #### Paso 3: Application Layer
+
 - [ ] `application/usecase/material/CreateMaterialUseCaseImpl.java`
 - [ ] `application/usecase/material/GetMaterialsUseCaseImpl.java`
 - [ ] `application/usecase/material/UpdateMaterialUseCaseImpl.java`
 
 #### Paso 4: Infrastructure Layer
+
 - [ ] `infra/adapter/output/jpa/JpaMaterialRepositoryAdapter.java`
 - [ ] `infra/adapter/output/jpa/JpaCategoryRepositoryAdapter.java`
 - [ ] `infra/mapper/DomainMaterialMapper.java`
@@ -189,6 +194,7 @@ src/main/java/com/techmate/techmate/
 ### 📋 PENDIENTE: Módulo User/Auth
 
 #### Paso 1: Domain Layer
+
 - [ ] `domain/model/user/User.java` (domain model)
 - [ ] `domain/model/user/UserId.java` (Value Object)
 - [ ] `domain/model/user/Email.java` (Value Object)
@@ -198,6 +204,7 @@ src/main/java/com/techmate/techmate/
 - [ ] `domain/service/AuthenticationService.java`
 
 #### Paso 2: Ports
+
 - [ ] `domain/port/in/RegisterUserUseCase.java`
 - [ ] `domain/port/in/AuthenticateUserUseCase.java`
 - [ ] `domain/port/in/GetUserUseCase.java`
@@ -206,11 +213,13 @@ src/main/java/com/techmate/techmate/
 - [ ] `domain/port/out/EmailServicePort.java`
 
 #### Paso 3: Application Layer
+
 - [ ] `application/usecase/user/RegisterUserUseCaseImpl.java`
 - [ ] `application/usecase/user/AuthenticateUserUseCaseImpl.java`
 - [ ] `application/usecase/user/GetUserUseCaseImpl.java`
 
 #### Paso 4: Infrastructure Layer
+
 - [ ] `infra/adapter/output/jpa/JpaUserRepositoryAdapter.java`
 - [ ] `infra/adapter/output/jpa/JpaRoleRepositoryAdapter.java`
 - [ ] `infra/adapter/output/email/SmtpEmailAdapter.java`
@@ -220,15 +229,18 @@ src/main/java/com/techmate/techmate/
 ### 📋 PENDIENTE: Módulo Movements
 
 #### Paso 1: Domain Layer
+
 - [ ] `domain/model/movement/Movement.java`
 - [ ] `domain/model/movement/MovementType.java` (enum)
 
 #### Paso 2: Ports
+
 - [ ] `domain/port/in/CreateMovementUseCase.java`
 - [ ] `domain/port/in/GetMovementsUseCase.java`
 - [ ] `domain/port/out/MovementRepositoryPort.java`
 
 #### Paso 3: Application & Infrastructure
+
 - [ ] Use Cases implementation
 - [ ] JPA Adapters
 - [ ] Refactor controllers
@@ -236,6 +248,7 @@ src/main/java/com/techmate/techmate/
 ### 📋 PENDIENTE: Módulo Categories
 
 #### Domain & Ports
+
 - [ ] `domain/model/category/Category.java`
 - [ ] `domain/model/category/SubCategory.java`
 - [ ] Ports & Use Cases
@@ -246,17 +259,20 @@ src/main/java/com/techmate/techmate/
 ## 🛠️ Refactoring Estrategia
 
 ### Fase 1: Preparación (Sin Breaking Changes)
+
 1. Crear estructura hexagonal en paralelo
 2. Domain models coexisten con JPA entities
 3. Use Cases consumen Services actuales
 
 ### Fase 2: Migración Gradual (Módulo por Módulo)
+
 1. Migrar Materials (más simple)
 2. Migrar User/Auth (más complejo)
 3. Migrar Movements
 4. Migrar Categories
 
 ### Fase 3: Limpieza (Eliminar Legacy)
+
 1. Eliminar `service/` antigua
 2. Consolidar `entity/` → `infra/entity/`
 3. Mover `dto/` → `infra/adapter/input/dto/`
@@ -267,6 +283,7 @@ src/main/java/com/techmate/techmate/
 ## 📋 Checklist por Módulo
 
 ### Para cada módulo:
+
 - [ ] ✅ Domain models sin dependencias de framework
 - [ ] ✅ Ports (in/out) como interfaces puras
 - [ ] ✅ Use Cases implementan lógica de orquestación
@@ -282,12 +299,14 @@ src/main/java/com/techmate/techmate/
 ## 🎯 Objetivos de Calidad
 
 ### Métricas
+
 - **Cobertura de tests**: ≥ 80%
 - **Acoplamiento**: Domain layer = 0 dependencias externas
 - **Cohesión**: Alta (cada capa tiene responsabilidad clara)
 - **Complejidad ciclomática**: ≤ 10 por método
 
 ### Validaciones
+
 ```bash
 # Verificar que Domain no tiene dependencias de Spring/JPA
 find src/main/java/com/techmate/techmate/domain -name "*.java" | xargs grep -l "import org.springframework"
