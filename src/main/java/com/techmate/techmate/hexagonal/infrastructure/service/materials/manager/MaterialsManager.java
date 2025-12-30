@@ -33,7 +33,8 @@ import lombok.extern.slf4j.Slf4j;
  * - OCP: Extensible para nuevas operaciones sin modificar código existente
  * - LSP: Puede ser sustituido por cualquier implementación del contrato
  * - ISP: Interfaz específica para gestión de ciclo de vida
- * - DIP: Depende de abstracciones (Repository, Mapper, Validator) no de implementaciones
+ * - DIP: Depende de abstracciones (Repository, Mapper, Validator) no de
+ * implementaciones
  * 
  * RESPONSABILIDADES:
  * - Crear nuevos materiales con validación e imagen
@@ -47,7 +48,8 @@ import lombok.extern.slf4j.Slf4j;
  * - Delega validaciones a MaterialsValidator
  * - Delega conversión Entity ↔ DTO a MaterialsMapper
  * - Delega almacenamiento de imágenes a ImageStorageStrategy
- * - Publica eventos de dominio (MaterialLowStockEvent) para alertas asincrónicas
+ * - Publica eventos de dominio (MaterialLowStockEvent) para alertas
+ * asincrónicas
  * 
  * @author TechShare Team - SOLID Implementation
  */
@@ -155,7 +157,7 @@ public class MaterialsManager {
      * 7. Publicar eventos si aplica
      * 8. Retornar DTO actualizado
      * 
-     * @param materialsId ID del material a actualizar
+     * @param materialsId  ID del material a actualizar
      * @param materialsDTO Datos con los nuevos valores
      * @param image        Nuevo archivo de imagen (opcional)
      * @return MaterialsDTO del material actualizado
@@ -225,8 +227,8 @@ public class MaterialsManager {
                 imageStorageStrategy.deleteImage(imagePath);
                 log.debug("Imagen eliminada para material ID: {}", materialsId);
             } catch (Exception ex) {
-                log.warn("No se pudo eliminar imagen para material ID: {} - Continuando con eliminación lógica", 
-                         materialsId, ex);
+                log.warn("No se pudo eliminar imagen para material ID: {} - Continuando con eliminación lógica",
+                        materialsId, ex);
             }
         }
 
@@ -348,18 +350,12 @@ public class MaterialsManager {
      */
     private void checkAndPublishLowStockEvent(Materials material) {
         if (material.getStock() < LOW_STOCK_THRESHOLD) {
-            log.warn("Stock bajo detectado para material ID: {} - Stock: {}", 
-                     material.getId(), material.getStock());
+            log.warn("Stock bajo detectado para material ID: {} - Stock: {}",
+                    material.getId(), material.getStock());
             // TODO: Publish MaterialLowStockEvent when event system is implemented
-            // MaterialLowStockEvent event = new MaterialLowStockEvent(material, LOW_STOCK_THRESHOLD);
+            // MaterialLowStockEvent event = new MaterialLowStockEvent(material,
+            // LOW_STOCK_THRESHOLD);
             // eventPublisher.publishEvent(event);
         }
     }
 }
-
-
-
-
-
-
-

@@ -35,9 +35,3 @@ public class UsuarioRepositoryAdapter implements UserRepositoryPort {
         return jpaRepository.findOneByEmailNative(email);
     }
 }
-
-
-
-
-
-

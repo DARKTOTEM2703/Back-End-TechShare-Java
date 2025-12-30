@@ -25,7 +25,7 @@ public class BorrowUserServiceImp implements BorrowUserService {
     private final BorrowMapper borrowMapper;
     private final com.techmate.techmate.hexagonal.domain.repository.BorrowRepository borrowRepository;
 
-    public BorrowUserServiceImp(BorrowMapper borrowMapper, 
+    public BorrowUserServiceImp(BorrowMapper borrowMapper,
             com.techmate.techmate.hexagonal.domain.repository.BorrowRepository borrowRepository) {
         this.borrowMapper = borrowMapper;
         this.borrowRepository = borrowRepository;
@@ -56,10 +56,3 @@ public class BorrowUserServiceImp implements BorrowUserService {
         return TokenUtils.getRolesFromToken(token);
     }
 }
-
-
-
-
-
-
-

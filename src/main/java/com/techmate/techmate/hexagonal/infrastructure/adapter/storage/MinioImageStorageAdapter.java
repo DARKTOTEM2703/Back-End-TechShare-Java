@@ -35,8 +35,7 @@ public class MinioImageStorageAdapter implements ImageStoragePort {
                             .object(fileName)
                             .stream(fileStream, size, -1)
                             .contentType(contentType)
-                            .build()
-            );
+                            .build());
             return fileName;
         } catch (Exception e) {
             throw new RuntimeException("Error uploading file to MinIO: " + e.getMessage(), e);
@@ -51,8 +50,7 @@ public class MinioImageStorageAdapter implements ImageStoragePort {
                             .method(io.minio.http.Method.GET)
                             .bucket(bucketName)
                             .object(fileName)
-                            .build()
-            );
+                            .build());
         } catch (Exception e) {
             throw new RuntimeException("Error generating presigned URL: " + e.getMessage(), e);
         }
@@ -67,16 +65,9 @@ public class MinioImageStorageAdapter implements ImageStoragePort {
                     RemoveObjectsArgs.builder()
                             .bucket(bucketName)
                             .objects(deleteObjects)
-                            .build()
-            );
+                            .build());
         } catch (Exception e) {
             throw new RuntimeException("Error deleting file from MinIO: " + e.getMessage(), e);
         }
     }
 }
-
-
-
-
-
-

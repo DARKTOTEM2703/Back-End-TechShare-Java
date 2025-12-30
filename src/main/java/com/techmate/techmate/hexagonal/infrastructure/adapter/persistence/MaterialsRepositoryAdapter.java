@@ -35,9 +35,3 @@ public class MaterialsRepositoryAdapter implements MaterialRepositoryPort {
         jpaRepository.deleteById(id.intValue());
     }
 }
-
-
-
-
-
-

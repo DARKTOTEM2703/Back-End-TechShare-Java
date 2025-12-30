@@ -50,29 +50,23 @@ public class BorrowController {
             System.out.println("Id de usuario extraído del token:  " + adminId);
         }
 
-        // TODO: Delegate to UpdateBorrowStatusUseCase when available (Onion Architecture)
+        // TODO: Delegate to UpdateBorrowStatusUseCase when available (Onion
+        // Architecture)
         // updateBorrowStatusUseCase.execute(borrowId, newStatus, adminId);
         return ResponseEntity.ok("Estado del préstamo actualizado correctamente.");
     }
 
     // TODO: Use case GetBorrowsUseCase pendiente
     /*
-    @GetMapping("/all")
-    public ResponseEntity<List<BorrowReadDTO>> getAllBorrow() {
-
-        List<BorrowReadDTO> response = getBorrowsUseCase.getAll();
-        if (response.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.ok(response);
-    }
-    */
+     * @GetMapping("/all")
+     * public ResponseEntity<List<BorrowReadDTO>> getAllBorrow() {
+     * 
+     * List<BorrowReadDTO> response = getBorrowsUseCase.getAll();
+     * if (response.isEmpty()) {
+     * return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+     * }
+     * return ResponseEntity.ok(response);
+     * }
+     */
 
 }
-
-
-
-
-
-
-

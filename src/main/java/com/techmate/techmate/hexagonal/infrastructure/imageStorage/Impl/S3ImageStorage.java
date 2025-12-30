@@ -39,12 +39,12 @@ public class S3ImageStorage implements ImageStorageStrategy {
     private final String endpoint;
 
     public S3ImageStorage(ImageValidationStrategy imageValidationStrategy,
-                          @Value("${minio.endpoint:}") String endpoint,
-                          @Value("${minio.region:us-east-1}") String region,
-                          @Value("${minio.access-key:minioadmin}") String accessKey,
-                          @Value("${minio.secret-key:minioadmin}") String secretKey,
-                          @Value("${minio.bucket:techshare}") String bucketName) {
-        
+            @Value("${minio.endpoint:}") String endpoint,
+            @Value("${minio.region:us-east-1}") String region,
+            @Value("${minio.access-key:minioadmin}") String accessKey,
+            @Value("${minio.secret-key:minioadmin}") String secretKey,
+            @Value("${minio.bucket:techshare}") String bucketName) {
+
         this.imageValidationStrategy = imageValidationStrategy;
         this.bucketName = bucketName;
         this.endpoint = endpoint;
@@ -52,13 +52,12 @@ public class S3ImageStorage implements ImageStorageStrategy {
         S3ClientBuilder builder = S3Client.builder()
                 .region(Region.of(region))
                 .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKey, secretKey)
-                ));
+                        AwsBasicCredentials.create(accessKey, secretKey)));
 
         // 🔑 LA CLAVE: Si hay endpoint local (MinIO), forzamos path-style access
         if (endpoint != null && !endpoint.isBlank()) {
             builder.endpointOverride(URI.create(endpoint))
-                   .forcePathStyle(true);  // Vital para MinIO
+                    .forcePathStyle(true); // Vital para MinIO
             log.info("🚀 S3ImageStorage configurado para MinIO en: {}", endpoint);
         } else {
             log.info("☁️ S3ImageStorage configurado para AWS S3 Real");
@@ -90,7 +89,7 @@ public class S3ImageStorage implements ImageStorageStrategy {
                     .build();
 
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(is, image.getSize()));
-            
+
             log.info("✅ Imagen subida: {}", key);
             return buildUrl(key);
 
@@ -131,9 +130,9 @@ public class S3ImageStorage implements ImageStorageStrategy {
     // --- Métodos Auxiliares ---
 
     private String getExtension(String filename) {
-        return (filename != null && filename.contains(".")) 
-               ? filename.substring(filename.lastIndexOf('.')) 
-               : "";
+        return (filename != null && filename.contains("."))
+                ? filename.substring(filename.lastIndexOf('.'))
+                : "";
     }
 
     private String buildUrl(String key) {
@@ -156,9 +155,3 @@ public class S3ImageStorage implements ImageStorageStrategy {
         return url;
     }
 }
-
-
-
-
-
-

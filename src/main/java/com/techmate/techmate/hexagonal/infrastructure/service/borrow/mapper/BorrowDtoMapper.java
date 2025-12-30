@@ -34,10 +34,3 @@ public interface BorrowDtoMapper {
     // nombre)
     DetailsBorrowDTO detailsToDto(DetailsBorrow details);
 }
-
-
-
-
-
-
-
