@@ -30,7 +30,7 @@ public class UserManager {
     @Transactional
     public void deleteUser(Integer id) {
         if (!usuarioRepository.existsById(id)) {
-            throw new com.techmate.techmate.exception.NotFoundException(
+            throw new com.techmate.techmate.hexagonal.infrastructure.exception.NotFoundException(
                     "El usuario con ID " + id + " no fue encontrado.");
         }
         usuarioRepository.deleteById(id);
@@ -40,7 +40,7 @@ public class UserManager {
     public Usuario updateUser(Integer id, UsuarioDTO usuarioDTO) {
         // Buscar al usuario por ID
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                .orElseThrow(() -> new com.techmate.techmate.hexagonal.infrastructure.exception.NotFoundException(
                         "Usuario no encontrado con ID: " + id));
 
         // Actualizar los campos básicos del usuario
@@ -65,6 +65,7 @@ public class UserManager {
         return usuarioRepository.save(usuario);
     }
 }
+
 
 
 

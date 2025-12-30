@@ -34,7 +34,7 @@ public class UserQueryService {
     public List<UsuarioDTO> getAllUsers() {
         List<Usuario> usuarios = usuarioRepository.findAll();
         if (usuarios.isEmpty()) {
-            throw new com.techmate.techmate.exception.NotFoundException("No está disponible ningún usuario");
+            throw new com.techmate.techmate.hexagonal.infrastructure.exception.NotFoundException("No está disponible ningún usuario");
         }
 
         List<Integer> usuarioIds = usuarios.stream().map(Usuario::getId).collect(Collectors.toList());
@@ -54,7 +54,7 @@ public class UserQueryService {
 
     public UsuarioDTO getById(Integer id) {
         return findDTOById(id)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                .orElseThrow(() -> new com.techmate.techmate.hexagonal.infrastructure.exception.NotFoundException(
                         "Usuario no encontrado con ID: " + id));
     }
 
@@ -68,6 +68,7 @@ public class UserQueryService {
         });
     }
 }
+
 
 
 

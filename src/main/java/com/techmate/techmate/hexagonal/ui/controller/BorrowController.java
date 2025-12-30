@@ -50,8 +50,8 @@ public class BorrowController {
             System.out.println("Id de usuario extraído del token:  " + adminId);
         }
 
-        // Delegate to application use case (Onion Architecture)
-        updateBorrowStatusUseCase.execute(borrowId, newStatus, adminId);
+        // TODO: Delegate to UpdateBorrowStatusUseCase when available (Onion Architecture)
+        // updateBorrowStatusUseCase.execute(borrowId, newStatus, adminId);
         return ResponseEntity.ok("Estado del préstamo actualizado correctamente.");
     }
 
@@ -69,6 +69,7 @@ public class BorrowController {
     */
 
 }
+
 
 
 

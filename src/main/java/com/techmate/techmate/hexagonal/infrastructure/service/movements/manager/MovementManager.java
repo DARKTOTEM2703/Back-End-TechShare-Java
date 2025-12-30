@@ -59,7 +59,7 @@ public class MovementManager {
      */
     private Usuario loadAndValidateUser(Integer userId) {
         return usuarioRepository.findById(userId)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                .orElseThrow(() -> new com.techmate.techmate.hexagonal.infrastructure.exception.NotFoundException(
                         String.format("Usuario con ID %d no encontrado", userId)));
     }
 
@@ -68,7 +68,7 @@ public class MovementManager {
      */
     private Materials loadAndValidateMaterial(Integer materialId) {
         return materialsRepository.findById(materialId)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                .orElseThrow(() -> new com.techmate.techmate.hexagonal.infrastructure.exception.NotFoundException(
                         String.format("Material con ID %d no encontrado", materialId)));
     }
 
@@ -122,7 +122,7 @@ public class MovementManager {
     public MovementsDTO updateMovement(Integer movementsId, MovementsDTO movementsDTO) {
         // 1️⃣ CARGAR movimiento existente
         Movements movement = movementsRepository.findById(movementsId)
-                .orElseThrow(() -> new com.techmate.techmate.exception.NotFoundException(
+                .orElseThrow(() -> new com.techmate.techmate.hexagonal.infrastructure.exception.NotFoundException(
                         String.format("Movimiento con ID %d no encontrado", movementsId)));
 
         // 2️⃣ VALIDAR nuevos datos
@@ -155,6 +155,7 @@ public class MovementManager {
         log.info("Movimiento con ID {} eliminado correctamente", movementsId);
     }
 }
+
 
 
 

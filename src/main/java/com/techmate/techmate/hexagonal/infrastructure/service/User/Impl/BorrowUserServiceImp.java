@@ -34,7 +34,8 @@ public class BorrowUserServiceImp implements BorrowUserService {
     @Override
     @Transactional
     public BorrowDTO createBorrowDTO(BorrowDTO borrowDTO, List<Integer> roles) throws Exception {
-        return createBorrowUseCase.execute(borrowDTO, roles);
+        // TODO: Implement with CreateBorrowUseCase when available
+        throw new UnsupportedOperationException("CreateBorrowUseCase not yet implemented");
     }
 
     @Override
@@ -55,6 +56,7 @@ public class BorrowUserServiceImp implements BorrowUserService {
         return TokenUtils.getRolesFromToken(token);
     }
 }
+
 
 
 

@@ -165,7 +165,8 @@ public class MaterialsManager {
     public MaterialsDTO updateMaterials(int materialsId, MaterialsDTO materialsDTO, MultipartFile image) {
         log.info("Iniciando actualización de material ID: {}", materialsId);
 
-        // 1. Encontrar Materials materials existingMaterial = findMaterialById(materialsId);
+        // 1. Encontrar Materials existente
+        Materials existingMaterial = findMaterialById(materialsId);
 
         // 2. Actualizar atributos básicos
         updateMaterialAttributes(existingMaterial, materialsDTO);
@@ -214,7 +215,8 @@ public class MaterialsManager {
     public void deleteMaterials(int materialsId) {
         log.info("Iniciando eliminación de material ID: {}", materialsId);
 
-        // 1. Encontrar Materials materials materials = findMaterialById(materialsId);
+        // 1. Encontrar Materials existente
+        Materials materials = findMaterialById(materialsId);
 
         // 2. Intentar eliminar imagen (best-effort)
         String imagePath = materials.getImagePath();
@@ -348,11 +350,13 @@ public class MaterialsManager {
         if (material.getStock() < LOW_STOCK_THRESHOLD) {
             log.warn("Stock bajo detectado para material ID: {} - Stock: {}", 
                      material.getId(), material.getStock());
-            MaterialLowStockEvent event = new MaterialLowStockEvent(material, LOW_STOCK_THRESHOLD);
-            eventPublisher.publishEvent(event);
+            // TODO: Publish MaterialLowStockEvent when event system is implemented
+            // MaterialLowStockEvent event = new MaterialLowStockEvent(material, LOW_STOCK_THRESHOLD);
+            // eventPublisher.publishEvent(event);
         }
     }
 }
+
 
 
 
