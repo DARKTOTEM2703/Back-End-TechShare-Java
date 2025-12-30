@@ -5,7 +5,7 @@
 
 app:
   storage:
-    type: ${APP_STORAGE_TYPE}
+    type: ${APP_STORAGE_TYPE:minio}
 
 minio:
   endpoint: ${MINIO_ENDPOINT}
