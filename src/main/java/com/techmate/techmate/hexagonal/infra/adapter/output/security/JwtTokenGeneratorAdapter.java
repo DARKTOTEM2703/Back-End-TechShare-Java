@@ -20,17 +20,16 @@ public class JwtTokenGeneratorAdapter implements TokenGeneratorPort {
     @Override
     public String generateToken(Integer userId, String username, String email, List<String> roles) {
         // Convertir roles de String a Integer si es necesario
-        List<Integer> roleIds = (roles != null && !roles.isEmpty()) ? 
-            roles.stream()
+        List<Integer> roleIds = (roles != null && !roles.isEmpty()) ? roles.stream()
                 .map(role -> {
                     return switch (role.toUpperCase()) {
                         case "ADMIN" -> 2;
                         case "MODERATOR" -> 3;
-                        default -> 1;  // Default to USER
+                        default -> 1; // Default to USER
                     };
                 })
                 .toList() : new ArrayList<>();
-        
+
         return TokenUtils.createToken(userId, email, username, roles, roleIds);
     }
 
@@ -48,15 +47,13 @@ public class JwtTokenGeneratorAdapter implements TokenGeneratorPort {
     public List<String> extractRoles(String token) {
         var rolesOptional = TokenUtils.getRolesFromToken(token);
         // Convertir Integer roles de vuelta a String
-        return rolesOptional.map(intRoles -> 
-            intRoles.stream()
+        return rolesOptional.map(intRoles -> intRoles.stream()
                 .map(roleId -> switch (roleId) {
                     case 2 -> "ADMIN";
                     case 3 -> "MODERATOR";
                     default -> "USER";
                 })
-                .toList()
-        ).orElse(new ArrayList<>());
+                .toList()).orElse(new ArrayList<>());
     }
 
     @Override
@@ -64,10 +61,10 @@ public class JwtTokenGeneratorAdapter implements TokenGeneratorPort {
         try {
             // Usar un UserDetails dummy para validar el token
             UserDetails dummyUser = User.builder()
-                .username(extractUsername(token))
-                .password("")
-                .authorities(new ArrayList<>())
-                .build();
+                    .username(extractUsername(token))
+                    .password("")
+                    .authorities(new ArrayList<>())
+                    .build();
             return TokenUtils.validateToken(token, dummyUser);
         } catch (Exception e) {
             return false;

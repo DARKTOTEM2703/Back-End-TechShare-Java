@@ -7,7 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Puerto de entrada para gestión de materials (UseCases).
- * El método createMaterial ahora acepta el archivo multipart para que el caso de uso
+ * El método createMaterial ahora acepta el archivo multipart para que el caso
+ * de uso
  * sea responsable del flujo de almacenamiento de imágenes (hexagonal boundary).
  */
 public interface MaterialManagementUseCase {
@@ -21,9 +22,3 @@ public interface MaterialManagementUseCase {
 
     void deleteMaterial(Long id);
 }
-
-
-
-
-
-

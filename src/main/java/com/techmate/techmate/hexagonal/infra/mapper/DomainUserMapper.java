@@ -39,13 +39,13 @@ public class DomainUserMapper {
 
         Usuario entity = new Usuario();
         entity.setId(user.getId());
-        entity.setUser_name(user.getUsername());  // Column 'username' -> field 'user_name'
+        entity.setUser_name(user.getUsername()); // Column 'username' -> field 'user_name'
         entity.setFirst_name(user.getFirstName());
         entity.setLast_name(user.getLastName());
         entity.setEmail(user.getEmail());
         entity.setPassword(user.getPasswordHash());
         entity.setBirthDate(user.getBirthDate());
-        
+
         // Map Gender enum
         if (user.getGender() != null) {
             try {
@@ -55,12 +55,12 @@ public class DomainUserMapper {
                 entity.setGender(null);
             }
         }
-        
+
         entity.setEnabled(user.isEnabled());
         entity.setProfile_image_url(user.getProfileImageUrl());
         entity.setCreated_at(user.getCreatedAt());
         entity.setUpdated_at(user.getUpdatedAt());
-        
+
         return entity;
     }
 
@@ -76,7 +76,7 @@ public class DomainUserMapper {
 
         return User.builder()
                 .id(entity.getId())
-                .username(entity.getUser_name())  // Field 'user_name' -> 'username'
+                .username(entity.getUser_name()) // Field 'user_name' -> 'username'
                 .firstName(entity.getFirst_name())
                 .lastName(entity.getLast_name())
                 .email(entity.getEmail())
@@ -104,7 +104,7 @@ public class DomainUserMapper {
         com.techmate.techmate.hexagonal.domain.entity.Role entity = new com.techmate.techmate.hexagonal.domain.entity.Role();
         entity.setId(role.getId());
         entity.setName(role.getName());
-        
+
         return entity;
     }
 

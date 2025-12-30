@@ -50,7 +50,8 @@ public class MaterialsFlowIntegrationTest {
         saved.setStock(5);
         when(materialRepositoryPort.save(any())).thenReturn(saved);
 
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "fake-image".getBytes());
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", MediaType.IMAGE_JPEG_VALUE,
+                "fake-image".getBytes());
 
         mockMvc.perform(multipart("/api/materials/create")
                 .file(image)

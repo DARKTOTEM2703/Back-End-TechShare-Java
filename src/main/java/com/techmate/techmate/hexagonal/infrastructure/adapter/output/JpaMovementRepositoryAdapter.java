@@ -21,7 +21,8 @@ import com.techmate.techmate.hexagonal.domain.port.output.MovementRepositoryPort
 import com.techmate.techmate.hexagonal.application.mapper.DomainMovementMapper;
 
 /**
- * JpaMovementRepositoryAdapter - Infrastructure adapter implementing MovementRepositoryPort.
+ * JpaMovementRepositoryAdapter - Infrastructure adapter implementing
+ * MovementRepositoryPort.
  * Bridges between domain (pure business logic) and JPA persistence layer.
  * 
  * Responsibilities:

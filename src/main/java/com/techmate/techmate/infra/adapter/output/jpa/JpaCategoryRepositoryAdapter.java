@@ -42,14 +42,14 @@ public class JpaCategoryRepositoryAdapter implements CategoryRepositoryPort {
     @Override
     public Optional<Category> findById(Integer id) {
         return jpaRepository.findById(id)
-            .map(mapper::toDomain);
+                .map(mapper::toDomain);
     }
 
     @Override
     public List<Category> findAll() {
         return jpaRepository.findAll().stream()
-            .map(mapper::toDomain)
-            .collect(Collectors.toList());
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -12,7 +12,8 @@ import com.techmate.techmate.hexagonal.domain.model.movement.MoveType;
 import com.techmate.techmate.hexagonal.domain.port.input.MovementManagementUseCase;
 
 /**
- * DomainMovementMapper - Manual mapper for Movement domain model ↔ JPA/DTO conversion.
+ * DomainMovementMapper - Manual mapper for Movement domain model ↔ JPA/DTO
+ * conversion.
  * Handles conversions between:
  * - Domain Movement model (immutable, pure business logic)
  * - JPA Movements entity (database persistence)

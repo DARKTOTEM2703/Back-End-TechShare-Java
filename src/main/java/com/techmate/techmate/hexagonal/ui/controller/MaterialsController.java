@@ -48,7 +48,8 @@ public class MaterialsController {
             @RequestParam(value = "image", required = false) MultipartFile image,
             @ModelAttribute MaterialRequest materialRequest) {
         try {
-            // Pasamos la imagen al puerto de entrada; el UseCase se encarga del almacenamiento
+            // Pasamos la imagen al puerto de entrada; el UseCase se encarga del
+            // almacenamiento
             MaterialResponse resp = materialManagementUseCase.createMaterial(materialRequest, image);
             return new ResponseEntity<>(resp, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {

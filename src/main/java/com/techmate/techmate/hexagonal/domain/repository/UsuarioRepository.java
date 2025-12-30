@@ -26,10 +26,13 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     /**
-     * Busca usuario por ID SIN roles cargados (evita ConcurrentModificationException).
-     * CRÍTICO: @EntityGraph deshabilitado temporalmente por problemas de concurrencia.
+     * Busca usuario por ID SIN roles cargados (evita
+     * ConcurrentModificationException).
+     * CRÍTICO: @EntityGraph deshabilitado temporalmente por problemas de
+     * concurrencia.
      */
-    // @EntityGraph(attributePaths = { "roles" })  // DESHABILITADO: Causa ConcurrentModificationException
+    // @EntityGraph(attributePaths = { "roles" }) // DESHABILITADO: Causa
+    // ConcurrentModificationException
     @NonNull
     Optional<Usuario> findById(@NonNull Integer id);
 
@@ -41,7 +44,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findByUsername(String username);
 
     /**
-     * Login optimizado con query nativa para evitar ConcurrentModificationException.
+     * Login optimizado con query nativa para evitar
+     * ConcurrentModificationException.
      * CRÍTICO: Este método se usa en CADA LOGIN.
      */
     @Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
@@ -49,13 +53,15 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     /**
      * Login con query nativa completa para evitar por completo las entidades JPA.
-     * Retorna directamente los datos necesarios sin tocar las entidades con colecciones.
+     * Retorna directamente los datos necesarios sin tocar las entidades con
+     * colecciones.
      */
     @Query(value = "SELECT id, username, email, password, first_name, last_name, is_enabled FROM users WHERE email = :email", nativeQuery = true)
     Object[] findUserDataCompleteByEmail(@Param("email") String email);
 
     /**
-     * Login con proyección type-safe para evitar entidades JPA con colecciones problemáticas.
+     * Login con proyección type-safe para evitar entidades JPA con colecciones
+     * problemáticas.
      * FALLBACK: Solo si query nativa falla.
      */
     @Query("SELECT new com.techmate.techmate.hexagonal.infrastructure.dto.AuthUserDTO(u.id, u.user_name, u.email, u.password, u.first_name, u.last_name, u.isEnabled, null) FROM Usuario u WHERE u.email = :email")
@@ -114,10 +120,3 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     @Query(value = "UPDATE users SET last_login = NOW() WHERE id = :userId", nativeQuery = true)
     void updateLastLoginTime(@Param("userId") Integer userId);
 }
-
-
-
-
-
-
-

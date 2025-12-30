@@ -42,7 +42,8 @@ public class MaterialManagementService implements MaterialManagementUseCase {
 
     @Override
     public MaterialResponse createMaterial(MaterialRequest request, MultipartFile image) {
-        if (request == null) throw new IllegalArgumentException("MaterialRequest must not be null");
+        if (request == null)
+            throw new IllegalArgumentException("MaterialRequest must not be null");
 
         // Validaciones de negocio
         materialsValidator.validateUniqueName(request.getName());

@@ -47,35 +47,35 @@ public class JpaMaterialRepositoryAdapter implements MaterialRepositoryPort {
     @Override
     public Optional<Material> findById(Integer id) {
         return jpaRepository.findById(id)
-            .map(mapper::toDomain);
+                .map(mapper::toDomain);
     }
 
     @Override
     public List<Material> findAll() {
         return jpaRepository.findAll().stream()
-            .map(mapper::toDomain)
-            .collect(Collectors.toList());
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Material> findBySubCategoryId(Integer subCategoryId) {
         return jpaRepository.findBySubCategoryId(subCategoryId).stream()
-            .map(mapper::toDomain)
-            .collect(Collectors.toList());
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Material> findByNameContaining(String name) {
         return jpaRepository.findByNameContainingIgnoreCase(name).stream()
-            .map(mapper::toDomain)
-            .collect(Collectors.toList());
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Material> findAvailableForBorrow() {
         return jpaRepository.findByBorrowableStockGreaterThan(0).stream()
-            .map(mapper::toDomain)
-            .collect(Collectors.toList());
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -97,7 +97,7 @@ public class JpaMaterialRepositoryAdapter implements MaterialRepositoryPort {
     public List<Material> findBySubCategoryIdPaginated(Integer subCategoryId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return jpaRepository.findBySubCategoryIdWithPagination(subCategoryId, pageRequest)
-            .map(mapper::toDomain)
-            .getContent();
+                .map(mapper::toDomain)
+                .getContent();
     }
 }

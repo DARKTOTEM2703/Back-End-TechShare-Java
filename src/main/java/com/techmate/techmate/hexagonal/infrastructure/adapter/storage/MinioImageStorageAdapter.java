@@ -28,7 +28,7 @@ public class MinioImageStorageAdapter implements ImageStoragePort {
         try {
             String fileName = generateFileName(file.getOriginalFilename(), folderName);
             long size = file.getSize();
-            
+
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
