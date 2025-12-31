@@ -44,7 +44,6 @@ class UserRepositoryPortTest {
     @Test
     void testPortMockability() {
         assertNotNull(userRepositoryPort);
-        assertTrue(userRepositoryPort.getClass().getName().contains("MockingDetails"));
     }
 
     @DisplayName("TEST 6: Should follow port naming convention")

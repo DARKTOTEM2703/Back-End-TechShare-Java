@@ -76,3 +76,6 @@ class ApplicationExceptionTest {
         String message = "Test error";
         ResourceNotFoundException ex = new ResourceNotFoundException(message);
         assertTrue(ex.getMessage().contains("Test error"));
+    }
+
+}
