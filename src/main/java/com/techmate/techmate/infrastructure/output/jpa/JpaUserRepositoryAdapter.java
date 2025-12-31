@@ -1,4 +1,4 @@
-package com.techmate.techmate.infrastructure.adapter.output.jpa;
+package com.techmate.techmate.infrastructure.output.jpa;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.techmate.techmate.domain.model.user.User;
 import com.techmate.techmate.domain.port.out.UserRepositoryPort;
-import com.techmate.techmate.infrastructure.mapper.DomainUserMapper;
+import com.techmate.techmate.mapper.DomainUserMapper;
 import com.techmate.techmate.domain.repository.UsuarioRepository;
 import com.techmate.techmate.domain.entity.Usuario;
 

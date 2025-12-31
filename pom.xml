@@ -123,6 +123,13 @@
         <scope>test</scope>
     </dependency>
     
+    <!-- REST Assured for Integration Testing -->
+    <dependency>
+        <groupId>io.rest-assured</groupId>
+        <artifactId>rest-assured</artifactId>
+        <scope>test</scope>
+    </dependency>
+    
     <!-- Spring Security -->
     <dependency>
         <groupId>org.springframework.boot</groupId>

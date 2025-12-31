@@ -1,4 +1,4 @@
-package com.techmate.techmate.infrastructure.mapper;
+package com.techmate.techmate.mapper;
 
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;

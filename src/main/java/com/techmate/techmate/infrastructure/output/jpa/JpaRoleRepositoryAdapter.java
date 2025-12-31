@@ -1,4 +1,4 @@
-package com.techmate.techmate.infrastructure.adapter.output.jpa;
+package com.techmate.techmate.infrastructure.output.jpa;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.techmate.techmate.domain.model.user.Role;
 import com.techmate.techmate.domain.port.out.RoleRepositoryPort;
-import com.techmate.techmate.infrastructure.mapper.DomainUserMapper;
+import com.techmate.techmate.mapper.DomainUserMapper;
 import com.techmate.techmate.domain.repository.RoleRepository;
 
 import java.util.List;

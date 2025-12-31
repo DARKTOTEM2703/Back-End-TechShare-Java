@@ -1,4 +1,4 @@
-package com.techmate.techmate.infrastructure.adapter.output.security;
+package com.techmate.techmate.infrastructure.output.security;
 
 import org.springframework.stereotype.Component;
 import com.techmate.techmate.domain.port.out.TokenGeneratorPort;

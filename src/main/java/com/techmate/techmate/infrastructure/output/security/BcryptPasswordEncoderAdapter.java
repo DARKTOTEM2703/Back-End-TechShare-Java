@@ -1,4 +1,4 @@
-package com.techmate.techmate.infrastructure.adapter.output.security;
+package com.techmate.techmate.infrastructure.output.security;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,8 @@ import com.techmate.techmate.domain.port.out.PasswordEncoderPort;
 /**
  * Password encoder adapter using Spring's BCryptPasswordEncoder.
  * 
- * Implements PasswordEncoderPort to provide password encoding/matching functionality.
+ * Implements PasswordEncoderPort to provide password encoding/matching
+ * functionality.
  * Uses Spring Security's BCryptPasswordEncoder for secure password handling.
  */
 @Component
