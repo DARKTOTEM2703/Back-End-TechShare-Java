@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.techmate.techmate.domain.entity.Borrow;
 import com.techmate.techmate.domain.entity.DetailsBorrow;
+import com.techmate.techmate.domain.entity.Materials;
 import com.techmate.techmate.domain.entity.Status;
 import com.techmate.techmate.domain.entity.Usuario;
 import com.techmate.techmate.infrastructure.exception.BusinessException;
@@ -91,7 +92,7 @@ public class BorrowStateProcessor {
                 processRejection(borrow);
                 break;
                 
-            case BORROWED:
+                case BORROWED:
                 processBorrowing(borrow);
                 break;
                 
@@ -129,21 +130,18 @@ public class BorrowStateProcessor {
      * @param borrow Préstamo a aprobar
      */
     private void processBorrowing(Borrow borrow) {
-        
-        // Validar y reducir stock para cada detalle
+
+        // Validar y reservar stock + registrar movimiento para cada detalle
         for (DetailsBorrow detail : borrow.getDetails()) {
-            Integer materialId = detail.getMaterials().getId();
             int quantity = detail.getQuantity();
-            
-            // Validar stock disponible
-            stockManager.validateStockAvailability(materialId, quantity);
-            
-            // Reducir stock
-            stockManager.reduceStock(materialId, quantity);
+            Materials material = detail.getMaterials();
+
+            // Reserva stock y registra movimiento (método transaccional MANDATORY)
+            stockManager.reserveStockAndLogMovement(material, quantity, borrow, borrow.getUsuario());
         }
-        
+
         // Actualizar estado y fechas
-    borrow.setStatus(Status.BORROWED);
+        borrow.setStatus(Status.BORROWED);
         borrow.setStartDate(new Date());
     }
     
@@ -154,16 +152,15 @@ public class BorrowStateProcessor {
      * @param borrow Préstamo a devolver
      */
     private void processReturn(Borrow borrow) {
-        
-        // Restaurar stock para cada detalle
+
+        // Restaurar stock y registrar movimiento para cada detalle
         for (DetailsBorrow detail : borrow.getDetails()) {
-            Integer materialId = detail.getMaterials().getId();
             int quantity = detail.getQuantity();
-            
-            // Restaurar stock
-            stockManager.restoreStock(materialId, quantity);
+            Materials material = detail.getMaterials();
+
+            stockManager.releaseStockAndLogMovement(material, quantity, borrow, borrow.getUsuario());
         }
-        
+
         // Actualizar estado y fechas
         borrow.setStatus(Status.RETURNED);
         borrow.setReturnDate(new Date());

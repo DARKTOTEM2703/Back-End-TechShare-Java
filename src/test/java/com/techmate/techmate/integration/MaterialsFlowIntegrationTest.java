@@ -2,8 +2,6 @@ package com.techmate.techmate.integration;
 
 import com.techmate.techmate.application.port.output.ImageStoragePort;
 import com.techmate.techmate.application.port.output.MaterialRepositoryPort;
-import com.techmate.techmate.infrastructure.dto.MaterialRequest;
-import com.techmate.techmate.infrastructure.dto.MaterialResponse;
 import com.techmate.techmate.domain.entity.Materials;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
@@ -18,13 +16,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = {"spring.profiles.active=minio", "spring.jpa.hibernate.ddl-auto=create-drop"})
+@SpringBootTest(properties = { "spring.profiles.active=minio", "spring.jpa.hibernate.ddl-auto=create-drop" })
 @AutoConfigureMockMvc(addFilters = false)
 @Disabled("Integration test skipped during restore; re-enable after schema/MinIO setup")
 public class MaterialsFlowIntegrationTest {

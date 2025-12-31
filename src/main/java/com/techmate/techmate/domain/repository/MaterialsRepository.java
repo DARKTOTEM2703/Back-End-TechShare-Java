@@ -128,6 +128,6 @@ public interface MaterialsRepository extends JpaRepository<Materials, Integer>,
          * Busca materiales por subcategoría con paginación
          */
         @EntityGraph(attributePaths = { "subCategory" })
-        Page<Materials> findBySubCategoryIdWithPagination(@Param("subCategoryId") Integer subCategoryId,
+        Page<Materials> findBySubCategoryId(@Param("subCategoryId") Integer subCategoryId,
                         Pageable pageable);
 }

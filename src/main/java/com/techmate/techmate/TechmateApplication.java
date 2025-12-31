@@ -13,9 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {
-		"com.techmate.techmate.hexagonal"
-})
+@ComponentScan(basePackages = { "com.techmate.techmate" })
 @EnableConfigurationProperties(AppProperties.class)
 public class TechmateApplication {
 

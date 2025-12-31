@@ -70,7 +70,7 @@ class ApplicationExceptionTest {
         assertTrue(RuntimeException.class.isAssignableFrom(BadRequestException.class));
     }
 
-@DisplayName("TEST 8: Exceptions should have messages")
+    @DisplayName("TEST 8: Exceptions should have messages")
     @Test
     void testExceptionMessages() {
         String message = "Test error";
