@@ -41,10 +41,23 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>4.1.127.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 	<dependencies>
     <!-- MapStruct for automatic mapping between domain and DTOs -->
+        <!-- Force Apache Commons Lang to a secure version to mitigate CVE-2025-48924 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
+        </dependency>
     <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct</artifactId>
@@ -227,7 +240,7 @@
     <dependency>
         <groupId>io.minio</groupId>
         <artifactId>minio</artifactId>
-        <version>8.5.5</version>
+        <version>8.6.0</version>
     </dependency>
     
     <!-- AWS S3 SDK v2 -->
