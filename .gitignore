@@ -50,6 +50,7 @@ uploaded-images/*
 ### Temporary Files ###
 temp_*.txt
 tmp_*.json
+deps.txt
 
 ### OS ###
 .DS_Store
