@@ -11,10 +11,8 @@ import java.util.List;
 @Component
 public class JwtTokenGeneratorAdapter implements TokenGeneratorPort {
 
-    private final TokenUtils tokenUtils;
-
-    public JwtTokenGeneratorAdapter(TokenUtils tokenUtils) {
-        this.tokenUtils = tokenUtils;
+    // TokenUtils usa métodos estáticos, no necesita inyección
+    public JwtTokenGeneratorAdapter() {
     }
 
     @Override

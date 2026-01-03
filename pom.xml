@@ -95,9 +95,10 @@
         <scope>runtime</scope>
         <optional>true</optional>
     </dependency>
+    <!-- PostgreSQL Driver (Production) -->
     <dependency>
-        <groupId>com.mysql</groupId>
-        <artifactId>mysql-connector-j</artifactId>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
         <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -172,11 +173,10 @@
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-core</artifactId>
     </dependency>
-    <!-- Flyway MySQL support (required by Flyway 10+ modular distribution) -->
+    <!-- Flyway PostgreSQL support (Production Database) -->
     <dependency>
         <groupId>org.flywaydb</groupId>
-        <artifactId>flyway-mysql</artifactId>
-        <version>10.21.0</version>
+        <artifactId>flyway-database-postgresql</artifactId>
     </dependency>
     <!-- OpenAPI / Swagger UI -->
     <dependency>
@@ -210,6 +210,55 @@
         <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
     
+    <!-- Micrometer Tracing Bridge (Distributed Tracing) -->
+    <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-tracing-bridge-brave</artifactId>
+    </dependency>
+    
+    <!-- Zipkin Reporter for sending traces to Zipkin -->
+    <dependency>
+        <groupId>io.zipkin.reporter2</groupId>
+        <artifactId>zipkin-reporter-brave</artifactId>
+    </dependency>
+    
+    <!-- Resilience4j for Circuit Breaker, Retry, Bulkhead -->
+    <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-spring-boot3</artifactId>
+        <version>2.2.0</version>
+    </dependency>
+    
+    <!-- Spring Kafka for Event-Driven Architecture -->
+    <dependency>
+        <groupId>org.springframework.kafka</groupId>
+        <artifactId>spring-kafka</artifactId>
+    </dependency>
+    
+    <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-circuitbreaker</artifactId>
+        <version>2.2.0</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-retry</artifactId>
+        <version>2.2.0</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-bulkhead</artifactId>
+        <version>2.2.0</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-timelimiter</artifactId>
+        <version>2.2.0</version>
+    </dependency>
+    
     <!-- Logstash Logback Encoder for Structured JSON Logging -->
     <dependency>
         <groupId>net.logstash.logback</groupId>
@@ -241,6 +290,13 @@
         <groupId>io.minio</groupId>
         <artifactId>minio</artifactId>
         <version>8.6.0</version>
+    </dependency>
+
+    <!-- OkHttp - Required by MinIO client -->
+    <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>4.12.0</version>
     </dependency>
     
     <!-- AWS S3 SDK v2 -->

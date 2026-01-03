@@ -6,7 +6,9 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectsArgs;
 import io.minio.messages.DeleteObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -14,12 +16,20 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
+@Primary
+@ConditionalOnProperty(name = "minio.enabled", havingValue = "true", matchIfMissing = true)
 public class MinioImageStorageAdapter implements ImageStoragePort {
     private final MinioClient minioClient;
     private final String bucketName;
 
-    public MinioImageStorageAdapter(MinioClient minioClient, @Value("${minio.bucket}") String bucketName) {
-        this.minioClient = minioClient;
+    public MinioImageStorageAdapter(@Value("${minio.endpoint}") String endpoint,
+            @Value("${minio.access-key}") String accessKey,
+            @Value("${minio.secret-key}") String secretKey,
+            @Value("${minio.bucket}") String bucketName) {
+        this.minioClient = MinioClient.builder()
+                .endpoint(endpoint)
+                .credentials(accessKey, secretKey)
+                .build();
         this.bucketName = bucketName;
     }
 
