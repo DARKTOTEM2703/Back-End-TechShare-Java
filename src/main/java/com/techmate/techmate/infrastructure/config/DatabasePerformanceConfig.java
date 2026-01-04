@@ -34,7 +34,7 @@ public class DatabasePerformanceConfig {
     @Value("${spring.datasource.password}")
     private String password;
 
-    @Value("${spring.datasource.driver-class-name:com.mysql.cj.jdbc.Driver}")
+    @Value("${spring.datasource.driver-class-name:org.postgresql.Driver}")
     private String driverClassName;
 
     /**
@@ -100,34 +100,36 @@ public class DatabasePerformanceConfig {
         config.setAutoCommit(true);
         
         // ============================================
-        // MYSQL SPECIFIC OPTIMIZATIONS
+        // DB-SPECIFIC OPTIMIZATIONS
+        // Apply MySQL-specific optimizations only when using MySQL driver
         // ============================================
-        
-        // Cachear prepared statements
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        
-        // Use server-side prepared statements
-        config.addDataSourceProperty("useServerPrepStmts", "true");
-        
-        // Use local session state
-        config.addDataSourceProperty("useLocalSessionState", "true");
-        
-        // Rewrite batched statements
-        config.addDataSourceProperty("rewriteBatchedStatements", "true");
-        
-        // Cache result set metadata
-        config.addDataSourceProperty("cacheResultSetMetadata", "true");
-        
-        // Cache server configuration
-        config.addDataSourceProperty("cacheServerConfiguration", "true");
-        
-        // Lazy loading of result sets
-        config.addDataSourceProperty("elideSetAutoCommits", "true");
-        
-        // Maintain time stats
-        config.addDataSourceProperty("maintainTimeStats", "false");
+        if (driverClassName != null && driverClassName.toLowerCase().contains("mysql")) {
+            // Cachear prepared statements
+            config.addDataSourceProperty("cachePrepStmts", "true");
+            config.addDataSourceProperty("prepStmtCacheSize", "250");
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+            // Use server-side prepared statements
+            config.addDataSourceProperty("useServerPrepStmts", "true");
+
+            // Use local session state
+            config.addDataSourceProperty("useLocalSessionState", "true");
+
+            // Rewrite batched statements
+            config.addDataSourceProperty("rewriteBatchedStatements", "true");
+
+            // Cache result set metadata
+            config.addDataSourceProperty("cacheResultSetMetadata", "true");
+
+            // Cache server configuration
+            config.addDataSourceProperty("cacheServerConfiguration", "true");
+
+            // Lazy loading of result sets
+            config.addDataSourceProperty("elideSetAutoCommits", "true");
+
+            // Maintain time stats
+            config.addDataSourceProperty("maintainTimeStats", "false");
+        }
         
         // ============================================
         // METRICS & MONITORING

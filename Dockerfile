@@ -36,7 +36,7 @@ LABEL description="TechShare Backend - Spring Boot 3.4.1"
 
 # Instalar utilidades necesarias
 RUN apk add --no-cache \
-    mariadb-client \
+    postgresql-client \
     netcat-openbsd \
     curl \
     && rm -rf /var/cache/apk/*
@@ -54,18 +54,18 @@ COPY --from=builder /build/target/*.jar app.jar
 # Crear el script de espera directamente en Linux con printf (evita CRLF)
 RUN printf '#!/bin/sh\n\
 # wait-for-db.sh\n\
-HOST=${SPRING_DATASOURCE_HOST:-db}\n\
-PORT=${SPRING_DATASOURCE_PORT:-3306}\n\
-echo "Waiting for MySQL at $HOST:$PORT..."\n\
+HOST=${SPRING_DATASOURCE_HOST:-postgres}\n\
+PORT=${SPRING_DATASOURCE_PORT:-5432}\n\
+echo "Waiting for PostgreSQL at $HOST:$PORT..."\n\
 for i in $(seq 1 60); do\n\
   if nc -z -w2 "$HOST" "$PORT" 2>/dev/null; then\n\
-    echo "MySQL is ready!"\n\
+    echo "PostgreSQL is ready!"\n\
     exec java $JAVA_OPTS -jar /app/app.jar\n\
   fi\n\
   echo "Attempt $i/60..."\n\
   sleep 2\n\
 done\n\
-echo "Timeout waiting for MySQL" >&2\n\
+echo "Timeout waiting for PostgreSQL" >&2\n\
 exit 1\n' > /usr/local/bin/wait-for-db.sh && chmod +x /usr/local/bin/wait-for-db.sh
 
 # Crear directorios necesarios
