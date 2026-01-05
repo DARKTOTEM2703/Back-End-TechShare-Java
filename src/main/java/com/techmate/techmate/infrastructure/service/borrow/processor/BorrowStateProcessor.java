@@ -17,14 +17,16 @@ import com.techmate.techmate.infrastructure.service.borrow.manager.BorrowStockMa
 import com.techmate.techmate.infrastructure.service.borrow.validator.BorrowStateValidator;
 
 /**
- * 🎯 Procesador de transiciones de estado para préstamos siguiendo SRP + Strategy Pattern.
+ * 🎯 Procesador de transiciones de estado para préstamos siguiendo SRP +
+ * Strategy Pattern.
  * 
  * PRINCIPIOS SOLID APLICADOS:
  * - SRP: Solo se encarga de procesar transiciones de estado de préstamos
  * - OCP: Extensible para nuevas transiciones sin modificar código existente
  * - LSP: Puede ser sustituido por cualquier implementación del contrato
  * - ISP: Interfaz específica para procesamiento de estados
- * - DIP: Depende de abstracciones (Validator, StockManager) no de implementaciones
+ * - DIP: Depende de abstracciones (Validator, StockManager) no de
+ * implementaciones
  * 
  * STRATEGY PATTERN:
  * - Cada transición de estado tiene su propia estrategia de procesamiento
@@ -40,12 +42,12 @@ import com.techmate.techmate.infrastructure.service.borrow.validator.BorrowState
  */
 @Component
 public class BorrowStateProcessor {
-    
+
     private final BorrowRepository borrowRepository;
     private final UsuarioRepository usuarioRepository;
     private final BorrowStateValidator stateValidator;
     private final BorrowStockManager stockManager;
-    
+
     /**
      * Constructor injection para cumplir con DIP.
      */
@@ -59,57 +61,58 @@ public class BorrowStateProcessor {
         this.stateValidator = stateValidator;
         this.stockManager = stockManager;
     }
-    
+
     /**
      * Procesa la transición de estado de un préstamo.
      * Utiliza Strategy Pattern para delegar a la estrategia específica.
      * 
-     * @param borrowId ID del préstamo
+     * @param borrowId  ID del préstamo
      * @param newStatus Nuevo estado
-     * @param adminId ID del administrador que procesa
-    * @throws BusinessException si la transición no es válida
+     * @param adminId   ID del administrador que procesa
+     * @throws BusinessException si la transición no es válida
      */
     @Transactional
     public void processStateTransition(Integer borrowId, Status newStatus, Integer adminId) {
-        
+
         // Obtener préstamo
-    Borrow borrow = borrowRepository.findById(borrowId)
-        .orElseThrow(() -> new BusinessException(
-            "BORROW_NOT_FOUND", String.format("Préstamo no encontrado con ID: %d", borrowId)));
-        
+        Borrow borrow = borrowRepository.findById(borrowId)
+                .orElseThrow(() -> new BusinessException(
+                        "BORROW_NOT_FOUND", String.format("Préstamo no encontrado con ID: %d", borrowId)));
+
         // Validar transición
         stateValidator.validateStateTransition(borrow.getStatus(), newStatus);
-        
+
         // Obtener y asignar administrador
-    Usuario admin = usuarioRepository.findById(adminId)
-        .orElseThrow(() -> new BusinessException(
-            "USER_NOT_FOUND", String.format("Administrador no encontrado con ID: %d", adminId)));
+        Usuario admin = usuarioRepository.findById(adminId)
+                .orElseThrow(() -> new BusinessException(
+                        "USER_NOT_FOUND", String.format("Administrador no encontrado con ID: %d", adminId)));
         borrow.setAdmin(admin);
-        
+
         // Aplicar estrategia específica según el nuevo estado
         switch (newStatus) {
             case REJECTED:
                 processRejection(borrow);
                 break;
-                
-                case BORROWED:
+
+            case BORROWED:
                 processBorrowing(borrow);
                 break;
-                
+
             case RETURNED:
                 processReturn(borrow);
                 break;
-                
+
             default:
-                throw new BusinessException("INVALID_BORROW_STATUS", "Estado no soportado para transición: " + newStatus);
+                throw new BusinessException("INVALID_BORROW_STATUS",
+                        "Estado no soportado para transición: " + newStatus);
         }
-        
+
         // Guardar cambios
         borrowRepository.save(borrow);
     }
-    
+
     // ==================== ESTRATEGIAS DE PROCESAMIENTO ====================
-    
+
     /**
      * Estrategia para procesar rechazo de préstamo.
      * 
@@ -118,11 +121,11 @@ public class BorrowStateProcessor {
     private void processRejection(Borrow borrow) {
         borrow.setStatus(Status.REJECTED);
         borrow.setEndDate(new Date());
-        
+
         // No se requiere gestión de stock en rechazo
         // El stock nunca fue reducido
     }
-    
+
     /**
      * Estrategia para procesar aprobación de préstamo.
      * Incluye validación y reducción de stock.
@@ -144,7 +147,7 @@ public class BorrowStateProcessor {
         borrow.setStatus(Status.BORROWED);
         borrow.setStartDate(new Date());
     }
-    
+
     /**
      * Estrategia para procesar devolución de préstamo.
      * Incluye restauración de stock.
@@ -167,11 +170,3 @@ public class BorrowStateProcessor {
         borrow.setEndDate(new Date());
     }
 }
-
-
-
-
-
-
-
-

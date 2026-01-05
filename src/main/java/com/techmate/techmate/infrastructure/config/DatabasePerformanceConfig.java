@@ -47,58 +47,58 @@ public class DatabasePerformanceConfig {
     @Primary
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
-        
+
         // Configuración básica
         config.setJdbcUrl(jdbcUrl);
         config.setUsername(username);
         config.setPassword(password);
         config.setDriverClassName(driverClassName);
-        
+
         // ============================================
         // POOL SIZE OPTIMIZATION
         // ============================================
-        
+
         // Tamaño mínimo del pool (siempre activas)
         config.setMinimumIdle(5);
-        
+
         // Tamaño máximo del pool
         // Formula: (CPUs * 2) + effective_spindle_count
         // Para 4 CPUs + 1 disco: (4*2)+1 = 9
         config.setMaximumPoolSize(20);
-        
+
         // ============================================
         // TIMEOUTS
         // ============================================
-        
+
         // Tiempo máximo de espera para obtener conexión (30s)
         config.setConnectionTimeout(30000);
-        
+
         // Tiempo máximo de vida de una conexión (30 min)
         config.setMaxLifetime(1800000);
-        
+
         // Tiempo máximo de inactividad (10 min)
         config.setIdleTimeout(600000);
-        
+
         // ============================================
         // LEAK DETECTION
         // ============================================
-        
+
         // Detectar conexiones que no se cierran (2 min)
         config.setLeakDetectionThreshold(120000);
-        
+
         // ============================================
         // PERFORMANCE TUNING
         // ============================================
-        
+
         // Test de conexión al obtenerla del pool
         config.setConnectionTestQuery("SELECT 1");
-        
+
         // Nombre del pool (para métricas)
         config.setPoolName("TechShare-HikariCP");
-        
+
         // Habilitar auto-commit (mejor performance)
         config.setAutoCommit(true);
-        
+
         // ============================================
         // DB-SPECIFIC OPTIMIZATIONS
         // Apply MySQL-specific optimizations only when using MySQL driver
@@ -130,37 +130,27 @@ public class DatabasePerformanceConfig {
             // Maintain time stats
             config.addDataSourceProperty("maintainTimeStats", "false");
         }
-        
+
         // ============================================
         // METRICS & MONITORING
         // ============================================
-        
+
         // Registrar métricas (integración con Actuator)
         config.setRegisterMbeans(true);
-        
+
         return new HikariDataSource(config);
     }
-    
+
     /**
      * Información del pool para health checks.
      */
     public String getPoolInfo(HikariDataSource dataSource) {
         return String.format(
-            "Pool: %s | Active: %d | Idle: %d | Waiting: %d | Total: %d",
-            dataSource.getPoolName(),
-            dataSource.getHikariPoolMXBean().getActiveConnections(),
-            dataSource.getHikariPoolMXBean().getIdleConnections(),
-            dataSource.getHikariPoolMXBean().getThreadsAwaitingConnection(),
-            dataSource.getHikariPoolMXBean().getTotalConnections()
-        );
+                "Pool: %s | Active: %d | Idle: %d | Waiting: %d | Total: %d",
+                dataSource.getPoolName(),
+                dataSource.getHikariPoolMXBean().getActiveConnections(),
+                dataSource.getHikariPoolMXBean().getIdleConnections(),
+                dataSource.getHikariPoolMXBean().getThreadsAwaitingConnection(),
+                dataSource.getHikariPoolMXBean().getTotalConnections());
     }
 }
-
-
-
-
-
-
-
-
-

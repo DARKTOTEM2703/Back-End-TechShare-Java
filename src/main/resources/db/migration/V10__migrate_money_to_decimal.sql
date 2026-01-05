@@ -1,16 +1,21 @@
 -- V10__migrate_money_to_decimal.sql
 -- Migración para convertir columnas monetarias de DOUBLE a DECIMAL(10,2)
--- Ajustar según dialecto MySQL/MariaDB
+-- PostgreSQL syntax
 
 ALTER TABLE materials
-    MODIFY COLUMN price DECIMAL(10,2) NOT NULL DEFAULT 0.00;
+    ALTER COLUMN price TYPE DECIMAL(10,2),
+    ALTER COLUMN price SET DEFAULT 0.00,
+    ALTER COLUMN price SET NOT NULL;
 
 ALTER TABLE details_borrow
-    MODIFY COLUMN unit_price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    MODIFY COLUMN total_price DECIMAL(10,2) NOT NULL DEFAULT 0.00;
+    ALTER COLUMN unit_price TYPE DECIMAL(10,2),
+    ALTER COLUMN unit_price SET DEFAULT 0.00,
+    ALTER COLUMN unit_price SET NOT NULL,
+    ALTER COLUMN total_price TYPE DECIMAL(10,2),
+    ALTER COLUMN total_price SET DEFAULT 0.00,
+    ALTER COLUMN total_price SET NOT NULL;
 
 ALTER TABLE borrow
-    MODIFY COLUMN amount DECIMAL(10,2) NOT NULL DEFAULT 0.00;
-
--- Nota: Si las columnas están en DOUBLE, MySQL realizará la conversión de forma automática.
--- Recomiendo ejecutar en entorno de staging primero y respaldar la base de datos antes de aplicar.
+    ALTER COLUMN amount TYPE DECIMAL(10,2),
+    ALTER COLUMN amount SET DEFAULT 0.00,
+    ALTER COLUMN amount SET NOT NULL;

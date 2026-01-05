@@ -1,70 +1,17 @@
 package com.techmate.techmate.infrastructure.config;
 
 import java.util.Arrays;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-@Configuration
-public class SecurityConfig {
-
-    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000}")
-    private String allowedOrigins;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .cors(Customizer.withDefaults())
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/health", "/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/public/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .httpBasic(Customizer.withDefaults());
-
-        return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        String[] origins = Arrays.stream(allowedOrigins.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .toArray(String[]::new);
-
-        config.setAllowedOrigins(Arrays.asList(origins));
-        config.addAllowedMethod(HttpMethod.GET);
-        config.addAllowedMethod(HttpMethod.POST);
-        config.addAllowedMethod(HttpMethod.PUT);
-        config.addAllowedMethod(HttpMethod.DELETE);
-        config.addAllowedMethod(HttpMethod.PATCH);
-        config.addAllowedMethod(HttpMethod.OPTIONS);
-        config.addAllowedHeader("*");
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
-}
-package com.techmate.techmate.infrastructure.config;
+import java.util.List;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 import com.techmate.techmate.infrastructure.security.JWTAuthenticationFilter;
 import com.techmate.techmate.infrastructure.security.JwtRequestFilter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -80,11 +27,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 /**
  * Configuración de seguridad con JWT - CSRF deshabilitado
@@ -111,13 +53,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Permitir orígenes específicos y patterns
-        // En desarrollo permitimos patrones localhost y, si es necesario, aceptar
-        // cualquier origen
         configuration.setAllowedOriginPatterns(
                 Arrays.asList("http://localhost:*", "https://localhost:*", "http://127.0.0.1:*", "*"));
-        // Leer orígenes permitidos desde la propiedad inyectada (CSV). Si no está
-        // definida, usar lista vacía.
+
         List<String> allowedOrigins;
         if (corsAllowedOriginsRaw == null || corsAllowedOriginsRaw.trim().isEmpty()) {
             allowedOrigins = Collections.emptyList();
@@ -129,13 +67,13 @@ public class SecurityConfig {
                     .collect(Collectors.toList());
             log.info("CORS allowed origins loaded: {}", allowedOrigins);
         }
+
         configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type", "Access-Control-Allow-Origin"));
         configuration.setMaxAge(3600L);
-        log.info("🌐 CORS configurado para: localhost:3000, localhost:3001, patrones localhost:*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -153,7 +91,6 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        // Forzar uso de nuestro DaoAuthenticationProvider personalizado
         ProviderManager providerManager = new ProviderManager(authenticationProvider());
         log.info("✅ AuthenticationManager configured with custom DaoAuthenticationProvider");
         return providerManager;
@@ -169,49 +106,26 @@ public class SecurityConfig {
             JwtRequestFilter jwtRequestFilter) throws Exception {
         log.info("🔒 Configuring SecurityFilterChain with JWT and CORS");
 
-        // Crear filtro JWT para /login (autenticación)
         JWTAuthenticationFilter jwtAuthFilter = new JWTAuthenticationFilter();
         jwtAuthFilter.setAuthenticationManager(authManager);
         jwtAuthFilter.setFilterProcessesUrl("/login");
 
-        // El filtro JWT se inyecta automáticamente como Bean
-        // NO necesitamos crearlo manualmente aquí
-
-        log.info("🔧 Adding JWT Request Filter to the security chain");
-
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.deny())
-                        .xssProtection(xss -> xss.and())
-                        .contentSecurityPolicy(csp -> csp.policyDirectives(
-                                "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:"))
-                        .contentTypeOptions(content -> content.disable().and())
-                        .cacheControl(cache -> cache.disable().and())
-                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas (login, register, verify, auth)
                         .requestMatchers("/login", "/verify", "/api/auth/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        // Endpoint temporal para generar hash
                         .requestMatchers("/temp/**").permitAll()
-                        // Health checks para monitoring
                         .requestMatchers("/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
-                        // Recursos estáticos e imágenes
                         .requestMatchers("/admin/categories/images/**", "/admin/materials/images/**",
                                 "/admin/subcategories/images/**", "/uploaded-images/**")
                         .permitAll()
-                        // API pública de materiales (sin autenticación)
                         .requestMatchers("/api/materials/**").permitAll()
-                        // Rutas de administración - REQUIEREN ROL ADMIN
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // Endpoint de usuario autenticado
                         .requestMatchers("/user/me").authenticated()
-                        // API general requiere autenticación
                         .requestMatchers("/api/**").authenticated()
-                        // Cualquier otra petición requiere autenticación
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilter(jwtAuthFilter)
@@ -221,10 +135,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
-
-
-
-
-
-

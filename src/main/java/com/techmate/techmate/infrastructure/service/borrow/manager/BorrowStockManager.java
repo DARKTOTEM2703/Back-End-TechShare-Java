@@ -263,10 +263,3 @@ public class BorrowStockManager implements IBorrowStockManager {
         movementsRepository.save(movement);
     }
 }
-
-
-
-
-
-
-

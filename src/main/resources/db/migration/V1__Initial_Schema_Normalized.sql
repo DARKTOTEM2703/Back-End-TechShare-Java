@@ -1,22 +1,17 @@
-SET FOREIGN_KEY_CHECKS = 0;
-
--- Drop all existing tables to start fresh
-DROP TABLE IF EXISTS verification_token;
-DROP TABLE IF EXISTS movements;
-DROP TABLE IF EXISTS details_borrow;
-DROP TABLE IF EXISTS borrow;
-DROP TABLE IF EXISTS user_roles;
-DROP TABLE IF EXISTS user_role;
-DROP TABLE IF EXISTS reviews;
-DROP TABLE IF EXISTS favorites;
-DROP TABLE IF EXISTS materials;
-DROP TABLE IF EXISTS sub_categories;
-DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS roles;
-DROP TABLE IF EXISTS users;
-
--- Enable foreign key checks
-SET FOREIGN_KEY_CHECKS = 1;
+-- PostgreSQL: Drop tables with CASCADE
+DROP TABLE IF EXISTS verification_token CASCADE;
+DROP TABLE IF EXISTS movements CASCADE;
+DROP TABLE IF EXISTS details_borrow CASCADE;
+DROP TABLE IF EXISTS borrow CASCADE;
+DROP TABLE IF EXISTS user_roles CASCADE;
+DROP TABLE IF EXISTS user_role CASCADE;
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS favorites CASCADE;
+DROP TABLE IF EXISTS materials CASCADE;
+DROP TABLE IF EXISTS sub_categories CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 -- ============================================
 -- CREATE SCHEMA
@@ -24,16 +19,16 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- Tabla: roles
 CREATE TABLE roles (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
     description VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_name (name)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_roles_name ON roles(name);
 
 -- Tabla: users
 CREATE TABLE users (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
     email VARCHAR(120) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -42,168 +37,195 @@ CREATE TABLE users (
     profile_image_url VARCHAR(255),
     is_enabled BOOLEAN DEFAULT TRUE,
     birth_date DATE DEFAULT NULL,
-    gender ENUM('Mujer', 'Hombre', 'Otro') DEFAULT NULL,
+    gender VARCHAR(20) DEFAULT NULL CHECK (gender IN ('Mujer', 'Hombre', 'Otro')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_username (username),
-    INDEX idx_email (email),
-    INDEX idx_enabled (is_enabled)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_enabled ON users(is_enabled);
+
+-- Trigger para updated_at automático
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.updated_at = CURRENT_TIMESTAMP;
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Tabla: categories
 CREATE TABLE categories (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(255),
     image_path VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_name (name)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_categories_name ON categories(name);
+CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Tabla: sub_categories
 CREATE TABLE sub_categories (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    category_id INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    category_id INTEGER NOT NULL,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(255),
+    image_path VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE,
-    UNIQUE KEY uk_name_category (name, category_id),
-    INDEX idx_category (category_id)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    CONSTRAINT uk_name_category UNIQUE (name, category_id)
+);
+CREATE INDEX idx_sub_categories_category ON sub_categories(category_id);
+CREATE TRIGGER update_sub_categories_updated_at BEFORE UPDATE ON sub_categories
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Tabla: materials
 CREATE TABLE materials (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     description VARCHAR(500),
     price DECIMAL(10, 2) NOT NULL,
-    stock INT NOT NULL DEFAULT 0,
-    sub_category_id INT NULL DEFAULT NULL,
+    stock INTEGER NOT NULL DEFAULT 0,
+    sub_category_id INTEGER DEFAULT NULL,
     image_path VARCHAR(255),
-    created_by INT,
+    created_by INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sub_category_id) REFERENCES sub_categories (id) ON DELETE SET NULL,
-    FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL,
-    INDEX idx_sub_category (sub_category_id),
-    INDEX idx_created_by (created_by),
-    FULLTEXT INDEX ft_search (name, description)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL
+);
+CREATE INDEX idx_materials_sub_category ON materials(sub_category_id);
+CREATE INDEX idx_materials_created_by ON materials(created_by);
+CREATE INDEX idx_materials_search ON materials USING gin(to_tsvector('spanish', name || ' ' || COALESCE(description, '')));
+CREATE TRIGGER update_materials_updated_at BEFORE UPDATE ON materials
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Tabla: user_role
 CREATE TABLE user_role (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    role_id INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    role_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_user_role (user_id, role_id),
+    CONSTRAINT uk_user_role UNIQUE (user_id, role_id),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE,
-    INDEX idx_role (role_id),
-    INDEX idx_user (user_id)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE
+);
+CREATE INDEX idx_user_role_role ON user_role(role_id);
+CREATE INDEX idx_user_role_user ON user_role(user_id);
 
 -- Tabla: reviews
 CREATE TABLE reviews (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    material_id INT NOT NULL,
-    user_id INT NOT NULL,
-    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    id SERIAL PRIMARY KEY,
+    material_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
     comment VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    UNIQUE KEY uk_material_user (material_id, user_id),
-    INDEX idx_material (material_id),
-    INDEX idx_user (user_id),
-    INDEX idx_rating (rating)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    CONSTRAINT uk_material_user UNIQUE (material_id, user_id)
+);
+CREATE INDEX idx_reviews_material ON reviews(material_id);
+CREATE INDEX idx_reviews_user ON reviews(user_id);
+CREATE INDEX idx_reviews_rating ON reviews(rating);
+CREATE TRIGGER update_reviews_updated_at BEFORE UPDATE ON reviews
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Tabla: favorites
 CREATE TABLE favorites (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    material_id INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    material_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE CASCADE,
-    UNIQUE KEY uk_user_material (user_id, material_id),
-    INDEX idx_user (user_id),
-    INDEX idx_material (material_id)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    CONSTRAINT uk_user_material UNIQUE (user_id, material_id)
+);
+CREATE INDEX idx_favorites_user ON favorites(user_id);
+CREATE INDEX idx_favorites_material ON favorites(material_id);
 
 -- Tabla: borrow
 CREATE TABLE borrow (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    resource_id INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    resource_id INTEGER NOT NULL,
     borrow_date DATE NOT NULL,
     due_date DATE NOT NULL,
     return_date DATE NULL,
-    status ENUM('PENDING', 'BORROWED', 'RETURNED', 'OVERDUE', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'BORROWED', 'RETURNED', 'OVERDUE', 'CANCELLED')),
     amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (resource_id) REFERENCES materials (id) ON DELETE CASCADE,
-    INDEX idx_user (user_id),
-    INDEX idx_resource (resource_id),
-    INDEX idx_status (status),
-    INDEX idx_borrow_date (borrow_date),
-    INDEX idx_return_date (return_date)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    FOREIGN KEY (resource_id) REFERENCES materials (id) ON DELETE CASCADE
+);
+CREATE INDEX idx_borrow_user ON borrow(user_id);
+CREATE INDEX idx_borrow_resource ON borrow(resource_id);
+CREATE INDEX idx_borrow_status ON borrow(status);
+CREATE INDEX idx_borrow_borrow_date ON borrow(borrow_date);
+CREATE INDEX idx_borrow_return_date ON borrow(return_date);
+CREATE TRIGGER update_borrow_updated_at BEFORE UPDATE ON borrow
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Tabla: details_borrow
 CREATE TABLE details_borrow (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    borrow_id INT NOT NULL,
-    material_id INT NOT NULL,
-    quantity INT NOT NULL DEFAULT 1,
+    id SERIAL PRIMARY KEY,
+    borrow_id INTEGER NOT NULL,
+    material_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 1,
     unit_price DECIMAL(10, 2) NOT NULL,
     total_price DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (borrow_id) REFERENCES borrow (id) ON DELETE CASCADE,
-    FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE RESTRICT,
-    INDEX idx_borrow (borrow_id),
-    INDEX idx_material (material_id)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE RESTRICT
+);
+CREATE INDEX idx_details_borrow_borrow ON details_borrow(borrow_id);
+CREATE INDEX idx_details_borrow_material ON details_borrow(material_id);
+CREATE TRIGGER update_details_borrow_updated_at BEFORE UPDATE ON details_borrow
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Tabla: movements
 CREATE TABLE movements (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    resource_id INT NOT NULL,
-    user_id INT NOT NULL,
-    move_type ENUM('BORROW', 'RETURN', 'PURCHASE', 'DONATION', 'ADJUSTMENT') NOT NULL,
-    quantity INT NOT NULL DEFAULT 1,
+    id SERIAL PRIMARY KEY,
+    resource_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    move_type VARCHAR(50) NOT NULL CHECK (move_type IN ('BORROW', 'RETURN', 'PURCHASE', 'DONATION', 'ADJUSTMENT')),
+    quantity INTEGER NOT NULL DEFAULT 1,
     movement_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     description VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (resource_id) REFERENCES materials (id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    INDEX idx_resource (resource_id),
-    INDEX idx_user (user_id),
-    INDEX idx_move_type (move_type),
-    INDEX idx_movement_date (movement_date)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+CREATE INDEX idx_movements_resource ON movements(resource_id);
+CREATE INDEX idx_movements_user ON movements(user_id);
+CREATE INDEX idx_movements_move_type ON movements(move_type);
+CREATE INDEX idx_movements_movement_date ON movements(movement_date);
+CREATE TRIGGER update_movements_updated_at BEFORE UPDATE ON movements
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Tabla: verification_token
 CREATE TABLE verification_token (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     token VARCHAR(255) NOT NULL UNIQUE,
-    user_id INT NOT NULL,
+    user_id INTEGER NOT NULL,
     expiry_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    INDEX idx_token (token),
-    INDEX idx_user (user_id),
-    INDEX idx_expiry_date (expiry_date)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+CREATE INDEX idx_verification_token_token ON verification_token(token);
+CREATE INDEX idx_verification_token_user ON verification_token(user_id);
+CREATE INDEX idx_verification_token_expiry_date ON verification_token(expiry_date);
 
 -- ============================================
 -- INSERT INITIAL DATA
@@ -214,7 +236,10 @@ INSERT INTO roles (id, name, description)
 VALUES 
     (1, 'ADMIN', 'Administrador del sistema'),
     (2, 'USER', 'Usuario regular')
-ON DUPLICATE KEY UPDATE name = VALUES(name), description = VALUES(description);
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
+
+-- Resetear secuencia después del insert con ID explícito
+SELECT setval('roles_id_seq', (SELECT MAX(id) FROM roles));
 
 -- Insert admin user
 -- Email: jafethgamboabaas@gmail.com
@@ -222,7 +247,6 @@ ON DUPLICATE KEY UPDATE name = VALUES(name), description = VALUES(description);
 -- Hash: $2a$10$G2QZUq7/UBQFAJu/ynIiWeYUqRkxYGqWG5xXvPelgeywvOqCM/k9q
 INSERT INTO users (username, email, password, first_name, last_name, is_enabled)
 SELECT 'jafethgamboabaas', 'jafethgamboabaas@gmail.com', '$2a$10$G2QZUq7/UBQFAJu/ynIiWeYUqRkxYGqWG5xXvPelgeywvOqCM/k9q', 'Jafeth Daniel', 'Gamboa Baas', TRUE
-FROM DUAL
 WHERE NOT EXISTS (
     SELECT 1 FROM users WHERE email = 'jafethgamboabaas@gmail.com'
 );
