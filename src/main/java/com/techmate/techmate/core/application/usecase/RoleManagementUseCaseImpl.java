@@ -69,8 +69,8 @@ public class RoleManagementUseCaseImpl implements RoleManagementUseCase {
         }
 
         // Create domain Role
-        com.techmate.techmate.core.domain.model.user.Role newRole = 
-            com.techmate.techmate.core.domain.model.user.Role.builder()
+        com.techmate.techmate.core.domain.model.user.Role newRole = com.techmate.techmate.core.domain.model.user.Role
+                .builder()
                 .name(request.name().toUpperCase())
                 .build();
 
@@ -96,7 +96,6 @@ public class RoleManagementUseCaseImpl implements RoleManagementUseCase {
     private RoleResponse toResponse(com.techmate.techmate.core.domain.model.user.Role role) {
         return new RoleResponse(
                 role.getId(),
-                role.getName()
-        );
+                role.getName());
     }
 }

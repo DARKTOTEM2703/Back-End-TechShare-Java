@@ -135,10 +135,10 @@ public class UserManagementUseCaseImpl implements UserManagementUseCase {
                 .lastName(request.lastName())
                 .birthDate(request.birthDate())
                 .gender(request.gender())
-                .enabled(false)  // New users start disabled
+                .enabled(false) // New users start disabled
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .roleNames(Set.of("USER"))  // Default role
+                .roleNames(Set.of("USER")) // Default role
                 .build();
 
         User savedUser = userRepository.save(newUser);
@@ -297,8 +297,7 @@ public class UserManagementUseCaseImpl implements UserManagementUseCase {
                 user.getGender(),
                 user.isEnabled(),
                 user.getProfileImageUrl(),
-                user.getRoleNames()
-        );
+                user.getRoleNames());
     }
 
     private void validateRegisterRequest(RegisterUserRequest request) {

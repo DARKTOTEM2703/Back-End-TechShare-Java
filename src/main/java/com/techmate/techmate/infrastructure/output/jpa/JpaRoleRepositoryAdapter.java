@@ -16,7 +16,8 @@ import java.util.Optional;
  * JPA adapter for Role persistence operations.
  * 
  * Maps between domain Role model and JPA Role entity.
- * Implements RoleRepositoryPort interface (uses domain models, not JPA entities).
+ * Implements RoleRepositoryPort interface (uses domain models, not JPA
+ * entities).
  */
 @Component
 @Transactional(readOnly = true)
@@ -74,7 +75,8 @@ public class JpaRoleRepositoryAdapter implements RoleRepositoryPort {
 
     @Override
     @Transactional
-    public com.techmate.techmate.core.domain.model.user.Role save(com.techmate.techmate.core.domain.model.user.Role role) {
+    public com.techmate.techmate.core.domain.model.user.Role save(
+            com.techmate.techmate.core.domain.model.user.Role role) {
         logger.debug("Saving role: {}", role.getName());
         com.techmate.techmate.infrastructure.persistence.entity.Role roleEntity = roleMapper.roleToEntity(role);
         com.techmate.techmate.infrastructure.persistence.entity.Role savedEntity = roleRepository.save(roleEntity);
