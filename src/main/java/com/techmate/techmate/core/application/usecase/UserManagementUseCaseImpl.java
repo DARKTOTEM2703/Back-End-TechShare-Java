@@ -246,10 +246,10 @@ public class UserManagementUseCaseImpl implements UserManagementUseCase {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-        Role role = roleRepository.findById(roleId)
+        com.techmate.techmate.core.domain.model.user.Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new RuntimeException("Role not found with ID: " + roleId));
 
-        Set<String> newRoles = Set.copyOf(user.getRoleNames());
+        Set<String> newRoles = new java.util.HashSet<>(user.getRoleNames());
         newRoles.add(role.getName());
 
         User updatedUser = User.builder()

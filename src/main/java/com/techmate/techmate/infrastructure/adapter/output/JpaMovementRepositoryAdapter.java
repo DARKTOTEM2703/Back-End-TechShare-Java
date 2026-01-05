@@ -67,6 +67,7 @@ public class JpaMovementRepositoryAdapter implements MovementRepositoryPort {
 
     @Override
     public List<Movement> findByMoveType(MoveType moveType) {
+        // Convert domain MoveType to JPA MoveType
         com.techmate.techmate.infrastructure.persistence.entity.MoveType jpaMoveType = convertMoveType(moveType);
         return movementsRepository.findByMoveType(jpaMoveType).stream()
                 .map(movementMapper::toDomain)

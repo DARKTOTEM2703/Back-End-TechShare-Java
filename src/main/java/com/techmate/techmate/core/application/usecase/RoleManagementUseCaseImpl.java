@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.infrastructure.persistence.entity.Role;
 import com.techmate.techmate.domain.port.in.RoleManagementUseCase;
 import com.techmate.techmate.domain.port.out.RoleRepositoryPort;
 
@@ -15,7 +14,7 @@ import java.util.List;
  * Implementation of role management use cases.
  * 
  * Handles role CRUD operations.
- * Coordinates with role repository port.
+ * Coordinates with role repository port (uses domain models).
  */
 @Service
 @Transactional
@@ -69,11 +68,13 @@ public class RoleManagementUseCaseImpl implements RoleManagementUseCase {
             throw new RuntimeException("Role already exists: " + request.name());
         }
 
-        // Create role JPA entity
-        Role newRole = new Role();
-        newRole.setName(request.name().toUpperCase());
+        // Create domain Role
+        com.techmate.techmate.core.domain.model.user.Role newRole = 
+            com.techmate.techmate.core.domain.model.user.Role.builder()
+                .name(request.name().toUpperCase())
+                .build();
 
-        Role savedRole = roleRepository.save(newRole);
+        com.techmate.techmate.core.domain.model.user.Role savedRole = roleRepository.save(newRole);
         logger.info("Role created successfully: {}", savedRole.getName());
         return toResponse(savedRole);
     }
@@ -92,7 +93,7 @@ public class RoleManagementUseCaseImpl implements RoleManagementUseCase {
 
     // ============= HELPERS =============
 
-    private RoleResponse toResponse(Role role) {
+    private RoleResponse toResponse(com.techmate.techmate.core.domain.model.user.Role role) {
         return new RoleResponse(
                 role.getId(),
                 role.getName()
