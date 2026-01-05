@@ -90,7 +90,7 @@ public class CategoriesServiceImp implements CategoriesService {
     @Override
     public String getCategoryNameById(int categoryId) {
         return categoriesRepository.findById(categoryId)
-                .map(com.techmate.techmate.domain.entity.Categories::getName)
+                .map(com.techmate.techmate.infrastructure.persistence.entity.Categories::getName)
                 .orElse(null);
     }
 

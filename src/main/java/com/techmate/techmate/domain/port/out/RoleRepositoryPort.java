@@ -1,6 +1,6 @@
 package com.techmate.techmate.domain.port.out;
 
-import com.techmate.techmate.infrastructure.persistence.entity.Role;
+import com.techmate.techmate.core.domain.model.user.Role;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +10,7 @@ import java.util.Optional;
  * 
  * Defines the contract for role repository implementations.
  * Isolates domain logic from infrastructure details.
+ * Uses domain model (not JPA entities) to enforce hexagonal architecture.
  */
 public interface RoleRepositoryPort {
 

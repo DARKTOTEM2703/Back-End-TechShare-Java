@@ -14,7 +14,10 @@ public class MovementMapper {
         if (dto == null) return null;
         Movements m = new Movements();
         m.setId(dto.getId());
-        m.setMoveType(dto.getMoveType());
+        // Convert domain MoveType to JPA MoveType
+        if (dto.getMoveType() != null) {
+            m.setMoveType(com.techmate.techmate.infrastructure.persistence.entity.MoveType.valueOf(dto.getMoveType().name()));
+        }
         m.setQuantity(dto.getQuantity());
         m.setDate(dto.getDate());
         m.setComment(dto.getComment());
@@ -27,7 +30,10 @@ public class MovementMapper {
         if (m == null) return null;
         MovementsDTO dto = new MovementsDTO();
         dto.setId(m.getId());
-        dto.setMoveType(m.getMoveType());
+        // Convert JPA MoveType to domain MoveType
+        if (m.getMoveType() != null) {
+            dto.setMoveType(com.techmate.techmate.core.domain.model.movement.MoveType.valueOf(m.getMoveType().name()));
+        }
         dto.setQuantity(m.getQuantity());
         dto.setDate(m.getDate());
         dto.setComment(m.getComment());

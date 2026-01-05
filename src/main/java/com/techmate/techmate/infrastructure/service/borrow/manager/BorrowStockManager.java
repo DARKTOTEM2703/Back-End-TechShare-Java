@@ -195,7 +195,7 @@ public class BorrowStockManager implements IBorrowStockManager {
 
         // 4. Crear registro de movimiento (SALIDA/BORROW)
         Movements movement = new Movements();
-        movement.setMoveType(MoveType.BORROW);
+        movement.setMoveType(com.techmate.techmate.infrastructure.persistence.entity.MoveType.BORROW);
         movement.setResourceId(material.getId());
         movement.setMaterials(material);
         movement.setUsuario(usuario);
@@ -248,7 +248,7 @@ public class BorrowStockManager implements IBorrowStockManager {
 
         // 3. Crear registro de movimiento (ENTRADA/RETURN)
         Movements movement = new Movements();
-        movement.setMoveType(MoveType.RETURN);
+        movement.setMoveType(com.techmate.techmate.infrastructure.persistence.entity.MoveType.RETURN);
         movement.setResourceId(material.getId());
         movement.setMaterials(material);
         movement.setUsuario(usuario);

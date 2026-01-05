@@ -91,7 +91,7 @@ public class MaterialsServiceImpl implements MaterialsService {
     @Override
     public String getMaterialsNameById(int materialId) {
         return materialsRepository.findById(materialId)
-                .map(com.techmate.techmate.domain.entity.Materials::getName)
+                .map(com.techmate.techmate.infrastructure.persistence.entity.Materials::getName)
                 .orElse(null);
     }
 
@@ -110,7 +110,7 @@ public class MaterialsServiceImpl implements MaterialsService {
      */
     @Override
     public Page<MaterialsDTO> getAllMaterialsPaginated(Pageable pageable) {
-        Page<com.techmate.techmate.domain.entity.Materials> materialsPage = materialsRepository.findAll(pageable);
+        Page<com.techmate.techmate.infrastructure.persistence.entity.Materials> materialsPage = materialsRepository.findAll(pageable);
         return materialsPage.map(materials -> {
             // Se usa MaterialsQueryService para consistencia en mapeo
             return materialsQueryService.getById(materials.getId());
