@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.domain.port.out.RoleRepositoryPort;
+import com.techmate.techmate.core.application.port.output.RoleRepositoryPort;
 import com.techmate.techmate.mapper.DomainUserMapper;
 import com.techmate.techmate.infrastructure.persistence.repository.RoleRepository;
 

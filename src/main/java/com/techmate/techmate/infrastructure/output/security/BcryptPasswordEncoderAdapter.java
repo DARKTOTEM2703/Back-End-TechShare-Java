@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.domain.port.out.PasswordEncoderPort;
+import com.techmate.techmate.core.application.port.output.PasswordEncoderPort;
 
 /**
  * Password encoder adapter using Spring's BCryptPasswordEncoder.

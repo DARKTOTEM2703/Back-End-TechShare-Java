@@ -1,4 +1,4 @@
-package com.techmate.techmate.domain.port.out;
+package com.techmate.techmate.core.application.port.output;
 
 import com.techmate.techmate.core.domain.model.user.Role;
 

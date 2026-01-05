@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.techmate.techmate.core.domain.model.user.User;
-import com.techmate.techmate.domain.port.out.UserRepositoryPort;
+import com.techmate.techmate.core.application.port.output.UserRepositoryPort;
 import com.techmate.techmate.mapper.DomainUserMapper;
 import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
 import com.techmate.techmate.infrastructure.persistence.entity.Usuario;

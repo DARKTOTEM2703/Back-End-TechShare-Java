@@ -1,4 +1,4 @@
-package com.techmate.techmate.domain.port.out;
+package com.techmate.techmate.core.application.port.output;
 
 /**
  * Output port for password encoding operations.

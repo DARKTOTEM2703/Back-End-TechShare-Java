@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import com.techmate.techmate.core.domain.model.user.User;
 import com.techmate.techmate.infrastructure.persistence.entity.Role;
-import com.techmate.techmate.domain.port.in.UserManagementUseCase;
-import com.techmate.techmate.domain.port.out.UserRepositoryPort;
-import com.techmate.techmate.domain.port.out.RoleRepositoryPort;
-import com.techmate.techmate.domain.port.out.PasswordEncoderPort;
+import com.techmate.techmate.core.application.port.input.UserManagementUseCase;
+import com.techmate.techmate.core.application.port.output.UserRepositoryPort;
+import com.techmate.techmate.core.application.port.output.RoleRepositoryPort;
+import com.techmate.techmate.core.application.port.output.PasswordEncoderPort;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

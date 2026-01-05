@@ -1,7 +1,7 @@
 package com.techmate.techmate.infrastructure.output.security;
 
 import org.springframework.stereotype.Component;
-import com.techmate.techmate.domain.port.out.TokenGeneratorPort;
+import com.techmate.techmate.core.application.port.output.TokenGeneratorPort;
 import com.techmate.techmate.infrastructure.security.TokenUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

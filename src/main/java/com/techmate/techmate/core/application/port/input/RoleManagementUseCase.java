@@ -1,4 +1,4 @@
-package com.techmate.techmate.domain.port.in;
+package com.techmate.techmate.core.application.port.input;
 
 import java.util.List;
 

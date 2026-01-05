@@ -23,10 +23,10 @@ import com.techmate.techmate.infrastructure.service.borrow.mapper.BorrowMapper;
 public class BorrowUserServiceImp implements BorrowUserService {
 
     private final BorrowMapper borrowMapper;
-    private final com.techmate.techmate.domain.repository.BorrowRepository borrowRepository;
+    private final com.techmate.techmate.infrastructure.persistence.repository.BorrowRepository borrowRepository;
 
     public BorrowUserServiceImp(BorrowMapper borrowMapper,
-            com.techmate.techmate.domain.repository.BorrowRepository borrowRepository) {
+            com.techmate.techmate.infrastructure.persistence.repository.BorrowRepository borrowRepository) {
         this.borrowMapper = borrowMapper;
         this.borrowRepository = borrowRepository;
     }

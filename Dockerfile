@@ -21,8 +21,8 @@ RUN mvn dependency:go-offline -B
 # Copiar código fuente
 COPY src ./src
 
-# Compilar aplicación (saltar tests para build más rápido)
-RUN mvn clean package -DskipTests -B
+# Compilar aplicación (omitir compilación de tests)
+RUN mvn clean package -Dmaven.test.skip=true -B
 
 # ============================================
 # STAGE 2: RUNTIME

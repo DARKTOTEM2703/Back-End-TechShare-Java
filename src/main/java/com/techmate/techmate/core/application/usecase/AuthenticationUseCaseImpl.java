@@ -6,10 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.techmate.techmate.core.domain.model.user.User;
-import com.techmate.techmate.domain.port.in.AuthenticationUseCase;
-import com.techmate.techmate.domain.port.out.UserRepositoryPort;
-import com.techmate.techmate.domain.port.out.PasswordEncoderPort;
-import com.techmate.techmate.domain.port.out.TokenGeneratorPort;
+import com.techmate.techmate.core.application.port.input.AuthenticationUseCase;
+import com.techmate.techmate.core.application.port.output.UserRepositoryPort;
+import com.techmate.techmate.core.application.port.output.PasswordEncoderPort;
+import com.techmate.techmate.core.application.port.output.TokenGeneratorPort;
 
 import java.util.ArrayList;
 import java.util.List;
