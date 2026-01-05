@@ -1,6 +1,6 @@
 package com.techmate.techmate.application.port.output;
 
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 import java.util.Optional;
 
 public interface UserRepositoryPort {

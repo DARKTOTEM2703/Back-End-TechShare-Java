@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.techmate.techmate.infrastructure.dto.UsuarioDTO;
-import com.techmate.techmate.domain.entity.Role;
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 import com.techmate.techmate.infrastructure.service.UserService;
 import com.techmate.techmate.infrastructure.service.User.manager.UserManager;
 import com.techmate.techmate.infrastructure.service.User.mapper.UserMapper;

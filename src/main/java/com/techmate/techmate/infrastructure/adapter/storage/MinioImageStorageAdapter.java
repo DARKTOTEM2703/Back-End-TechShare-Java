@@ -1,6 +1,6 @@
 package com.techmate.techmate.infrastructure.adapter.storage;
 
-import com.techmate.techmate.application.port.output.ImageStoragePort;
+import com.techmate.techmate.core.application.port.output.ImageStoragePort;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectsArgs;

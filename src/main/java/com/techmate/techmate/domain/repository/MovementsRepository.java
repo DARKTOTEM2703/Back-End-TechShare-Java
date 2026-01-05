@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.techmate.techmate.domain.entity.MoveType;
-import com.techmate.techmate.domain.entity.Movements;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
+import com.techmate.techmate.infrastructure.persistence.entity.Movements;
 
 /**
  * Repository optimizado para Movements con queries que previenen N+1.

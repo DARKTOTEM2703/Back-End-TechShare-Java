@@ -3,7 +3,7 @@ package com.techmate.techmate.domain.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 
-import com.techmate.techmate.domain.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
 
 import java.util.List;
 import java.util.Optional;

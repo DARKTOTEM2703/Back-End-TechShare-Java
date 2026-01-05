@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
 
-import com.techmate.techmate.domain.entity.Status;
+import com.techmate.techmate.core.domain.entity.Status;
 import com.techmate.techmate.infrastructure.exception.BusinessException;
 import com.techmate.techmate.infrastructure.service.borrow.validator.BorrowStateValidator;
 

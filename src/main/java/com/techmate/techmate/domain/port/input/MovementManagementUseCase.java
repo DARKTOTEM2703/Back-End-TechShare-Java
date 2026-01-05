@@ -3,7 +3,7 @@ package com.techmate.techmate.domain.port.input;
 import java.util.Date;
 import java.util.List;
 
-import com.techmate.techmate.domain.model.movement.MoveType;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
 
 /**
  * MovementManagementUseCase - Input port defining movement management operations.

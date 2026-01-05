@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
-import com.techmate.techmate.domain.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
 
 /**
  * Repository optimizado para Materials con prevención de N+1.

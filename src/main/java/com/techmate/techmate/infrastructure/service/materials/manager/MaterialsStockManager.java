@@ -3,10 +3,10 @@ package com.techmate.techmate.infrastructure.service.materials.manager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.techmate.techmate.domain.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
 import com.techmate.techmate.infrastructure.exception.InsufficientStockException;
 import com.techmate.techmate.infrastructure.exception.NotFoundException;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
 
 /**
  * Gestor de stock para Materials (SRP).

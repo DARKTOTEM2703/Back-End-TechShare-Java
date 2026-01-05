@@ -2,7 +2,7 @@ package com.techmate.techmate.infrastructure.service.borrow.validator;
 
 import org.springframework.stereotype.Component;
 
-import com.techmate.techmate.domain.entity.Status;
+import com.techmate.techmate.infrastructure.persistence.entity.Status;
 
 /**
  * 🎯 Validador de transiciones de estado para préstamos siguiendo SRP.

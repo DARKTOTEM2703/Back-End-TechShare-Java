@@ -1,6 +1,6 @@
 package com.techmate.techmate.infrastructure.config;
 
-import com.techmate.techmate.domain.entity.MoveType;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;

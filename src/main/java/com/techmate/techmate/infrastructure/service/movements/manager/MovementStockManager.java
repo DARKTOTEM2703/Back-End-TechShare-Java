@@ -2,8 +2,8 @@ package com.techmate.techmate.infrastructure.service.movements.manager;
 
 import org.springframework.stereotype.Component;
 
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Movements;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Movements;
 
 @Component
 public class MovementStockManager {

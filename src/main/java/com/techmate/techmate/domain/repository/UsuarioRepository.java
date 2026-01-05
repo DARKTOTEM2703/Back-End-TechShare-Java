@@ -9,7 +9,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 import com.techmate.techmate.infrastructure.dto.AuthUserDTO;
 
 import java.util.List;

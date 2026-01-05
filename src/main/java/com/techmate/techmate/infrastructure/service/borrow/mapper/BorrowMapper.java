@@ -11,8 +11,8 @@ import com.techmate.techmate.infrastructure.dto.BorrowReadDTO;
 import com.techmate.techmate.infrastructure.dto.BorrowResponse;
 import com.techmate.techmate.infrastructure.dto.DetailsBorrowResponse;
 import com.techmate.techmate.infrastructure.dto.DetailsBorrowDTO;
-import com.techmate.techmate.domain.entity.Borrow;
-import com.techmate.techmate.domain.entity.DetailsBorrow;
+import com.techmate.techmate.infrastructure.persistence.entity.Borrow;
+import com.techmate.techmate.infrastructure.persistence.entity.DetailsBorrow;
 
 /**
  * Unified BorrowMapper: provides conversions between Entity, internal DTO and

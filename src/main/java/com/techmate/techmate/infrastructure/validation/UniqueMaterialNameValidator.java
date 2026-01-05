@@ -1,6 +1,6 @@
 package com.techmate.techmate.infrastructure.validation;
 
-import com.techmate.techmate.domain.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;

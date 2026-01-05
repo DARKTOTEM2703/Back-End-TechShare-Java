@@ -10,7 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 
 /**
  * Implementación de la interfaz UserDetails para integrar la autenticación

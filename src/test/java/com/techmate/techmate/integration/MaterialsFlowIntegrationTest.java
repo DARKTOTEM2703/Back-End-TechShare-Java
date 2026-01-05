@@ -1,8 +1,8 @@
 package com.techmate.techmate.integration;
 
-import com.techmate.techmate.application.port.output.ImageStoragePort;
-import com.techmate.techmate.application.port.output.MaterialRepositoryPort;
-import com.techmate.techmate.domain.entity.Materials;
+import com.techmate.techmate.core.application.port.output.ImageStoragePort;
+import com.techmate.techmate.core.application.port.output.MaterialRepositoryPort;
+import com.techmate.techmate.core.domain.entity.Materials;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;

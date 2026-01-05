@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.techmate.techmate.infrastructure.exception.NotFoundException;
 import com.techmate.techmate.infrastructure.exception.ValidationException;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
-import com.techmate.techmate.domain.repository.RoleRepository;
-import com.techmate.techmate.domain.repository.SubCategoriesRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.RoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.SubCategoriesRepository;
 
 /**
  * Validador de reglas de negocio para Materials (SRP).

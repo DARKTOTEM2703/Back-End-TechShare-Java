@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.techmate.techmate.domain.repository.UsuarioRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
 import com.techmate.techmate.mapper.DomainUserMapper;
 
 import static org.junit.jupiter.api.Assertions.*;

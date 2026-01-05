@@ -4,10 +4,10 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.domain.model.user.User;
-import com.techmate.techmate.domain.model.user.Role;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.entity.Usuario.Gender;
+import com.techmate.techmate.core.domain.model.user.User;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario.Gender;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -93,17 +93,18 @@ public class DomainUserMapper {
 
     /**
      * Converts domain Role to JPA Role entity.
+     * Note: In hexagonal architecture, this would convert from core.domain to persistence entity
      */
-    public com.techmate.techmate.domain.entity.Role roleToEntity(Role role) {
-        if (role == null) {
+    public Role roleToEntity(com.techmate.techmate.core.domain.model.user.Role domainRole) {
+        if (domainRole == null) {
             return null;
         }
 
-        logger.debug("Mapping domain Role to JPA Role: {}", role.getName());
+        logger.debug("Mapping domain Role to JPA Role: {}", domainRole.getName());
 
-        com.techmate.techmate.domain.entity.Role entity = new com.techmate.techmate.domain.entity.Role();
-        entity.setId(role.getId());
-        entity.setName(role.getName());
+        Role entity = new Role();
+        entity.setId(domainRole.getId());
+        entity.setName(domainRole.getName());
 
         return entity;
     }
@@ -111,14 +112,14 @@ public class DomainUserMapper {
     /**
      * Converts JPA Role entity to domain Role.
      */
-    public Role roleToDomain(com.techmate.techmate.domain.entity.Role entity) {
+    public com.techmate.techmate.core.domain.model.user.Role roleToDomain(Role entity) {
         if (entity == null) {
             return null;
         }
 
         logger.debug("Mapping JPA Role to domain Role: {}", entity.getName());
 
-        return Role.builder()
+        return com.techmate.techmate.core.domain.model.user.Role.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .build();

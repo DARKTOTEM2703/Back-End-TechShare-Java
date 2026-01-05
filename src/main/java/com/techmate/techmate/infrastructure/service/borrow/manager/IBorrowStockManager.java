@@ -1,8 +1,8 @@
 package com.techmate.techmate.infrastructure.service.borrow.manager;
 
-import com.techmate.techmate.domain.entity.Borrow;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Borrow;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 
 /**
  * Contrato para la gestión de stock en operaciones de préstamo.

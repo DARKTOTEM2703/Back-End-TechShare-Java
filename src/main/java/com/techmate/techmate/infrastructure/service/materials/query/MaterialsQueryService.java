@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.techmate.techmate.infrastructure.dto.MaterialsDTO;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
 import com.techmate.techmate.infrastructure.service.materials.mapper.MaterialsMapper;
 
 /**

@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.techmate.techmate.infrastructure.dto.UsuarioDTO;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.entity.UsuarioRole;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
-import com.techmate.techmate.domain.repository.UsuarioRoleRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.UsuarioRole;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRoleRepository;
 import com.techmate.techmate.infrastructure.service.TokenService;
 import com.techmate.techmate.infrastructure.service.User.UserDemoService;
 

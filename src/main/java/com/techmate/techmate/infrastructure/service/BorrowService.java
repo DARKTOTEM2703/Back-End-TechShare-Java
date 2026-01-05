@@ -3,7 +3,7 @@ package com.techmate.techmate.infrastructure.service;
 import java.util.*;
 
 import com.techmate.techmate.infrastructure.dto.BorrowDTO;
-import com.techmate.techmate.domain.entity.Status;
+import com.techmate.techmate.infrastructure.persistence.entity.Status;
 
 public interface BorrowService {
     void updateBorrowStatus(Integer borrowId, Status newStatus, Integer adminId) throws Exception;

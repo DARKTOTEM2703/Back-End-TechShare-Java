@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.techmate.techmate.infrastructure.dto.CategoryRequest;
 import com.techmate.techmate.infrastructure.dto.CategoryResponse;
 import com.techmate.techmate.infrastructure.dto.CategoriesDTO;
-import com.techmate.techmate.domain.entity.Categories;
+import com.techmate.techmate.infrastructure.persistence.entity.Categories;
 
 @Component
 public class CategoriesMapper {

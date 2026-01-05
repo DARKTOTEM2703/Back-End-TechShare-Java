@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.techmate.techmate.infrastructure.dto.MovementsDTO;
 import com.techmate.techmate.infrastructure.dto.MovementResponse;
-import com.techmate.techmate.domain.entity.MoveType;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
 import com.techmate.techmate.infrastructure.security.TokenUtils;
 import com.techmate.techmate.infrastructure.service.MovementsService;
 import com.techmate.techmate.infrastructure.service.movements.mapper.MovementsMapper;

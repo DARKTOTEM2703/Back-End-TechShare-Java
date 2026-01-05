@@ -1,6 +1,6 @@
 package com.techmate.techmate.domain.repository;
 
-import com.techmate.techmate.domain.entity.VerificationToken;
+import com.techmate.techmate.infrastructure.persistence.entity.VerificationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

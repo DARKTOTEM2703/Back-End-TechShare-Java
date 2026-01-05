@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.techmate.techmate.infrastructure.dto.CategoriesDTO;
-import com.techmate.techmate.domain.entity.Categories;
-import com.techmate.techmate.domain.repository.CategoriesRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Categories;
+import com.techmate.techmate.infrastructure.persistence.repository.CategoriesRepository;
 import com.techmate.techmate.infrastructure.service.categories.mapper.CategoriesMapper;
 
 @Component

@@ -9,8 +9,8 @@ import java.util.Optional;
 
 import com.techmate.techmate.infrastructure.config.AppProperties;
 import com.techmate.techmate.infrastructure.dto.RegisterRequest;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.entity.VerificationToken;
+import com.techmate.techmate.core.domain.entity.Usuario;
+import com.techmate.techmate.core.domain.entity.VerificationToken;
 import com.techmate.techmate.infrastructure.service.mapper.AuthMapper;
 import com.techmate.techmate.infrastructure.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,10 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.techmate.techmate.domain.repository.UsuarioRepository;
-import com.techmate.techmate.domain.repository.VerificationTokenRepository;
-import com.techmate.techmate.domain.repository.RoleRepository;
-import com.techmate.techmate.domain.repository.UsuarioRoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.VerificationTokenRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.RoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRoleRepository;
 import com.techmate.techmate.infrastructure.service.EmailService;
 import com.techmate.techmate.infrastructure.service.EmailTemplateService;
 
@@ -66,7 +66,7 @@ class AuthServiceTest {
                 .thenReturn("<html>Test Email</html>");
 
         // Mock roleRepository para retornar rol 'USER'
-        com.techmate.techmate.domain.entity.Role userRole = new com.techmate.techmate.domain.entity.Role();
+        com.techmate.techmate.infrastructure.persistence.entity.Role userRole = new com.techmate.techmate.infrastructure.persistence.entity.Role();
         userRole.setId(2);
         userRole.setName("USER");
         when(roleRepository.findByNameIgnoreCase(anyString())).thenReturn(Optional.of(userRole));

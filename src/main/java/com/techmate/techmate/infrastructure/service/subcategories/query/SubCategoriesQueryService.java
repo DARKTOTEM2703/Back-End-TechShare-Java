@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.techmate.techmate.infrastructure.dto.SubCategoriesDTO;
-import com.techmate.techmate.domain.entity.SubCategories;
-import com.techmate.techmate.domain.repository.SubCategoriesRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.SubCategories;
+import com.techmate.techmate.infrastructure.persistence.repository.SubCategoriesRepository;
 import com.techmate.techmate.infrastructure.service.CategoriesService;
 
 import jakarta.persistence.EntityNotFoundException;

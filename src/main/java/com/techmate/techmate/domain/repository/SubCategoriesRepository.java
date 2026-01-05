@@ -3,7 +3,7 @@ package com.techmate.techmate.domain.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.techmate.techmate.domain.entity.SubCategories;
+import com.techmate.techmate.infrastructure.persistence.entity.SubCategories;
 import java.util.List;
 import java.util.Optional;
 

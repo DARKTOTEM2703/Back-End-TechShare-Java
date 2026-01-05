@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.domain.model.user.User;
+import com.techmate.techmate.core.domain.model.user.User;
 import com.techmate.techmate.domain.port.in.AuthenticationUseCase;
 import com.techmate.techmate.domain.port.out.UserRepositoryPort;
 import com.techmate.techmate.domain.port.out.PasswordEncoderPort;

@@ -1,6 +1,6 @@
 package com.techmate.techmate.application.port.output;
 
-import com.techmate.techmate.domain.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
 import java.util.Optional;
 import java.util.List;
 

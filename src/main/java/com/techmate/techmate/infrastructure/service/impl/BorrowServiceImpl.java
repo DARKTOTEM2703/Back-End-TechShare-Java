@@ -1,7 +1,7 @@
 package com.techmate.techmate.infrastructure.service.impl;
 
 import com.techmate.techmate.infrastructure.dto.BorrowDTO;
-import com.techmate.techmate.domain.entity.Status;
+import com.techmate.techmate.infrastructure.persistence.entity.Status;
 import com.techmate.techmate.infrastructure.security.TokenUtils;
 import com.techmate.techmate.infrastructure.service.BorrowService;
 import com.techmate.techmate.infrastructure.service.borrow.processor.BorrowStateProcessor;

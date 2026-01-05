@@ -2,7 +2,7 @@ package com.techmate.techmate.infrastructure.dto;
 
 import java.util.Date;
 
-import com.techmate.techmate.domain.entity.MoveType;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

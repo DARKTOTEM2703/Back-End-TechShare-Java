@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.techmate.techmate.infrastructure.dto.UsuarioDTO;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.entity.UsuarioRole;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
-import com.techmate.techmate.domain.repository.UsuarioRoleRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.UsuarioRole;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRoleRepository;
 import com.techmate.techmate.infrastructure.service.User.mapper.UserMapper;
 
 @Component

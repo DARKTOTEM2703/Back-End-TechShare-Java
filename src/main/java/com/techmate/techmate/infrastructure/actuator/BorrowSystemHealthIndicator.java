@@ -1,7 +1,7 @@
 package com.techmate.techmate.infrastructure.actuator;
 
-import com.techmate.techmate.domain.entity.Status;
-import com.techmate.techmate.domain.repository.BorrowRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Status;
+import com.techmate.techmate.infrastructure.persistence.repository.BorrowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;

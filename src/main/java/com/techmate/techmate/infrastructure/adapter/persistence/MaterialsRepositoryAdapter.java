@@ -1,8 +1,8 @@
 package com.techmate.techmate.infrastructure.adapter.persistence;
 
-import com.techmate.techmate.application.port.output.MaterialRepositoryPort;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
+import com.techmate.techmate.core.application.port.output.MaterialRepositoryPort;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
 import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.List;

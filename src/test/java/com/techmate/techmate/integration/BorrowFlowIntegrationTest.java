@@ -11,16 +11,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.techmate.techmate.domain.entity.Borrow;
-import com.techmate.techmate.domain.entity.DetailsBorrow;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.MoveType;
-import com.techmate.techmate.domain.entity.Status;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.repository.BorrowRepository;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
-import com.techmate.techmate.domain.repository.MovementsRepository;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
+import com.techmate.techmate.core.domain.entity.Borrow;
+import com.techmate.techmate.core.domain.entity.DetailsBorrow;
+import com.techmate.techmate.core.domain.entity.Materials;
+import com.techmate.techmate.core.domain.entity.MoveType;
+import com.techmate.techmate.core.domain.entity.Status;
+import com.techmate.techmate.core.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.repository.BorrowRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MovementsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
 import com.techmate.techmate.infrastructure.service.BorrowService;
 
 @SpringBootTest

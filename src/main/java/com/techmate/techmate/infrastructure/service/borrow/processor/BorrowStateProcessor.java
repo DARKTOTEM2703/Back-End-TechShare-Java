@@ -5,14 +5,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
-import com.techmate.techmate.domain.entity.Borrow;
-import com.techmate.techmate.domain.entity.DetailsBorrow;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Status;
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Borrow;
+import com.techmate.techmate.infrastructure.persistence.entity.DetailsBorrow;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Status;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 import com.techmate.techmate.infrastructure.exception.BusinessException;
-import com.techmate.techmate.domain.repository.BorrowRepository;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.BorrowRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
 import com.techmate.techmate.infrastructure.service.borrow.manager.BorrowStockManager;
 import com.techmate.techmate.infrastructure.service.borrow.validator.BorrowStateValidator;
 

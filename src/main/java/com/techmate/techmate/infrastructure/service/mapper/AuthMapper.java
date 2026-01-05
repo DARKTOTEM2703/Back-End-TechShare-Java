@@ -3,7 +3,7 @@ package com.techmate.techmate.infrastructure.service.mapper;
 import org.springframework.stereotype.Component;
 
 import com.techmate.techmate.infrastructure.dto.RegisterRequest;
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 
 @Component
 public class AuthMapper {

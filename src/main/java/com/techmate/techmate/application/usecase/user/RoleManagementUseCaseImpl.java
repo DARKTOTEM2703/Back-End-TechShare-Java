@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.domain.model.user.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
 import com.techmate.techmate.domain.port.in.RoleManagementUseCase;
 import com.techmate.techmate.domain.port.out.RoleRepositoryPort;
 
@@ -69,10 +69,9 @@ public class RoleManagementUseCaseImpl implements RoleManagementUseCase {
             throw new RuntimeException("Role already exists: " + request.name());
         }
 
-        // Create role domain object
-        Role newRole = Role.builder()
-                .name(request.name().toUpperCase())
-                .build();
+        // Create role JPA entity
+        Role newRole = new Role();
+        newRole.setName(request.name().toUpperCase());
 
         Role savedRole = roleRepository.save(newRole);
         logger.info("Role created successfully: {}", savedRole.getName());

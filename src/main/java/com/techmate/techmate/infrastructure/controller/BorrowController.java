@@ -13,7 +13,7 @@ import java.util.*;
 
 import com.techmate.techmate.infrastructure.dto.BorrowDTO;
 import com.techmate.techmate.infrastructure.dto.BorrowReadDTO;
-import com.techmate.techmate.domain.entity.Status;
+import com.techmate.techmate.infrastructure.persistence.entity.Status;
 import com.techmate.techmate.infrastructure.service.BorrowService;
 
 import jakarta.servlet.http.HttpServletRequest;

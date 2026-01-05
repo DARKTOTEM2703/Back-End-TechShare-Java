@@ -1,6 +1,6 @@
 package com.techmate.techmate.infrastructure.actuator;
 
-import com.techmate.techmate.domain.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;

@@ -5,10 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.domain.model.user.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
 import com.techmate.techmate.domain.port.out.RoleRepositoryPort;
 import com.techmate.techmate.mapper.DomainUserMapper;
-import com.techmate.techmate.domain.repository.RoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.RoleRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,8 +77,8 @@ public class JpaRoleRepositoryAdapter implements RoleRepositoryPort {
     @Transactional
     public Role save(Role role) {
         logger.debug("Saving role: {}", role.getName());
-        com.techmate.techmate.domain.entity.Role roleEntity = roleMapper.roleToEntity(role);
-        com.techmate.techmate.domain.entity.Role savedEntity = roleRepository.save(roleEntity);
+        com.techmate.techmate.infrastructure.persistence.entity.Role roleEntity = roleMapper.roleToEntity(role);
+        com.techmate.techmate.infrastructure.persistence.entity.Role savedEntity = roleRepository.save(roleEntity);
         return roleMapper.roleToDomain(savedEntity);
     }
 

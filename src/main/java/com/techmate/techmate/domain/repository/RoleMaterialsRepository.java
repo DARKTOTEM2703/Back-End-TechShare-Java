@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Role;
-import com.techmate.techmate.domain.entity.RoleMaterials;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.RoleMaterials;
 
 @Repository
 public interface RoleMaterialsRepository extends JpaRepository<RoleMaterials, Integer>{

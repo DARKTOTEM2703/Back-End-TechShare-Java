@@ -2,7 +2,7 @@ package com.techmate.techmate.infrastructure.service.categories.validator;
 
 import org.springframework.stereotype.Component;
 
-import com.techmate.techmate.domain.repository.CategoriesRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.CategoriesRepository;
 
 @Component
 public class CategoriesValidator {

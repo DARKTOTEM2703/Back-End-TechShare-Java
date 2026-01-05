@@ -3,9 +3,9 @@ package com.techmate.techmate.infrastructure.service.movements.mapper;
 import org.springframework.stereotype.Component;
 
 import com.techmate.techmate.infrastructure.dto.MovementsDTO;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Movements;
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Movements;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 
 @Component
 public class MovementMapper {

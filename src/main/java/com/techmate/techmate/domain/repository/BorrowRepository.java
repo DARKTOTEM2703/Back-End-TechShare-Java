@@ -12,8 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.techmate.techmate.domain.entity.Borrow;
-import com.techmate.techmate.domain.entity.Status;
+import com.techmate.techmate.infrastructure.persistence.entity.Borrow;
+import com.techmate.techmate.infrastructure.persistence.entity.Status;
 
 /**
  * Repository optimizado para Borrow con queries que previenen N+1.

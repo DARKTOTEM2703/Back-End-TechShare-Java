@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.techmate.techmate.domain.repository.RoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.RoleRepository;
 
 @Component
 public class UserValidator {

@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 import com.techmate.techmate.infrastructure.dto.MaterialRequest;
 import com.techmate.techmate.infrastructure.dto.MaterialResponse;
 import com.techmate.techmate.infrastructure.dto.MaterialsDTO;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Role;
-import com.techmate.techmate.domain.entity.RoleMaterials;
-import com.techmate.techmate.domain.entity.SubCategories;
-import com.techmate.techmate.domain.repository.RoleRepository;
-import com.techmate.techmate.domain.repository.SubCategoriesRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.RoleMaterials;
+import com.techmate.techmate.infrastructure.persistence.entity.SubCategories;
+import com.techmate.techmate.infrastructure.persistence.repository.RoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.SubCategoriesRepository;
 import com.techmate.techmate.infrastructure.service.RoleService;
 import com.techmate.techmate.infrastructure.service.SubCategoriesService;
 

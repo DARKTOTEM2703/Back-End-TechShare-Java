@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 import com.techmate.techmate.infrastructure.dto.AuthUserDTO;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
-import com.techmate.techmate.domain.repository.UsuarioRoleRepository;
-import com.techmate.techmate.domain.repository.AuthenticationRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.AuthenticationRepository;
 
 /**
  * Implementación del servicio de autenticación de usuarios para Spring

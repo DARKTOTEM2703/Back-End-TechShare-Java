@@ -10,9 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.techmate.techmate.infrastructure.dto.MovementsDTO;
-import com.techmate.techmate.domain.entity.MoveType;
-import com.techmate.techmate.domain.entity.Movements;
-import com.techmate.techmate.domain.repository.MovementsRepository;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
+import com.techmate.techmate.infrastructure.persistence.entity.Movements;
+import com.techmate.techmate.infrastructure.persistence.repository.MovementsRepository;
 import com.techmate.techmate.infrastructure.service.movements.mapper.MovementMapper;
 
 @Component

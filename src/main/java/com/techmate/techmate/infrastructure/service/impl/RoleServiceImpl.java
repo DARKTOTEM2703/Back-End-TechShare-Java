@@ -4,7 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.techmate.techmate.infrastructure.dto.RoleDTO;
-import com.techmate.techmate.domain.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
 import com.techmate.techmate.infrastructure.service.RoleService;
 import com.techmate.techmate.infrastructure.service.role.manager.RoleManager;
 import com.techmate.techmate.infrastructure.service.role.mapper.RoleMapper;

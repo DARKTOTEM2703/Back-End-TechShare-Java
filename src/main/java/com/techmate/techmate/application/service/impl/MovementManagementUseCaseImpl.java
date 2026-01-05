@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.techmate.techmate.domain.model.movement.Movement;
-import com.techmate.techmate.domain.model.movement.MoveType;
+import com.techmate.techmate.core.domain.model.movement.Movement;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
 import com.techmate.techmate.domain.port.input.MovementManagementUseCase;
 import com.techmate.techmate.domain.port.output.MovementRepositoryPort;
-import com.techmate.techmate.application.mapper.DomainMovementMapper;
+import com.techmate.techmate.core.application.mapper.DomainMovementMapper;
 
 /**
  * MovementManagementUseCaseImpl - Application service implementing movement management operations.

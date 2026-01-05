@@ -7,15 +7,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.techmate.techmate.infrastructure.config.AppProperties;
 import com.techmate.techmate.infrastructure.dto.RegisterRequest;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.entity.UsuarioRole;
-import com.techmate.techmate.domain.entity.Role;
-import com.techmate.techmate.domain.entity.VerificationToken;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
-import com.techmate.techmate.domain.repository.VerificationTokenRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.UsuarioRole;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.VerificationToken;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.VerificationTokenRepository;
 import com.techmate.techmate.infrastructure.service.mapper.AuthMapper;
-import com.techmate.techmate.domain.repository.RoleRepository;
-import com.techmate.techmate.domain.repository.UsuarioRoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.RoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRoleRepository;
 
 import java.util.Optional;
 import java.util.UUID;

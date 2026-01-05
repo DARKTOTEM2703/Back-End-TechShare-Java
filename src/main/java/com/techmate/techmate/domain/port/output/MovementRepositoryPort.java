@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import com.techmate.techmate.domain.model.movement.Movement;
-import com.techmate.techmate.domain.model.movement.MoveType;
+import com.techmate.techmate.core.domain.model.movement.Movement;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
 
 /**
  * MovementRepositoryPort - Output port for movement persistence operations.

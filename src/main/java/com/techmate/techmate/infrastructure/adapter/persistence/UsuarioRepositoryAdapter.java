@@ -1,8 +1,8 @@
 package com.techmate.techmate.infrastructure.adapter.persistence;
 
-import com.techmate.techmate.application.port.output.UserRepositoryPort;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
+import com.techmate.techmate.core.application.port.output.UserRepositoryPort;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
 import org.springframework.stereotype.Component;
 import java.util.Optional;
 

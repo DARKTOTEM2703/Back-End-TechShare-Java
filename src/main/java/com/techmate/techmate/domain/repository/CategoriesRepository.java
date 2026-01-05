@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.techmate.techmate.domain.entity.Categories;
+import com.techmate.techmate.infrastructure.persistence.entity.Categories;
 
 /**
  * La interfaz {@code CategoriesRepository} es un repositorio que proporciona

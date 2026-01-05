@@ -5,10 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.techmate.techmate.infrastructure.dto.CategoriesDTO;
-import com.techmate.techmate.domain.entity.Categories;
+import com.techmate.techmate.infrastructure.persistence.entity.Categories;
 import com.techmate.techmate.infrastructure.exception.BusinessException;
 import com.techmate.techmate.infrastructure.imageStorage.ImageStorageStrategy;
-import com.techmate.techmate.domain.repository.CategoriesRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.CategoriesRepository;
 import com.techmate.techmate.infrastructure.service.categories.mapper.CategoriesMapper;
 import com.techmate.techmate.infrastructure.service.categories.validator.CategoriesValidator;
 import com.techmate.techmate.infrastructure.validation.ImageValidationStrategy;

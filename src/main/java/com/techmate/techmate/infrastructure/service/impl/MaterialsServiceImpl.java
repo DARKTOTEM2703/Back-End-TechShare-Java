@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.techmate.techmate.infrastructure.service.MaterialsService;
 import com.techmate.techmate.infrastructure.dto.MaterialsDTO;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
 import com.techmate.techmate.infrastructure.service.materials.manager.MaterialsManager;
 import com.techmate.techmate.infrastructure.service.materials.query.MaterialsQueryService;
 

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.techmate.techmate.infrastructure.dto.CategoriesDTO;
-import com.techmate.techmate.domain.repository.CategoriesRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.CategoriesRepository;
 import com.techmate.techmate.infrastructure.service.CategoriesService;
 import com.techmate.techmate.infrastructure.service.categories.manager.CategoriesManager;
 import com.techmate.techmate.infrastructure.service.categories.query.CategoriesQueryService;

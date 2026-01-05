@@ -6,17 +6,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.io.IOException;
 
-import com.techmate.techmate.application.port.input.MaterialManagementUseCase;
-import com.techmate.techmate.application.port.output.ImageStoragePort;
-import com.techmate.techmate.application.port.output.MaterialRepositoryPort;
+import com.techmate.techmate.core.application.port.input.MaterialManagementUseCase;
+import com.techmate.techmate.core.application.port.output.ImageStoragePort;
+import com.techmate.techmate.core.application.port.output.MaterialRepositoryPort;
 import com.techmate.techmate.infrastructure.dto.MaterialRequest;
 import com.techmate.techmate.infrastructure.dto.MaterialResponse;
 import com.techmate.techmate.infrastructure.service.materials.mapper.MaterialsMapper;
 import com.techmate.techmate.infrastructure.service.materials.validator.MaterialsValidator;
 import com.techmate.techmate.infrastructure.config.AppProperties;
-import com.techmate.techmate.domain.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
 import com.techmate.techmate.infrastructure.dto.MaterialsDTO;
-import com.techmate.techmate.application.exception.ImageStorageException;
+import com.techmate.techmate.core.application.exception.ImageStorageException;
 
 @Service
 @Transactional

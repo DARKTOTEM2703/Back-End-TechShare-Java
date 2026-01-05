@@ -1,6 +1,6 @@
 package com.techmate.techmate.domain.repository.specification;
 
-import com.techmate.techmate.domain.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.*;
 

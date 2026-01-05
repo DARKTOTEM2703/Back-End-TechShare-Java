@@ -8,7 +8,7 @@ import java.util.*;
 
 import com.techmate.techmate.infrastructure.service.MovementsService;
 import com.techmate.techmate.infrastructure.dto.MovementsDTO;
-import com.techmate.techmate.domain.entity.MoveType;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
 import com.techmate.techmate.infrastructure.service.movements.mapper.MovementMapper;
 import com.techmate.techmate.infrastructure.service.movements.manager.MovementManager;
 import com.techmate.techmate.infrastructure.service.movements.query.MovementQueryService;

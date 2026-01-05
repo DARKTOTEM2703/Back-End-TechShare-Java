@@ -3,7 +3,7 @@ package com.techmate.techmate.infrastructure.service.role.mapper;
 import org.springframework.stereotype.Component;
 
 import com.techmate.techmate.infrastructure.dto.RoleDTO;
-import com.techmate.techmate.domain.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
 
 @Component
 public class RoleMapper {

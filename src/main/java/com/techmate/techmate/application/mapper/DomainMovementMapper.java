@@ -4,11 +4,10 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-import com.techmate.techmate.domain.entity.Movements;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.model.movement.Movement;
-import com.techmate.techmate.domain.model.movement.MoveType;
+import com.techmate.techmate.infrastructure.persistence.entity.Movements;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
+import com.techmate.techmate.core.domain.model.movement.Movement;
 import com.techmate.techmate.domain.port.input.MovementManagementUseCase;
 
 /**
@@ -130,20 +129,20 @@ public class DomainMovementMapper {
     /**
      * Convert JPA MoveType enum to domain MoveType enum
      */
-    private MoveType convertJpaMoveType(com.techmate.techmate.domain.entity.MoveType jpaMoveType) {
+    private com.techmate.techmate.core.domain.model.movement.MoveType convertJpaMoveType(com.techmate.techmate.infrastructure.persistence.entity.MoveType jpaMoveType) {
         if (jpaMoveType == null) {
             return null;
         }
 
         switch (jpaMoveType) {
             case BORROW:
-                return MoveType.BORROW;
+                return com.techmate.techmate.core.domain.model.movement.MoveType.BORROW;
             case RETURN:
-                return MoveType.RETURN;
+                return com.techmate.techmate.core.domain.model.movement.MoveType.RETURN;
             case STOCK_ADD:
-                return MoveType.STOCK_ADD;
+                return com.techmate.techmate.core.domain.model.movement.MoveType.STOCK_ADD;
             case ADJUSTMENT:
-                return MoveType.ADJUSTMENT;
+                return com.techmate.techmate.core.domain.model.movement.MoveType.ADJUSTMENT;
             default:
                 return null;
         }
@@ -152,20 +151,20 @@ public class DomainMovementMapper {
     /**
      * Convert domain MoveType enum to JPA MoveType enum
      */
-    private com.techmate.techmate.domain.entity.MoveType convertDomainMoveType(MoveType domainMoveType) {
+    private com.techmate.techmate.infrastructure.persistence.entity.MoveType convertDomainMoveType(com.techmate.techmate.core.domain.model.movement.MoveType domainMoveType) {
         if (domainMoveType == null) {
             return null;
         }
 
         switch (domainMoveType) {
             case BORROW:
-                return com.techmate.techmate.domain.entity.MoveType.BORROW;
+                return com.techmate.techmate.infrastructure.persistence.entity.MoveType.BORROW;
             case RETURN:
-                return com.techmate.techmate.domain.entity.MoveType.RETURN;
+                return com.techmate.techmate.infrastructure.persistence.entity.MoveType.RETURN;
             case STOCK_ADD:
-                return com.techmate.techmate.domain.entity.MoveType.STOCK_ADD;
+                return com.techmate.techmate.infrastructure.persistence.entity.MoveType.STOCK_ADD;
             case ADJUSTMENT:
-                return com.techmate.techmate.domain.entity.MoveType.ADJUSTMENT;
+                return com.techmate.techmate.infrastructure.persistence.entity.MoveType.ADJUSTMENT;
             default:
                 return null;
         }

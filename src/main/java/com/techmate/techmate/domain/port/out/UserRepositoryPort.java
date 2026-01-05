@@ -1,6 +1,6 @@
 package com.techmate.techmate.domain.port.out;
 
-import com.techmate.techmate.domain.model.user.User;
+import com.techmate.techmate.core.domain.model.user.User;
 
 import java.util.List;
 import java.util.Optional;

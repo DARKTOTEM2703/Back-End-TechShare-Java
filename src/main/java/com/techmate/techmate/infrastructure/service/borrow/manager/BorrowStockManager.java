@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.techmate.techmate.domain.entity.Borrow;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.MoveType;
-import com.techmate.techmate.domain.entity.Movements;
-import com.techmate.techmate.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Borrow;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
+import com.techmate.techmate.infrastructure.persistence.entity.Movements;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 import com.techmate.techmate.infrastructure.exception.BorrowBusinessException;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
-import com.techmate.techmate.domain.repository.MovementsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MovementsRepository;
 
 /**
  * Gestor de stock especializado para operaciones de préstamo siguiendo SRP.

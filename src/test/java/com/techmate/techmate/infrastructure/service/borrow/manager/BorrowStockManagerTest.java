@@ -12,12 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.techmate.techmate.domain.entity.Borrow;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Movements;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
-import com.techmate.techmate.domain.repository.MovementsRepository;
+import com.techmate.techmate.core.domain.entity.Borrow;
+import com.techmate.techmate.core.domain.entity.Materials;
+import com.techmate.techmate.core.domain.entity.Movements;
+import com.techmate.techmate.core.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MovementsRepository;
 import com.techmate.techmate.infrastructure.exception.BorrowBusinessException;
 
 import java.math.BigDecimal;

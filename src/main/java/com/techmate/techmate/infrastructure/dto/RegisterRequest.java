@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.techmate.techmate.domain.entity.Usuario.Gender;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario.Gender;
 
 @Data
 public class RegisterRequest {

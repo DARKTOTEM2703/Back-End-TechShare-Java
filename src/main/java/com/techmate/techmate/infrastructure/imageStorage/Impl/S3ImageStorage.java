@@ -1,8 +1,8 @@
 package com.techmate.techmate.infrastructure.imageStorage.Impl;
 
-import com.techmate.techmate.application.port.output.ImageStoragePort;
+import com.techmate.techmate.core.application.port.output.ImageStoragePort;
 import com.techmate.techmate.infrastructure.validation.ImageValidationStrategy;
-import com.techmate.techmate.application.exception.ImageStorageException;
+import com.techmate.techmate.core.application.exception.ImageStorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

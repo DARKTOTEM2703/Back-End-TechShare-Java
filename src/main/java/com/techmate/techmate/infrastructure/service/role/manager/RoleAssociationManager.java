@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Role;
-import com.techmate.techmate.domain.entity.RoleMaterials;
-import com.techmate.techmate.domain.entity.UsuarioRole;
-import com.techmate.techmate.domain.repository.RoleMaterialsRepository;
-import com.techmate.techmate.domain.repository.UsuarioRoleRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.RoleMaterials;
+import com.techmate.techmate.infrastructure.persistence.entity.UsuarioRole;
+import com.techmate.techmate.infrastructure.persistence.repository.RoleMaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRoleRepository;
 
 @Component
 public class RoleAssociationManager {

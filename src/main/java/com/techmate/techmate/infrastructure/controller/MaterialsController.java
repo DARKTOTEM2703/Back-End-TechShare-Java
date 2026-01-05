@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.techmate.techmate.application.port.input.MaterialManagementUseCase;
+import com.techmate.techmate.core.application.port.input.MaterialManagementUseCase;
 import com.techmate.techmate.infrastructure.config.AppProperties;
 import com.techmate.techmate.infrastructure.service.EmailService;
 import com.techmate.techmate.infrastructure.dto.MaterialRequest;

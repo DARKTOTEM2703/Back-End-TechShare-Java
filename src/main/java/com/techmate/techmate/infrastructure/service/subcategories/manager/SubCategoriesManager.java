@@ -5,11 +5,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.techmate.techmate.infrastructure.dto.SubCategoriesDTO;
-import com.techmate.techmate.domain.entity.Categories;
-import com.techmate.techmate.domain.entity.SubCategories;
+import com.techmate.techmate.infrastructure.persistence.entity.Categories;
+import com.techmate.techmate.infrastructure.persistence.entity.SubCategories;
 import com.techmate.techmate.infrastructure.imageStorage.ImageStorageStrategy;
-import com.techmate.techmate.domain.repository.CategoriesRepository;
-import com.techmate.techmate.domain.repository.SubCategoriesRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.CategoriesRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.SubCategoriesRepository;
 import com.techmate.techmate.infrastructure.service.CategoriesService;
 import com.techmate.techmate.infrastructure.validation.ImageValidationStrategy;
 

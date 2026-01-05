@@ -3,7 +3,7 @@ package com.techmate.techmate.infrastructure.dto;
 import java.util.Date;
 import java.util.List;
 
-import com.techmate.techmate.domain.entity.Status;
+import com.techmate.techmate.infrastructure.persistence.entity.Status;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

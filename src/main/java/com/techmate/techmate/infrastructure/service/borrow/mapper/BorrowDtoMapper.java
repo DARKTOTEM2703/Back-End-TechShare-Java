@@ -1,9 +1,9 @@
 package com.techmate.techmate.infrastructure.service.borrow.mapper;
 
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.entity.Borrow;
-import com.techmate.techmate.domain.entity.DetailsBorrow;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.entity.Borrow;
+import com.techmate.techmate.infrastructure.persistence.entity.DetailsBorrow;
 import com.techmate.techmate.infrastructure.dto.BorrowReadDTO;
 import com.techmate.techmate.infrastructure.dto.DetailsBorrowDTO;
 import org.mapstruct.Mapper;

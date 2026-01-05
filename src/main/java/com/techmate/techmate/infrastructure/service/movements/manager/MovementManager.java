@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.techmate.techmate.infrastructure.dto.MovementsDTO;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Movements;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
-import com.techmate.techmate.domain.repository.MovementsRepository;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Movements;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MovementsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
 import com.techmate.techmate.infrastructure.service.MaterialsService;
 import com.techmate.techmate.infrastructure.service.movements.mapper.MovementMapper;
 import com.techmate.techmate.infrastructure.service.movements.validator.MovementValidator;

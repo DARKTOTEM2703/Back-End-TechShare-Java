@@ -9,8 +9,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.techmate.techmate.infrastructure.dto.BorrowDTO;
-import com.techmate.techmate.domain.entity.Status;
-import com.techmate.techmate.domain.repository.BorrowRepository;
+import com.techmate.techmate.infrastructure.persistence.entity.Status;
+import com.techmate.techmate.infrastructure.persistence.repository.BorrowRepository;
 import com.techmate.techmate.infrastructure.service.borrow.mapper.BorrowMapper;
 
 /**

@@ -9,16 +9,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import com.techmate.techmate.domain.entity.Movements;
-import com.techmate.techmate.domain.entity.Materials;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.repository.MovementsRepository;
-import com.techmate.techmate.domain.repository.MaterialsRepository;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
-import com.techmate.techmate.domain.model.movement.Movement;
-import com.techmate.techmate.domain.model.movement.MoveType;
+import com.techmate.techmate.infrastructure.persistence.entity.Movements;
+import com.techmate.techmate.infrastructure.persistence.entity.Materials;
+import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.repository.MovementsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.MaterialsRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
+import com.techmate.techmate.core.domain.model.movement.Movement;
+import com.techmate.techmate.core.domain.model.movement.MoveType;
 import com.techmate.techmate.domain.port.output.MovementRepositoryPort;
-import com.techmate.techmate.application.mapper.DomainMovementMapper;
+import com.techmate.techmate.core.application.mapper.DomainMovementMapper;
 
 /**
  * JpaMovementRepositoryAdapter - Infrastructure adapter implementing
@@ -67,7 +67,7 @@ public class JpaMovementRepositoryAdapter implements MovementRepositoryPort {
 
     @Override
     public List<Movement> findByMoveType(MoveType moveType) {
-        com.techmate.techmate.domain.entity.MoveType jpaMoveType = convertMoveType(moveType);
+        com.techmate.techmate.infrastructure.persistence.entity.MoveType jpaMoveType = convertMoveType(moveType);
         return movementsRepository.findByMoveType(jpaMoveType).stream()
                 .map(movementMapper::toDomain)
                 .collect(Collectors.toList());
@@ -149,20 +149,20 @@ public class JpaMovementRepositoryAdapter implements MovementRepositoryPort {
     /**
      * Convert domain MoveType to JPA MoveType enum
      */
-    private com.techmate.techmate.domain.entity.MoveType convertMoveType(MoveType domainType) {
+    private com.techmate.techmate.infrastructure.persistence.entity.MoveType convertMoveType(MoveType domainType) {
         if (domainType == null) {
             return null;
         }
 
         switch (domainType) {
             case BORROW:
-                return com.techmate.techmate.domain.entity.MoveType.BORROW;
+                return com.techmate.techmate.infrastructure.persistence.entity.MoveType.BORROW;
             case RETURN:
-                return com.techmate.techmate.domain.entity.MoveType.RETURN;
+                return com.techmate.techmate.infrastructure.persistence.entity.MoveType.RETURN;
             case STOCK_ADD:
-                return com.techmate.techmate.domain.entity.MoveType.STOCK_ADD;
+                return com.techmate.techmate.infrastructure.persistence.entity.MoveType.STOCK_ADD;
             case ADJUSTMENT:
-                return com.techmate.techmate.domain.entity.MoveType.ADJUSTMENT;
+                return com.techmate.techmate.infrastructure.persistence.entity.MoveType.ADJUSTMENT;
             default:
                 return null;
         }

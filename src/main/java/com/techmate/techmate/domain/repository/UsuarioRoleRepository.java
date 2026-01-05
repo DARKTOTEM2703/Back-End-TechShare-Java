@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.techmate.techmate.domain.entity.Role;
-import com.techmate.techmate.domain.entity.UsuarioRole;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.UsuarioRole;
 
 import java.util.List;
 

@@ -8,10 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.techmate.techmate.domain.entity.Role;
-import com.techmate.techmate.domain.entity.Usuario;
-import com.techmate.techmate.domain.repository.RoleRepository;
-import com.techmate.techmate.domain.repository.UsuarioRepository;
+import com.techmate.techmate.core.domain.entity.Role;
+import com.techmate.techmate.core.domain.entity.Usuario;
+import com.techmate.techmate.infrastructure.persistence.repository.RoleRepository;
+import com.techmate.techmate.infrastructure.persistence.repository.UsuarioRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")

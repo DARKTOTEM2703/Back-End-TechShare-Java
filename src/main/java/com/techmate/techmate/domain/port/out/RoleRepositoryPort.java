@@ -1,6 +1,6 @@
 package com.techmate.techmate.domain.port.out;
 
-import com.techmate.techmate.domain.model.user.Role;
+import com.techmate.techmate.infrastructure.persistence.entity.Role;
 
 import java.util.List;
 import java.util.Optional;
