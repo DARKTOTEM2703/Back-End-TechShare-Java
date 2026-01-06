@@ -11,12 +11,14 @@ import com.techmate.techmate.infrastructure.persistence.entity.Usuario;
 public class MovementMapper {
 
     public Movements toEntity(MovementsDTO dto, Usuario usuario, Materials materials) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
         Movements m = new Movements();
         m.setId(dto.getId());
         // Convert domain MoveType to JPA MoveType
         if (dto.getMoveType() != null) {
-            m.setMoveType(com.techmate.techmate.infrastructure.persistence.entity.MoveType.valueOf(dto.getMoveType().name()));
+            m.setMoveType(
+                    com.techmate.techmate.infrastructure.persistence.entity.MoveType.valueOf(dto.getMoveType().name()));
         }
         m.setQuantity(dto.getQuantity());
         m.setDate(dto.getDate());
@@ -27,7 +29,8 @@ public class MovementMapper {
     }
 
     public MovementsDTO toDTO(Movements m, String usuarioName, String materialName) {
-        if (m == null) return null;
+        if (m == null)
+            return null;
         MovementsDTO dto = new MovementsDTO();
         dto.setId(m.getId());
         // Convert JPA MoveType to domain MoveType
@@ -44,13 +47,3 @@ public class MovementMapper {
         return dto;
     }
 }
-
-
-
-
-
-
-
-
-
-

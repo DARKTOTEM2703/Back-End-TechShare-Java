@@ -93,7 +93,8 @@ public class DomainUserMapper {
 
     /**
      * Converts domain Role to JPA Role entity.
-     * Note: In hexagonal architecture, this would convert from core.domain to persistence entity
+     * Note: In hexagonal architecture, this would convert from core.domain to
+     * persistence entity
      */
     public Role roleToEntity(com.techmate.techmate.core.domain.model.user.Role domainRole) {
         if (domainRole == null) {

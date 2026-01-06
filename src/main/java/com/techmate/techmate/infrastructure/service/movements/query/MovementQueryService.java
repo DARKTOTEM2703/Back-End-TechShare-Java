@@ -41,8 +41,8 @@ public class MovementQueryService {
 
     public List<MovementsDTO> getByMoveType(MoveType moveType) {
         // Convert domain MoveType to JPA MoveType
-        com.techmate.techmate.infrastructure.persistence.entity.MoveType jpaMoveType = 
-            com.techmate.techmate.infrastructure.persistence.entity.MoveType.valueOf(moveType.name());
+        com.techmate.techmate.infrastructure.persistence.entity.MoveType jpaMoveType = com.techmate.techmate.infrastructure.persistence.entity.MoveType
+                .valueOf(moveType.name());
         return movementsRepository.findByMoveType(jpaMoveType).stream()
                 .map(m -> movementMapper.toDTO(m, null, null))
                 .collect(Collectors.toList());
@@ -61,10 +61,3 @@ public class MovementQueryService {
                 .collect(Collectors.toList());
     }
 }
-
-
-
-
-
-
-

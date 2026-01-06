@@ -19,9 +19,9 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * Esta clase actúa como un COORDINADOR (Facade Pattern).
  * No contiene lógica de negocio compleja, solo delega responsabilidades a:
- * 1. MaterialsQueryService    → Para lecturas y búsquedas
- * 2. MaterialsManager         → Para CRUD y lógica de negocio
- * 3. MaterialsRepository      → Para acceso directo a persistencia (paginación)
+ * 1. MaterialsQueryService → Para lecturas y búsquedas
+ * 2. MaterialsManager → Para CRUD y lógica de negocio
+ * 3. MaterialsRepository → Para acceso directo a persistencia (paginación)
  * 
  * PRINCIPIOS SOLID APLICADOS:
  * - SRP: Solo coordina operaciones, no contiene lógica de negocio
@@ -32,9 +32,9 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * PATRÓN ARQUITECTÓNICO:
  * Controller → MaterialsServiceImpl (Facade)
- *           ├→ MaterialsQueryService (Consultas: GET, FIND, SEARCH)
- *           ├→ MaterialsManager (CRUD: CREATE, UPDATE, DELETE + lógica)
- *           └→ MaterialsRepository (Acceso a datos)
+ * ├→ MaterialsQueryService (Consultas: GET, FIND, SEARCH)
+ * ├→ MaterialsManager (CRUD: CREATE, UPDATE, DELETE + lógica)
+ * └→ MaterialsRepository (Acceso a datos)
  * 
  * @author TechShare Team - SOLID Implementation
  */
@@ -62,7 +62,6 @@ public class MaterialsServiceImpl implements MaterialsService {
      * Usado para operaciones específicas como paginación.
      */
     private final MaterialsRepository materialsRepository;
-
 
     // ==================== OPERACIONES DE CONSULTA ====================
 
@@ -110,7 +109,8 @@ public class MaterialsServiceImpl implements MaterialsService {
      */
     @Override
     public Page<MaterialsDTO> getAllMaterialsPaginated(Pageable pageable) {
-        Page<com.techmate.techmate.infrastructure.persistence.entity.Materials> materialsPage = materialsRepository.findAll(pageable);
+        Page<com.techmate.techmate.infrastructure.persistence.entity.Materials> materialsPage = materialsRepository
+                .findAll(pageable);
         return materialsPage.map(materials -> {
             // Se usa MaterialsQueryService para consistencia en mapeo
             return materialsQueryService.getById(materials.getId());
@@ -146,10 +146,3 @@ public class MaterialsServiceImpl implements MaterialsService {
         materialsManager.deleteMaterials(materialsId);
     }
 }
-
-
-
-
-
-
-

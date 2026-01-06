@@ -20,8 +20,8 @@ import lombok.extern.slf4j.Slf4j;
  * Esta clase actúa como un COORDINADOR (Facade Pattern).
  * No contiene lógica de negocio compleja, solo delega responsabilidades a:
  * 1. CategoriesQueryService → Para lecturas y búsquedas
- * 2. CategoriesManager      → Para CRUD y lógica de negocio
- * 3. CategoriesRepository   → Para acceso directo a persistencia
+ * 2. CategoriesManager → Para CRUD y lógica de negocio
+ * 3. CategoriesRepository → Para acceso directo a persistencia
  * 
  * PRINCIPIOS SOLID APLICADOS:
  * - SRP: Solo coordina operaciones, no contiene lógica de negocio
@@ -32,9 +32,9 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * PATRÓN ARQUITECTÓNICO:
  * Controller → CategoriesServiceImp (Facade)
- *           ├→ CategoriesQueryService (Consultas: GET, FIND, SEARCH)
- *           ├→ CategoriesManager (CRUD: CREATE, UPDATE, DELETE + lógica)
- *           └→ CategoriesRepository (Acceso a datos)
+ * ├→ CategoriesQueryService (Consultas: GET, FIND, SEARCH)
+ * ├→ CategoriesManager (CRUD: CREATE, UPDATE, DELETE + lógica)
+ * └→ CategoriesRepository (Acceso a datos)
  * 
  * @author TechShare Team - SOLID Implementation
  */
@@ -60,8 +60,6 @@ public class CategoriesServiceImp implements CategoriesService {
      * Usado para operaciones específicas.
      */
     private final CategoriesRepository categoriesRepository;
-
-
 
     // ==================== OPERACIONES DE CONSULTA ====================
 
@@ -123,10 +121,3 @@ public class CategoriesServiceImp implements CategoriesService {
         categoriesManager.deleteCategory(categoryID);
     }
 }
-
-
-
-
-
-
-

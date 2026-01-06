@@ -1,4 +1,4 @@
-package com.techmate.techmate.core.application.usecase.user;
+package com.techmate.techmate.core.application.usecase;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
